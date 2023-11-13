@@ -1,5 +1,4 @@
 <?php
-rollback test
 
 session_start();
 
