@@ -30,9 +30,8 @@ if (!$result) {
 while ($row1 = $result->fetch_assoc()) {
     echo "<div>" . $row1['Quest'] . "</div>";
     echo "<hr>";
-    if( isset($row1['Quest'])) {
-        $after=$row1['After'];
-        
+    if (isset($row1['Quest'])) {
+        $after = $row1['After'];
     }
 }
 
@@ -49,23 +48,22 @@ if (!$result1) {
 // Wyświetlenie zawartości tabeli "pytania"
 
 
-if (mysqli_num_rows($result1)>0){
-        echo    "<div class='quest-options'>";
-while ($row = $result1->fetch_assoc()) {
-    echo    "<div class='quest-option' ";
-    if ($row['PozId']==$row['correct'])
-        echo "id='correct'";
-    echo ">" . base64_decode($row['Value']) . "</div>";
-}
-echo    "</div><br>";
+if (mysqli_num_rows($result1) > 0) {
+    echo    "<div class='quest-options'>";
+    while ($row = $result1->fetch_assoc()) {
+        echo    "<div class='quest-option' ";
+        if ($row['PozId'] == $row['correct'])
+            echo "id='correct'";
+        echo ">" . base64_decode($row['Value']) . "</div>";
+    }
+    echo    "</div><br>";
 }
 
-    
-    
+
+
 if (!is_null($after)) {
     echo "<div>" . $after . "</div>";
 }
 
 // Zamknięcie połączenia z bazą danych
 $conn->close();
-?>

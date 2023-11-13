@@ -31,10 +31,10 @@ if ($row = mysqli_fetch_assoc($result)) {
 
     if ($row['TypeId'] == 1) {
         // Jeśli TypeId = 1, wykonaj dodatkowe zapytanie
-        
+
         $sql2 = "SELECT pp.pytpozId,pp.pozId, Value,p.Done FROM pytaniapoz pp JOIN pytania p
         ON pp.PytId=p.PytId WHERE TurniejId = ? and Done=0 order by pp.pytpozId limit 4;";
-        
+
         $stmt2 = mysqli_prepare($conn, $sql2);
         mysqli_stmt_bind_param($stmt2, "i", $turniejId);
         mysqli_stmt_execute($stmt2);
@@ -60,4 +60,3 @@ if ($row = mysqli_fetch_assoc($result)) {
 
 mysqli_stmt_close($stmt);
 mysqli_close($conn);
-?>
