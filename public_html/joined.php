@@ -67,7 +67,7 @@ if (isset($_SESSION['info'])) {
 
 
                     if (status == 'R') {
-                        $('.startpopup').html('<div class="loading-spinner"></div>Rozpoczęto- ładuje buzzer...');
+                        $('.startpopup').html('<button href="#" id="buzzer">BUZZ</button>');
                         $('#startform').hide();
 
                         //                 $.ajax({
@@ -158,7 +158,7 @@ if (isset($_SESSION['info'])) {
 
 <head>
     <title>TTT-TeTeTurnieje</title>
-    <link rel="icon" type="image/gif" href="images/title.png">
+    <link rel="shortcut icon" type="image/gif" href="images/title.png">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,11 +179,14 @@ if (isset($_SESSION['info'])) {
                 Oczekiwanie na rozpoczęcie...<br><br>
 
             </div>
+            <span id='turniej'>
             <?php
             $turniejid = $_SESSION['TurniejId'];
 
             if (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']) {
-                echo '<form method="post" id="startform"><button id="start" name="start" class="button-85" type="submit" margin-top="0px">START</button></form>';
+                echo '<form method="post" id="startform">';
+                echo '<button id="start" name="start" class="button-85" type="submit" margin-top="0px">START</button>';
+                echo '</form>';
             }
 
             if (isset($_POST['start'])) {
@@ -197,7 +200,9 @@ if (isset($_SESSION['info'])) {
                     //for debbuging echo . $conn->error;
                 }
             }
-
+            ?>
+            </span>
+            <?php
             echo '<data id="username" value=' . $_SESSION['username'] . '></data>';
 
 

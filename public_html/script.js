@@ -141,12 +141,14 @@ function sleep(ms) {
 }
 
 
-
-
-
 // Add click event for the close button using event delegation
 $(document).on('click', '#closeButton', function () {
     $('#popup').hide(); //schowaj popup
+});
 
-
+// Add click event for the close button using event delegation
+$(document).on('click', '#buzzer', function () {
+    $('#buzzer').css("background", "gray");
+    $('#buzzer').css("border-color", "black");
+    $('#buzzer').css("box-shadow", "3px 7px 0px 0px #4d4d4d");
 });
