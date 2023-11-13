@@ -79,7 +79,7 @@ else
               echo "<td>" . $row['Code'] . "</td>";
               echo "<td>" . $row['Status'] . "</td>";
               echo "<td> <a href='edit.php?turniejid=" . $row['TurniejId'] . "' ><img src='images/edit.png' alt='edit' height='40px' width='40px'</a></td>";
-              echo "<td><a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img src='https://cdn.discordapp.com/emojis/544557064610119680.webp?size=128&quality=lossless' alt='start' height='40px' width='40px'></a></td>";
+              echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
               echo "</tr>";
             }
 
