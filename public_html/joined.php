@@ -146,6 +146,44 @@ if (isset($_SESSION['info'])) {
             });
         }
 
+        function buzz() {
+            $('#buzzer').prop('disabled', true);
+            pressed =1;
+            $('#buzzer').css("background", "gray");
+            $('#buzzer').css("border-color", "black");
+            $('#buzzer').css("box-shadow", "3px 7px 0px 0px #4d4d4d");
+
+            var userId = <?php echo isset($_SESSION['userid']) ? $_SESSION['userid'] : 'null'; ?>;
+            var turniejId = <?php echo isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null'; ?>;
+
+            // AJAX request to insert a record into the 'buzzes' table
+            $.ajax({
+                url: 'buzz.php', // Adjust the URL to your server-side script
+                type: 'POST',
+                data: {
+                    userId: userId,
+                    turniejId: turniejId
+                },
+                success: function(response) {
+                    console.log('Buzzed!');
+                },
+                error: function(error) {
+                    console.error('Error buzzing:', error);
+                }
+            });
+        }
+
+        $(document).on('click', '#buzzer', function() {
+            buzz();
+        });
+
+        window.onkeydown = function(event) {
+
+            if ((event.keyCode === 32) && typeof pressed=='undefinded') {
+                event.preventDefault();
+                buzz();
+            }
+        };
 
 
 
@@ -180,27 +218,27 @@ if (isset($_SESSION['info'])) {
 
             </div>
             <span id='turniej'>
-            <?php
-            $turniejid = $_SESSION['TurniejId'];
+                <?php
+                $turniejid = $_SESSION['TurniejId'];
 
-            if (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']) {
-                echo '<form method="post" id="startform">';
-                echo '<button id="start" name="start" class="button-85" type="submit" margin-top="0px">START</button>';
-                echo '</form>';
-            }
-
-            if (isset($_POST['start'])) {
-                // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
-                $sql = "UPDATE turnieje SET Status='R' WHERE TurniejId = $turniejid";
-
-                if ($conn->query($sql) === TRUE) {
-                    $_SESSION['info'] = "Success!";
-                } else {
-                    $_SESSION['info'] = "Błąd!";
-                    //for debbuging echo . $conn->error;
+                if (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']) {
+                    echo '<form method="post" id="startform">';
+                    echo '<button id="start" name="start" class="button-85" type="submit" margin-top="0px">START</button>';
+                    echo '</form>';
                 }
-            }
-            ?>
+
+                if (isset($_POST['start'])) {
+                    // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
+                    $sql = "UPDATE turnieje SET Status='R' WHERE TurniejId = $turniejid";
+
+                    if ($conn->query($sql) === TRUE) {
+                        $_SESSION['info'] = "Success!";
+                    } else {
+                        $_SESSION['info'] = "Błąd!";
+                        //for debbuging echo . $conn->error;
+                    }
+                }
+                ?>
             </span>
             <?php
             echo '<data id="username" value=' . $_SESSION['username'] . '></data>';
