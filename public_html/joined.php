@@ -27,6 +27,8 @@ $turniejid = $_SESSION['TurniejId'];
 
         $('#participantsInfo').html('<div class="loading-spinner"></div>Loading...');
         var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
+        shown=false;
+
         function checkTournamentStatus() {
 
             $.ajax({
@@ -43,13 +45,13 @@ $turniejid = $_SESSION['TurniejId'];
 
                     // Wyświetl listę uczestników
                     var participantsList = '<table class="users">';
-                    
+
 
                     for (var i = 0; i < response.participants.length; i++) {
                         participantsList += '<tr><td>';
-                        
 
-                        
+
+
                         if (response.participants[i].Login == username) {
                             participantsList += '<b><font color="blue">' + response.participants[i].Login + "</font></b></td>"
                         } else {
@@ -63,51 +65,52 @@ $turniejid = $_SESSION['TurniejId'];
                     $('#participantsInfo').html('Organizator:<b> ' + response.creator +
                         '</b><br>Rzule: ' + participantsList);
 
+                    if (!shown) {
+                        shown=true;
+                        if (status == 'P') {
+                            $('.startpopup').html('<button href="#" id="buzzer">BUZZ</button>');
+                            $('#startform').hide();
 
-                    if (status == 'P') {
-                        $('.startpopup').html('<button href="#" id="buzzer">BUZZ</button>');
-                        $('#startform').hide();
+                            $.ajax({
+                                url: 'quest.php',
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(quests) {
+                                    // Tutaj możesz przetwarzać dane zwrócone z quest.php
+                                    var PytId = quests.PytId;
+                                    var Quest = quests.Quest;
+                                    var Category = quests.Category;
+                                    var TypeId = quests.TypeId;
+                                    var whoFirst = quests.whoFirst;
+                                    var Rewards = quests.Rewards;
+                                    var pozycje = quests.pozycje;
 
-                        $.ajax({
-                            url: 'quest.php',
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(quests) {
-                                console.log(quests);
-                                // Tutaj możesz przetwarzać dane zwrócone z quest.php
-                                var PytId = quests.PytId;
-                                var Quest = quests.Quest;
-                                var Category = quests.Category;
-                                var TypeId = quests.TypeId;
-                                var whoFirst = quests.whoFirst;
-                                var Rewards = quests.Rewards;
-                                var pozycje = quests.pozycje;
+                                    $('.startpopup').append('Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '<BR><span id="quest">' + Quest +
+                                        "</span><BR><div class='quest-options' id='questOptionsContainer'>" + '</div>');
 
-                                $('.startpopup').append('Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '<BR><span id="quest">' + Quest +
-                                    "</span><BR><div class='quest-options' id='questOptionsContainer'>" + '</div>');
+                                    wyswietlPozycje(pozycje);
 
-                                wyswietlPozycje(pozycje);
+                                    $('#statusInfo').text('Status turnieju: ' + status);
 
-                                $('#statusInfo').text('Status turnieju: ' + status);
+                                    // Wyświetl listę uczestników
+                                    var participantsList = '<table class="users">';
 
-                                // Wyświetl listę uczestników
-                                var participantsList = '<table class="users">';
+                                    for (var i = 0; i < response.participants.length; i++) {
+                                        participantsList += '<tr><td><b>' + response.participants[i].Login + "</td><td></b> Wynik: <span class='score-edit' contenteditable='true' data-login='" + response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
 
-                                for (var i = 0; i < response.participants.length; i++) {
-                                    participantsList += '<tr><td><b>' + response.participants[i].Login + "</td><td></b> Wynik: <span class='score-edit' contenteditable='true' data-login='" + response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
+                                    }
+                                    participantsList += '</table>';
+                                    $('#participantsInfo').html('Organizator:<b> ' + response.creator +
+                                        '</b><br>Rzule: ' + participantsList);
 
+                                },
+                                error: function() {
+                                    $('#statusInfo').text('Błąd podczas pobierania pytań.');
+                                    $('#participantsInfo').html('Error');
                                 }
-                                participantsList += '</table>';
-                                $('#participantsInfo').html('Organizator:<b> ' + response.creator +
-                                    '</b><br>Rzule: ' + participantsList);
+                            });
 
-                            },
-                            error: function() {
-                                $('#statusInfo').text('Błąd podczas pobierania pytań.');
-                                $('#participantsInfo').html('Error');
-                            }
-                        });
-
+                        }
                     }
                 },
                 error: function() {
@@ -221,7 +224,7 @@ $turniejid = $_SESSION['TurniejId'];
             </div>
             <span id='turniej'>
                 <?php
-                
+
 
                 if (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']) {
                     echo '<form method="post" id="startform">';
