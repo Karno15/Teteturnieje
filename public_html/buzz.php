@@ -4,19 +4,19 @@ session_start();
 require 'connect.php';
 
 // Assuming you have a button click event or some trigger
-if (isset($_POST['userId']) && isset($_POST['turniejId'])) {
+if (isset($_POST['userId']) && isset($_POST['turniejId']) && isset($_POST['pytId'])) {
     $userId = $_POST['userId'];
     $turniejId = $_POST['turniejId'];
-    
+    $pytId = $_POST['pytId'];
     // Your SQL query
-    $sql = "INSERT INTO buzzes (UserId, TurniejId) VALUES (?, ?)";
+    $sql = "INSERT INTO buzzes (UserId, TurniejId, PytId) VALUES (?, ?, ?)";
 
     try {
         // Prepare the statement
         $stmt = mysqli_prepare($conn, $sql);
 
         // Bind the parameters
-        mysqli_stmt_bind_param($stmt, 'ii', $userId, $turniejId);
+        mysqli_stmt_bind_param($stmt, 'iii', $userId, $turniejId, $pytId);
 
         // Execute the statement
         $execute = mysqli_stmt_execute($stmt);

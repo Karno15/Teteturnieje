@@ -22,6 +22,7 @@ $result = mysqli_stmt_get_result($stmt);
 if ($row = mysqli_fetch_assoc($result)) {
     // Pobrano dane z bazy danych
     $data = array(
+        "PytId" => $row['PytId'],
         "Quest" => $row['Quest'],
         "Rewards" => $row['Rewards'],
         "TypeId" => $row['TypeId'],

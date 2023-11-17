@@ -27,7 +27,7 @@ $turniejid = $_SESSION['TurniejId'];
 
         $('#participantsInfo').html('<div class="loading-spinner"></div>Loading...');
         var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
-        shown=false;
+        shown = false;
 
         function checkTournamentStatus() {
 
@@ -39,7 +39,8 @@ $turniejid = $_SESSION['TurniejId'];
 
                     var creator = response.creator
                     var status = response.status
-
+                    var currentQuest = response.currentQuest
+                    
                     // Wyświetl status turnieju
                     $('#statusInfo').text('Status turnieju: ' + status);
 
@@ -49,8 +50,6 @@ $turniejid = $_SESSION['TurniejId'];
 
                     for (var i = 0; i < response.participants.length; i++) {
                         participantsList += '<tr><td>';
-
-
 
                         if (response.participants[i].Login == username) {
                             participantsList += '<b><font color="blue">' + response.participants[i].Login + "</font></b></td>"
@@ -63,14 +62,14 @@ $turniejid = $_SESSION['TurniejId'];
                     participantsList += '</table>';
 
                     $('#participantsInfo').html('Organizator:<b> ' + response.creator +
-                        '</b><br>Rzule: ' + participantsList);
+                        '</b><p>Rzule: ' + participantsList + '</p>');
 
                     if (!shown) {
-                        shown=true;
+                        shown = true;
                         if (status == 'P') {
-                            $('.startpopup').html('<button href="#" id="buzzer">BUZZ</button>');
+                            $('.startpopup').html('<button data-pytid='+currentQuest+' id="buzzer">BUZZ</button>');
                             $('#startform').hide();
-
+                            
                             $.ajax({
                                 url: 'quest.php',
                                 type: 'GET',
@@ -85,27 +84,30 @@ $turniejid = $_SESSION['TurniejId'];
                                     var Rewards = quests.Rewards;
                                     var pozycje = quests.pozycje;
 
-                                    $('.startpopup').append('Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '<BR><span id="quest">' + Quest +
-                                        "</span><BR><div class='quest-options' id='questOptionsContainer'>" + '</div>');
+                                    $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '<BR><span id="quest">' + Quest +
+                                        "</span><BR><div class='quest-options' id='questOptionsContainer'>" + '</div></p>');
 
                                     wyswietlPozycje(pozycje);
 
-                                    $('#statusInfo').text('Status turnieju: ' + status);
+                                    $.ajax({
+                                        url: 'chkBuzzes.php',
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        success: function() {
+                                        },
+                                        error: function() {
+                                            $('.info').text('Błąd pobierania buzza.');
+                                        }
+                                    });
 
-                                    // Wyświetl listę uczestników
-                                    var participantsList = '<table class="users">';
 
-                                    for (var i = 0; i < response.participants.length; i++) {
-                                        participantsList += '<tr><td><b>' + response.participants[i].Login + "</td><td></b> Wynik: <span class='score-edit' contenteditable='true' data-login='" + response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
 
-                                    }
-                                    participantsList += '</table>';
-                                    $('#participantsInfo').html('Organizator:<b> ' + response.creator +
-                                        '</b><br>Rzule: ' + participantsList);
+                                    $('#buzzerInfo').html('Buzzes:<b> ' + response.creator +
+                                        '</b>');
 
                                 },
                                 error: function() {
-                                    $('#statusInfo').text('Błąd podczas pobierania pytań.');
+                                    $('.info').text('Błąd podczas pobierania pytań.');
                                     $('#participantsInfo').html('Error');
                                 }
                             });
@@ -118,10 +120,6 @@ $turniejid = $_SESSION['TurniejId'];
                     $('#participantsInfo').html('Error');
                 }
             });
-
-
-
-
 
 
             $('body').on('blur', '.score-edit', function() {
@@ -140,7 +138,7 @@ $turniejid = $_SESSION['TurniejId'];
                         checkTournamentStatus();
                     },
                     error: function() {
-                        $('#statusInfo').text('error.');
+                        $('.info').text('error.');
                     }
                 });
             });
@@ -154,7 +152,7 @@ $turniejid = $_SESSION['TurniejId'];
                 $('#buzzer').prop('disabled', true);
                 pressed = true;
                 $('#buzzer').css("background", "gray");
-                $('#buzzer').css("border-color", "black");
+                $('#buzzer').css("border-color", "dimgray");
                 $('#buzzer').css("box-shadow", "3px 7px 0px 0px #4d4d4d");
 
                 var userId = <?php echo isset($_SESSION['userid']) ? $_SESSION['userid'] : 'null'; ?>;
@@ -166,7 +164,8 @@ $turniejid = $_SESSION['TurniejId'];
                     type: 'POST',
                     data: {
                         userId: userId,
-                        turniejId: turniejId
+                        turniejId: turniejId,
+                        pytId: $("#buzzer").data("pytid")
                     },
                     success: function(response) {
                         console.log('Buzzed!');
@@ -250,6 +249,7 @@ $turniejid = $_SESSION['TurniejId'];
 
             <div id="statusInfo"></div>
             <div id="participantsInfo"></div>
+            <div id="buzzerInfo"></div>
 
 
 
