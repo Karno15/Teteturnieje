@@ -40,12 +40,12 @@ $turniejid = $_SESSION['TurniejId'];
                     var creator = response.creator
                     var status = response.status
                     var currentQuest = response.currentQuest
-                    
+
                     // Wyświetl status turnieju
                     $('#statusInfo').text('Status turnieju: ' + status);
 
                     // Wyświetl listę uczestników
-                    var participantsList = '<table class="users">';
+                    var participantsList = '<table class="datatables">';
 
 
                     for (var i = 0; i < response.participants.length; i++) {
@@ -64,12 +64,47 @@ $turniejid = $_SESSION['TurniejId'];
                     $('#participantsInfo').html('Organizator:<b> ' + response.creator +
                         '</b><p>Rzule: ' + participantsList + '</p>');
 
+                    if (status == 'P') {
+                        $.ajax({
+                            url: 'chkBuzzes.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                pytId: currentQuest
+                            },
+                            success: function(response) {
+
+                                // Assuming response has a property named 'buzzes'
+                                var buzzesHTML = '<p>Buzzes:<b><table class="datatables">';
+                                response.buzzes.forEach(function(buzz) {
+                                    buzzesHTML += '<tr><td><b>' + buzz.Login + ': </b></td><td>' + buzz.buzztime + '</td></tr>';
+                                });
+
+                                // Remove the trailing comma
+                                buzzesHTML = buzzesHTML.replace(/,\s*$/, '');
+
+                                buzzesHTML += '</b>';
+
+                                buzzesHTML += '</table></p>';
+                                // Insert the HTML into the #buzzerInfo element
+                                $('#buzzerInfo').html(buzzesHTML);
+                            },
+                            error: function() {
+                                $('.info').text('Błąd pobierania buzza.');
+                            }
+                        });
+
+
+
+                    }
+
                     if (!shown) {
                         shown = true;
                         if (status == 'P') {
-                            $('.startpopup').html('<button data-pytid='+currentQuest+' id="buzzer">BUZZ</button>');
+                            $('.startpopup').html('<button data-pytid=' + currentQuest + ' id="buzzer">BUZZ</button>');
                             $('#startform').hide();
-                            
+
+
                             $.ajax({
                                 url: 'quest.php',
                                 type: 'GET',
@@ -89,21 +124,7 @@ $turniejid = $_SESSION['TurniejId'];
 
                                     wyswietlPozycje(pozycje);
 
-                                    $.ajax({
-                                        url: 'chkBuzzes.php',
-                                        type: 'GET',
-                                        dataType: 'json',
-                                        success: function() {
-                                        },
-                                        error: function() {
-                                            $('.info').text('Błąd pobierania buzza.');
-                                        }
-                                    });
 
-
-
-                                    $('#buzzerInfo').html('Buzzes:<b> ' + response.creator +
-                                        '</b>');
 
                                 },
                                 error: function() {

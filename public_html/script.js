@@ -124,7 +124,7 @@ function wyswietlPozycje(data) {
     var questOptionsContainer = $('#questOptionsContainer'); // Znajdź kontener za pomocą jQuery
 
     if (data === void 0) {
-        questOptionsContainer.append('<textarea class="input-answer" placeholder="Wpisz odpowiedź tutaj..."></textarea>')
+        questOptionsContainer.append('<p></p>')
     }
     else {
 
