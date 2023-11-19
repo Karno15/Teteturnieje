@@ -28,7 +28,8 @@ $turniejid = $_SESSION['TurniejId'];
         $('#participantsInfo').html('<div class="loading-spinner"></div>Loading...');
         var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
         shown = false;
-
+        status = 0;
+        currentQuest = 0;
         function checkTournamentStatus() {
 
             $.ajax({
@@ -36,13 +37,23 @@ $turniejid = $_SESSION['TurniejId'];
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
+                    console.log(status+":"+response.status);
+
+                    if (status != response.status) {
+                        shown = false;
+                    }
+
 
                     var creator = response.creator
-                    var status = response.status
-                    var currentQuest = response.currentQuest
+                    status = response.status
+                    currentQuest = response.currentQuest
+
 
                     // Wyświetl status turnieju
-                    $('#statusInfo').text('Status turnieju: ' + status);
+
+                    $('#statusInfo').text(<?php echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
+                                                ? '"test"'
+                                                : null; ?>);
 
                     // Wyświetl listę uczestników
                     var participantsList = '<table class="datatables">';
@@ -76,9 +87,32 @@ $turniejid = $_SESSION['TurniejId'];
 
                                 // Assuming response has a property named 'buzzes'
                                 var buzzesHTML = '<p>Buzzes:<b><table class="datatables">';
-                                response.buzzes.forEach(function(buzz) {
-                                    buzzesHTML += '<tr><td><b>' + buzz.Login + ': </b></td><td>' + buzz.buzztime + '</td></tr>';
-                                });
+                                var firstBuzz = 0;
+                                for (var i = 0; i < response.buzzes.length; i++) {
+                                    var buzz = response.buzzes[i];
+                                    var buzztime = new Date(buzz.buzztime);
+
+                                    buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td>';
+
+                                    // Show the buzztime only for the second and subsequent logins
+                                    if (i !== 0) {
+                                        var duration = buzztime - firstBuzz;
+                                        buzzesHTML += '<td>' + formatDuration(duration) + '</td>';
+                                    } else {
+                                        firstBuzz = new Date(buzz.buzztime);
+                                        buzzesHTML += '<td>First!</td>';
+                                    }
+                                    buzzesHTML += '</tr>';
+
+                                    buzzesHTML += "<?php ";
+
+                                    buzzesHTML += ";
+                                                    echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
+                                                        ? '<tr><td><button>OK</td><td>BAD!</td></tr>' : null;
+                                                    "
+                                    
+                                    buzzesHTML += " ?>"
+                                }
 
                                 // Remove the trailing comma
                                 buzzesHTML = buzzesHTML.replace(/,\s*$/, '');
@@ -101,7 +135,7 @@ $turniejid = $_SESSION['TurniejId'];
                     if (!shown) {
                         shown = true;
                         if (status == 'P') {
-                            $('.startpopup').html('<button data-pytid=' + currentQuest + ' id="buzzer">BUZZ</button>');
+                            $('.startpopup').html('<button id="buzzer">BUZZ</button>');
                             $('#startform').hide();
 
 
@@ -119,8 +153,8 @@ $turniejid = $_SESSION['TurniejId'];
                                     var Rewards = quests.Rewards;
                                     var pozycje = quests.pozycje;
 
-                                    $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '<BR><span id="quest">' + Quest +
-                                        "</span><BR><div class='quest-options' id='questOptionsContainer'>" + '</div></p>');
+                                    $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '</p><span id="quest">' + Quest +
+                                        "</span><div class='quest-options' id='questOptionsContainer'></div>");
 
                                     wyswietlPozycje(pozycje);
 
@@ -186,7 +220,7 @@ $turniejid = $_SESSION['TurniejId'];
                     data: {
                         userId: userId,
                         turniejId: turniejId,
-                        pytId: $("#buzzer").data("pytid")
+                        pytId: currentQuest
                     },
                     success: function(response) {
                         console.log('Buzzed!');
@@ -214,7 +248,7 @@ $turniejid = $_SESSION['TurniejId'];
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
-        //setInterval(checkTournamentStatus, 2000);
+        setInterval(checkTournamentStatus, 2000);
     });
 </script>
 

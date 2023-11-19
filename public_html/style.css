@@ -431,6 +431,7 @@ table.datatable thead th:first-child {
 }
 
 #participantsInfo {
+  min-height: 100px;
   min-width: 15%;
   position: fixed;
   top: 20%;
@@ -483,7 +484,8 @@ table.datatable thead th:first-child {
 }
 
 #quest {
-  font-size: auto;
+  font-size: 28pt;
+  margin: -30px;
 }
 
 

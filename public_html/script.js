@@ -146,3 +146,11 @@ $(document).on('click', '#closeButton', function () {
     $('#popup').hide(); //schowaj popup
 });
 
+function formatDuration(duration) {
+    var totalSeconds = Math.floor(duration / 1000); // Convert milliseconds to seconds
+    var seconds = totalSeconds % 60;
+    var minutes = Math.floor(totalSeconds / 60); // Convert remaining seconds to minutes
+    var milliseconds = duration % 1000;
+
+    return '+' + (minutes * 60 + seconds) + 's ' + milliseconds + 'ms';
+}
