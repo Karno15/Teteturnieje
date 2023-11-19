@@ -30,6 +30,7 @@ $turniejid = $_SESSION['TurniejId'];
         shown = false;
         status = 0;
         currentQuest = 0;
+
         function checkTournamentStatus() {
 
             $.ajax({
@@ -37,7 +38,7 @@ $turniejid = $_SESSION['TurniejId'];
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
-                    console.log(status+":"+response.status);
+                    console.log(status + ":" + response.status);
 
                     if (status != response.status) {
                         shown = false;
@@ -47,13 +48,6 @@ $turniejid = $_SESSION['TurniejId'];
                     var creator = response.creator
                     status = response.status
                     currentQuest = response.currentQuest
-
-
-                    // Wyświetl status turnieju
-
-                    $('#statusInfo').text(<?php echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
-                                                ? '"test"'
-                                                : null; ?>);
 
                     // Wyświetl listę uczestników
                     var participantsList = '<table class="datatables">';
@@ -68,7 +62,8 @@ $turniejid = $_SESSION['TurniejId'];
                             participantsList += '<b>' + response.participants[i].Login + "</b></td>"
                         }
 
-                        participantsList += "<td> Wynik: <span class='score-edit' contenteditable='true' data-login='" + response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
+                        participantsList += "<td> Wynik: <span class='score-edit' contenteditable='true' data-login='" +
+                            response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
                     }
                     participantsList += '</table>';
 
@@ -108,10 +103,13 @@ $turniejid = $_SESSION['TurniejId'];
 
                                     buzzesHTML += ";
                                                     echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
-                                                        ? '<tr><td><button>OK</td><td>BAD!</td></tr>' : null;
+                                                        ? '<tr><td><button id="ok-button" data-login="">
+                                                        OK</button></td>
+                                                        <td><button id="bad-button" data-login="">
+                                                        BAD</button></td></tr>' : null;
                                                     "
                                     
-                                    buzzesHTML += " ?>"
+                                    buzzesHTML += " ?>" 
                                 }
 
                                 // Remove the trailing comma
@@ -153,11 +151,16 @@ $turniejid = $_SESSION['TurniejId'];
                                     var Rewards = quests.Rewards;
                                     var pozycje = quests.pozycje;
 
-                                    $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards + '</p><span id="quest">' + Quest +
+                                    $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
+                                        '</p><span id="quest">' + Quest +
                                         "</span><div class='quest-options' id='questOptionsContainer'></div>");
 
                                     wyswietlPozycje(pozycje);
 
+
+                                    $('#statusInfo').text(<?php echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
+                                                                ? '"test"'
+                                                                : null; ?>);
 
 
                                 },
