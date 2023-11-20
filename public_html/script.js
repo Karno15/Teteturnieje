@@ -154,3 +154,22 @@ function formatDuration(duration) {
 
     return '+' + (minutes * 60 + seconds) + 's ' + milliseconds + 'ms';
 }
+
+
+function answerPoints(login, pts, answer) {
+    $.ajax({
+        url: 'answer.php',
+        type: 'POST',
+        data: {
+            login: login,
+            pts: pts,
+            answer: answer
+        },
+        success: function (response) {
+            console.log('Points changed!');
+        },
+        error: function (error) {
+            console.error('Error changing points:', error);
+        }
+    });
+}

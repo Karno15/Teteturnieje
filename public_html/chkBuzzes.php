@@ -32,6 +32,3 @@ mysqli_close($conn);
 
 // Zwróć dane w formie JSON
 echo json_encode($response);
-
-
-//to do

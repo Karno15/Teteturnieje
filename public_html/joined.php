@@ -32,6 +32,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
         shown = false;
         status = 0;
         currentQuest = 0;
+        var pts = 0;
 
         function checkTournamentStatus() {
 
@@ -104,8 +105,8 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                     buzzesHTML += '</tr><tr>';
 
                                     if (isLeader) {
-                                        buzzesHTML += '<td><button id="ok-button" data-login="' + buzz.Login +
-                                            '">OK</button></td><td><button id="bad-button" data-login="' + buzz.Login + '">BAD</button></td>';
+                                        buzzesHTML += '<td><button class="okbutton" data-login="' + buzz.Login +
+                                            '">OK</button></td><td><button class="badbutton" data-login="' + buzz.Login + '">BAD</button></td>';
                                     }
 
                                     buzzesHTML += '</tr>';
@@ -150,6 +151,8 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                     var Rewards = quests.Rewards;
                                     var pozycje = quests.pozycje;
 
+                                    pts = Rewards;
+
                                     $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
                                         '</p><span id="quest">' + Quest +
                                         "</span><div class='quest-options' id='questOptionsContainer'></div>");
@@ -157,7 +160,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                     wyswietlPozycje(pozycje);
 
 
-                                    $('#statusInfo').text(<?php echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
+                                    $('#statusInfo').text(<?php echo ($isLeader)
                                                                 ? '"test"'
                                                                 : null; ?>);
 
@@ -182,6 +185,8 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
         }
 
         var pressed = false;
+
+
 
         function buzz() {
             if (!pressed) {
@@ -252,6 +257,17 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
         setInterval(checkTournamentStatus, 2000);
+
+        $(document).on('click', '.okbutton', function() {
+            var login = $(this).data('login');
+            answerPoints(login, pts, 1);
+        });
+
+        $(document).on('click', '.badbutton', function() {
+            var login = $(this).data('login');
+            answerPoints(login, pts, 0);
+            shown = false;
+        });
     });
 </script>
 
@@ -283,7 +299,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                 <?php
 
 
-                if (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']) {
+                if ($isLeader) {
                     echo '<form method="post" id="startform">';
                     echo '<button id="start" name="start" class="button-85" type="submit" margin-top="0px">START</button>';
                     echo '</form>';
