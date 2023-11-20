@@ -19,6 +19,8 @@ require('connect.php');
 
 $turniejid = $_SESSION['TurniejId'];
 
+$isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
+
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
@@ -44,32 +46,32 @@ $turniejid = $_SESSION['TurniejId'];
                         shown = false;
                     }
 
+                    if (!shown) {
+                        var creator = response.creator
+                        status = response.status
+                        currentQuest = response.currentQuest
 
-                    var creator = response.creator
-                    status = response.status
-                    currentQuest = response.currentQuest
-
-                    // Wyświetl listę uczestników
-                    var participantsList = '<table class="datatables">';
+                        // Wyświetl listę uczestników
+                        var participantsList = '<table class="datatables">';
 
 
-                    for (var i = 0; i < response.participants.length; i++) {
-                        participantsList += '<tr><td>';
+                        for (var i = 0; i < response.participants.length; i++) {
+                            participantsList += '<tr><td>';
 
-                        if (response.participants[i].Login == username) {
-                            participantsList += '<b><font color="blue">' + response.participants[i].Login + "</font></b></td>"
-                        } else {
-                            participantsList += '<b>' + response.participants[i].Login + "</b></td>"
+                            if (response.participants[i].Login == username) {
+                                participantsList += '<b><font color="blue">' + response.participants[i].Login + "</font></b></td>"
+                            } else {
+                                participantsList += '<b>' + response.participants[i].Login + "</b></td>"
+                            }
+
+                            participantsList += "<td> Wynik: <span class='score-edit' contenteditable='true' data-login='" +
+                                response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
                         }
+                        participantsList += '</table>';
 
-                        participantsList += "<td> Wynik: <span class='score-edit' contenteditable='true' data-login='" +
-                            response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
+                        $('#participantsInfo').html('Organizator:<b> ' + response.creator +
+                            '</b><p>Rzule: ' + participantsList + '</p>');
                     }
-                    participantsList += '</table>';
-
-                    $('#participantsInfo').html('Organizator:<b> ' + response.creator +
-                        '</b><p>Rzule: ' + participantsList + '</p>');
-
                     if (status == 'P') {
                         $.ajax({
                             url: 'chkBuzzes.php',
@@ -83,6 +85,8 @@ $turniejid = $_SESSION['TurniejId'];
                                 // Assuming response has a property named 'buzzes'
                                 var buzzesHTML = '<p>Buzzes:<b><table class="datatables">';
                                 var firstBuzz = 0;
+                                var isLeader = <?php echo json_encode($isLeader); ?>;
+
                                 for (var i = 0; i < response.buzzes.length; i++) {
                                     var buzz = response.buzzes[i];
                                     var buzztime = new Date(buzz.buzztime);
@@ -97,19 +101,14 @@ $turniejid = $_SESSION['TurniejId'];
                                         firstBuzz = new Date(buzz.buzztime);
                                         buzzesHTML += '<td>First!</td>';
                                     }
+                                    buzzesHTML += '</tr><tr>';
+
+                                    if (isLeader) {
+                                        buzzesHTML += '<td><button id="ok-button" data-login="' + buzz.Login +
+                                            '">OK</button></td><td><button id="bad-button" data-login="' + buzz.Login + '">BAD</button></td>';
+                                    }
+
                                     buzzesHTML += '</tr>';
-
-                                    buzzesHTML += "<?php ";
-
-                                    buzzesHTML += ";
-                                                    echo (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader'])
-                                                        ? '<tr><td><button id="ok-button" data-login="">
-                                                        OK</button></td>
-                                                        <td><button id="bad-button" data-login="">
-                                                        BAD</button></td></tr>' : null;
-                                                    "
-                                    
-                                    buzzesHTML += " ?>" 
                                 }
 
                                 // Remove the trailing comma
@@ -180,26 +179,6 @@ $turniejid = $_SESSION['TurniejId'];
             });
 
 
-            $('body').on('blur', '.score-edit', function() {
-                var login = $(this).data('login');
-                var newScore = $(this).text();
-
-                $.ajax({
-                    url: 'updateScore.php',
-                    type: 'POST',
-                    data: {
-                        login: login,
-                        newScore: newScore,
-                    },
-                    success: function(response) {
-                        // Aktualizuj listę uczestników po zaktualizowaniu wyniku
-                        checkTournamentStatus();
-                    },
-                    error: function() {
-                        $('.info').text('error.');
-                    }
-                });
-            });
         }
 
         var pressed = false;
@@ -248,6 +227,27 @@ $turniejid = $_SESSION['TurniejId'];
         };
 
 
+        $('body').on('blur', '.score-edit', function() {
+            var login = $(this).data('login');
+            var newScore = $(this).text();
+
+            $.ajax({
+                url: 'updateScore.php',
+                type: 'POST',
+                data: {
+                    login: login,
+                    newScore: newScore
+                },
+                success: function(response) {
+                    // Aktualizuj listę uczestników po zaktualizowaniu wyniku
+                    shown = false;
+                    //  checkTournamentStatus();
+                },
+                error: function() {
+                    $('.info').text('error.');
+                }
+            });
+        });
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
