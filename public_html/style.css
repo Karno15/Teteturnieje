@@ -432,7 +432,7 @@ table.datatable thead th:first-child {
 
 #participantsInfo {
   min-height: 100px;
-  min-width: 15%;
+  min-width: 17%;
   position: fixed;
   top: 20%;
   left: 0%;
@@ -453,7 +453,7 @@ table.datatable thead th:first-child {
 }
 
 #buzzerInfo {
-  min-width: 15%;
+  min-width: 17%;
   position: fixed;
   top: 20%;
   right: 0%;
@@ -515,5 +515,34 @@ table.datatable thead th:first-child {
   position: relative;
   top: 6px;
   left: 7px;
-  box-shadow:none;
+  box-shadow: none;
+}
+
+#categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  overflow: auto;
+  flex-direction: row;
+}
+
+.category, .category-done, .category-none {
+  overflow-wrap: break-word;
+  width: 287px;
+  height: 100px;
+  margin: 14px;
+  background-color: rgb(27, 226, 206);
+  border-radius: 10px;
+  box-shadow: rgba(38, 57, 77, 0.15) 0px 20px 30px -10px;
+}
+
+.category-done {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.category-none{
+  color: rgb(72, 70, 70);
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }

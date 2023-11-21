@@ -4,23 +4,24 @@ session_start();
 require 'connect.php';
 
 // Assuming you have a button click event or some trigger
-if (isset($_POST['login']) && isset($_POST['pts']) && isset($_POST['answer'])) {
+if (isset($_POST['login']) && isset($_POST['pts']) && isset($_POST['answer']) && isset($_POST['answer'])) {
     $login = $_POST['login'];
     $pts = $_POST['pts'];
     $answer = $_POST['answer'];
-
+    $turniejId = $_POST['turniejId'];
+    
     if ($answer == 0) {
         $pts = -1 * abs($_POST['pts']);
     }
     // Your SQL query
-    $sql = "INSERT INTO answers (Login, Points, Answer) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO answers (Login, Points, Answer, TurniejId) VALUES (?, ?, ?, ?)";
 
     try {
         // Prepare the statement
         $stmt = mysqli_prepare($conn, $sql);
 
         // Bind the parameters
-        mysqli_stmt_bind_param($stmt, 'sii', $login, $pts, $answer);
+        mysqli_stmt_bind_param($stmt, 'siii', $login, $pts, $answer, $turniejId);
 
         // Execute the statement
         $execute = mysqli_stmt_execute($stmt);

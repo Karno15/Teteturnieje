@@ -33,6 +33,8 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
         status = 0;
         currentQuest = 0;
         var pts = 0;
+        var ptsresponse = 0;
+        var turniejId = <?php echo $turniejid ?>;
 
         function checkTournamentStatus() {
 
@@ -41,17 +43,16 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
-                    console.log(status + ":" + response.status);
 
                     if (status != response.status) {
                         shown = false;
                     }
 
-                    if (!shown) {
+                    if (ptsresponse != JSON.stringify(response.participants)) {
                         var creator = response.creator
                         status = response.status
                         currentQuest = response.currentQuest
-
+                        ptsresponse = JSON.stringify(response.participants)
                         // Wyświetl listę uczestników
                         var participantsList = '<table class="datatables">';
 
@@ -73,6 +74,40 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                         $('#participantsInfo').html('Organizator:<b> ' + response.creator +
                             '</b><p>Rzule: ' + participantsList + '</p>');
                     }
+
+                    ptsresponse = JSON.stringify(response.participants);
+
+                    if (status == 'K') {
+                        $("#turniej").hide();
+                        if(!shown){
+                        $.ajax({
+                            url: 'getCategory.php', // Replace with the actual path to your PHP file
+                            type: 'GET', // Use GET method
+                            dataType: 'json',
+                            success: function(response) {
+                                // Handle the successful response here
+                                console.log(response);
+                                var categoriesHTML = "Kategorie<br><div id='categories-container'>";
+
+                                for (var i = 0; i < response.length; i++) {
+                                    categoriesHTML += "<div class='category";
+                                    (response[i].Done) ? categoriesHTML +=  "-none"
+                                    :categoriesHTML += "" ;
+                                    categoriesHTML += "'>" + response[i].Category + 
+                                    "<br>Pkt:" + response[i].Rewards + "</div>";
+                                }
+
+                                categoriesHTML += "</div>";
+                                $('.startpopup').html(categoriesHTML);
+                            },
+                            error: function(error) {
+                                // Handle errors here
+                                console.error('Error:', error);
+                            }
+                        });
+                    }
+                    }
+
                     if (status == 'P') {
                         $.ajax({
                             url: 'chkBuzzes.php',
@@ -84,7 +119,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                             success: function(response) {
 
                                 // Assuming response has a property named 'buzzes'
-                                var buzzesHTML = '<p>Buzzes:<b><table class="datatables">';
+                                var buzzesHTML = '<p>Buzzers:<b><table class="datatables">';
                                 var firstBuzz = 0;
                                 var isLeader = <?php echo json_encode($isLeader); ?>;
 
@@ -106,7 +141,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
                                     if (isLeader) {
                                         buzzesHTML += '<td><button class="okbutton" data-login="' + buzz.Login +
-                                            '">OK</button></td><td><button class="badbutton" data-login="' + buzz.Login + '">BAD</button></td>';
+                                            '">✔️</button></td><td><button class="badbutton" data-login="' + buzz.Login + '">❌</button></td>';
                                     }
 
                                     buzzesHTML += '</tr>';
@@ -125,9 +160,6 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                 $('.info').text('Błąd pobierania buzza.');
                             }
                         });
-
-
-
                     }
 
                     if (!shown) {
@@ -245,8 +277,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                 },
                 success: function(response) {
                     // Aktualizuj listę uczestników po zaktualizowaniu wyniku
-                    shown = false;
-                    //  checkTournamentStatus();
+                    checkTournamentStatus();
                 },
                 error: function() {
                     $('.info').text('error.');
@@ -254,20 +285,23 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
             });
         });
 
-        checkTournamentStatus();
-        // Uruchamiaj funkcję co 2 sekundy
-        setInterval(checkTournamentStatus, 2000);
 
         $(document).on('click', '.okbutton', function() {
             var login = $(this).data('login');
-            answerPoints(login, pts, 1);
+            answerPoints(login, pts, 1, turniejId);
+            checkTournamentStatus();
         });
 
         $(document).on('click', '.badbutton', function() {
             var login = $(this).data('login');
-            answerPoints(login, pts, 0);
-            shown = false;
+            answerPoints(login, pts, 0, turniejId);
+            checkTournamentStatus();
         });
+
+        checkTournamentStatus();
+        // Uruchamiaj funkcję co 2 sekundy
+        setInterval(checkTournamentStatus, 3000);
+
     });
 </script>
 
@@ -305,7 +339,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                     echo '</form>';
                     if (isset($_POST['start'])) {
                         // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
-                        $sql = "UPDATE turnieje SET Status='P' WHERE TurniejId = $turniejid";
+                        $sql = "UPDATE turnieje SET Status='K' WHERE TurniejId = $turniejid";
 
                         if ($conn->query($sql) === TRUE) {
                             $_SESSION['info'] = "Success!";

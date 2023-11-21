@@ -87,6 +87,16 @@ $(document).ready(function () {
         var generatedCode = generateRandomCode();
         $('#kodTurnieju').val(generatedCode);
     });
+
+
+    $(document).on('mouseover', '.category', function () {
+        $(this).addClass('category-done');
+    });
+    
+    $(document).on('mouseout', '.category-done', function () {
+        $(this).removeClass('category-done').addClass('category');
+    });
+    
 });
 
 function pokazPytanie(id) {
@@ -156,14 +166,15 @@ function formatDuration(duration) {
 }
 
 
-function answerPoints(login, pts, answer) {
+function answerPoints(login, pts, answer, turniejId) {
     $.ajax({
         url: 'answer.php',
         type: 'POST',
         data: {
             login: login,
             pts: pts,
-            answer: answer
+            answer: answer,
+            turniejId: turniejId
         },
         success: function (response) {
             console.log('Points changed!');
