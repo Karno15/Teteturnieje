@@ -21,10 +21,25 @@ $turniejid = $_SESSION['TurniejId'];
 
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
+function ($start) {
+    if (isset($_POST['start'])) {
+        require("connect.php");
+        // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
+        $sql = "UPDATE turnieje SET Status='K' WHERE TurniejId = $turniejid";
+
+        if ($conn->query($sql) === TRUE) {
+            $_SESSION['info'] = "Success!";
+        } else {
+            $_SESSION['info'] = "Błąd!";
+        }
+    }
+}
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
+        var isLeader = <?php echo json_encode($isLeader); ?>;
+
         var buzzsfx = new Audio("sounds/buzz.wav");
 
         $('#participantsInfo').html('<div class="loading-spinner"></div>Loading...');
@@ -46,6 +61,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
                     if (status != response.status) {
                         shown = false;
+                        status = response.status;
                     }
 
                     if (ptsresponse != JSON.stringify(response.participants)) {
@@ -79,33 +95,39 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
                     if (status == 'K') {
                         $("#turniej").hide();
-                        if(!shown){
-                        $.ajax({
-                            url: 'getCategory.php', // Replace with the actual path to your PHP file
-                            type: 'GET', // Use GET method
-                            dataType: 'json',
-                            success: function(response) {
-                                // Handle the successful response here
-                                console.log(response);
-                                var categoriesHTML = "Kategorie<br><div id='categories-container'>";
+                        if (!shown) {
+                            $.ajax({
+                                url: 'getCategory.php',
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    // Handle the successful response here
+                                    categoriesHTML = "Kategorie<br><div id='categories-container'>";
 
-                                for (var i = 0; i < response.length; i++) {
-                                    categoriesHTML += "<div class='category";
-                                    (response[i].Done) ? categoriesHTML +=  "-none"
-                                    :categoriesHTML += "" ;
-                                    categoriesHTML += "'>" + response[i].Category + 
-                                    "<br>Pkt:" + response[i].Rewards + "</div>";
+                                    for (var i = 0; i < response.length; i++) {
+                                        categoriesHTML += "<div class='category";
+                                        (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
+                                        categoriesHTML += "'>" + response[i].Category +
+                                            "<br>Pkt:" + response[i].Rewards + "</div>";
+                                    }
+
+                                    categoriesHTML += "</div>";
+                                    $('.startpopup').html(categoriesHTML);
+
+                                    console.log(isLeader);
+                                    if (isLeader) {
+
+                                        $(document).on('click', '#closeButton', function() {
+                                            $('#popup').hide(); //schowaj popup
+                                        });
+                                    }
+                                },
+                                error: function(error) {
+                                    // Handle errors here
+                                    console.error('Error:', error);
                                 }
-
-                                categoriesHTML += "</div>";
-                                $('.startpopup').html(categoriesHTML);
-                            },
-                            error: function(error) {
-                                // Handle errors here
-                                console.error('Error:', error);
-                            }
-                        });
-                    }
+                            });
+                        }
                     }
 
                     if (status == 'P') {
@@ -121,7 +143,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                 // Assuming response has a property named 'buzzes'
                                 var buzzesHTML = '<p>Buzzers:<b><table class="datatables">';
                                 var firstBuzz = 0;
-                                var isLeader = <?php echo json_encode($isLeader); ?>;
+
 
                                 for (var i = 0; i < response.buzzes.length; i++) {
                                     var buzz = response.buzzes[i];
@@ -203,7 +225,18 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                     $('#participantsInfo').html('Error');
                                 }
                             });
+                            
+                            $(document).on('click', '#buzzer', function() {
+                                buzz();
+                            });
 
+                            window.onkeydown = function(event) {
+
+                                if (event.keyCode === 32) {
+                                    event.preventDefault();
+                                    buzz();
+                                }
+                            };
                         }
                     }
                 },
@@ -251,17 +284,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
             }
         }
 
-        $(document).on('click', '#buzzer', function() {
-            buzz();
-        });
 
-        window.onkeydown = function(event) {
-
-            if (event.keyCode === 32) {
-                event.preventDefault();
-                buzz();
-            }
-        };
 
 
         $('body').on('blur', '.score-edit', function() {
@@ -308,6 +331,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
 <head>
     <title>TTT-TeTeTurnieje</title>
+
     <link rel="shortcut icon" type="image/gif" href="images/title.png">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
