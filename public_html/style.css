@@ -518,6 +518,17 @@ table.datatable thead th:first-child {
   box-shadow: none;
 }
 
+.score-edit {
+  min-width: 60px;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid black;
+  text-align: center;
+  background: #fceabb;
+  background: -webkit-linear-gradient(to right, #f8b500, #fceabb);
+  background: linear-gradient(to right, #f8b500, #fceabb);
+}
+
 #categories-container {
   display: flex;
   flex-wrap: wrap;
@@ -528,7 +539,9 @@ table.datatable thead th:first-child {
   flex-direction: row;
 }
 
-.category, .category-done, .category-none {
+.category,
+.category-done,
+.category-none {
   font-size: medium;
   overflow-wrap: break-word;
   width: 287px;
@@ -543,7 +556,7 @@ table.datatable thead th:first-child {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
-.category-none{
+.category-none {
   color: rgb(72, 70, 70);
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }

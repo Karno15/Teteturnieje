@@ -37,7 +37,7 @@ if (isset($_POST['login']) && isset($_POST['pts']) && isset($_POST['answer']) &&
         mysqli_stmt_close($stmt);
     } catch (mysqli_sql_exception $exception) {
         // Handle exceptions (e.g., log the error)
-        echo "Error answer sql!";
+        echo "Error answer sql!".$sql;
     } finally {
         // Close the connection
         mysqli_close($conn);

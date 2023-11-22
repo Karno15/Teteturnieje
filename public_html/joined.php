@@ -59,7 +59,7 @@ function updateStatus($newStatus)
         var turniejId = <?php echo $turniejid ?>;
 
         function checkTournamentStatus() {
-
+            console.log(currentQuest);
             $.ajax({
                 url: 'chkStatus.php',
                 type: 'GET',
@@ -88,8 +88,8 @@ function updateStatus($newStatus)
                                 participantsList += '<b>' + response.participants[i].Login + "</b></td>"
                             }
 
-                            participantsList += "<td> Wynik: <span class='score-edit' contenteditable='true' data-login='" +
-                                response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</span></td></tr>';
+                            participantsList += "<td><div class='score-edit' contenteditable='true' data-login='" +
+                                response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</div></td></tr>';
                         }
                         participantsList += '</table>';
 
@@ -223,13 +223,6 @@ function updateStatus($newStatus)
                                         "</span><div class='quest-options' id='questOptionsContainer'></div>");
 
                                     wyswietlPozycje(pozycje);
-
-
-                                    $('#statusInfo').text(<?php echo ($isLeader)
-                                                                ? '"test"'
-                                                                : null; ?>);
-
-
                                 },
                                 error: function() {
                                     $('.info').text('Błąd podczas pobierania pytań.');
