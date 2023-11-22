@@ -21,17 +21,24 @@ $turniejid = $_SESSION['TurniejId'];
 
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
-function ($start) {
-    if (isset($_POST['start'])) {
-        require("connect.php");
-        // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
-        $sql = "UPDATE turnieje SET Status='K' WHERE TurniejId = $turniejid";
+function updateStatus($newStatus)
+{
+    require('connect.php');
 
-        if ($conn->query($sql) === TRUE) {
+    if (isset($_POST['start'])) {
+        $sql = "UPDATE turnieje SET Status=? WHERE TurniejId =?";
+        $turniejid = $_SESSION['TurniejId'];
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $newStatus, $turniejid);
+
+        if ($stmt->execute() === TRUE) {
             $_SESSION['info'] = "Success!";
         } else {
             $_SESSION['info'] = "Błąd!";
+            // echo "Error: " . $stmt->error;
         }
+        $stmt->close();
     }
 }
 ?>
@@ -46,7 +53,7 @@ function ($start) {
         var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
         shown = false;
         status = 0;
-        currentQuest = 0;
+        currentQuest = <?php echo isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 'null'; ?>;
         var pts = 0;
         var ptsresponse = 0;
         var turniejId = <?php echo $turniejid ?>;
@@ -67,7 +74,6 @@ function ($start) {
                     if (ptsresponse != JSON.stringify(response.participants)) {
                         var creator = response.creator
                         status = response.status
-                        currentQuest = response.currentQuest
                         ptsresponse = JSON.stringify(response.participants)
                         // Wyświetl listę uczestników
                         var participantsList = '<table class="datatables">';
@@ -94,8 +100,9 @@ function ($start) {
                     ptsresponse = JSON.stringify(response.participants);
 
                     if (status == 'K') {
-                        $("#turniej").hide();
+
                         if (!shown) {
+                            $("#turniej").html("");
                             $.ajax({
                                 url: 'getCategory.php',
                                 type: 'GET',
@@ -107,18 +114,19 @@ function ($start) {
                                     for (var i = 0; i < response.length; i++) {
                                         categoriesHTML += "<div class='category";
                                         (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
-                                        categoriesHTML += "'>" + response[i].Category +
-                                            "<br>Pkt:" + response[i].Rewards + "</div>";
+                                        categoriesHTML += "' data-pytid='" + response[i].PytId + "'>" + response[i].Category +
+                                            "<br><br>Pkt:" + response[i].Rewards + "</div>";
                                     }
-
                                     categoriesHTML += "</div>";
                                     $('.startpopup').html(categoriesHTML);
 
-                                    console.log(isLeader);
                                     if (isLeader) {
 
-                                        $(document).on('click', '#closeButton', function() {
-                                            $('#popup').hide(); //schowaj popup
+                                        $(document).on('click', '.category', function() {
+                                            var pytId = $(this).data('pytid');
+                                            console.log(pytId)
+                                            currentQuest = pytId;
+                                            updateStatusAjax('P');
                                         });
                                     }
                                 },
@@ -189,12 +197,15 @@ function ($start) {
                         if (status == 'P') {
                             $('.startpopup').html('<button id="buzzer">BUZZ</button>');
                             $('#startform').hide();
-
+                            $("#turniej").html('<button class="button-85">Pokaż odpowiedź</button>');
 
                             $.ajax({
                                 url: 'quest.php',
-                                type: 'GET',
+                                type: 'POST',
                                 dataType: 'json',
+                                data: {
+                                    currentQuest: currentQuest
+                                },
                                 success: function(quests) {
                                     // Tutaj możesz przetwarzać dane zwrócone z quest.php
                                     var PytId = quests.PytId;
@@ -225,7 +236,7 @@ function ($start) {
                                     $('#participantsInfo').html('Error');
                                 }
                             });
-                            
+
                             $(document).on('click', '#buzzer', function() {
                                 buzz();
                             });
@@ -308,6 +319,9 @@ function ($start) {
             });
         });
 
+        $(document).on('click', '#start', function() {
+            updateStatusAjax('K');
+        });
 
         $(document).on('click', '.okbutton', function() {
             var login = $(this).data('login');
@@ -320,6 +334,25 @@ function ($start) {
             answerPoints(login, pts, 0, turniejId);
             checkTournamentStatus();
         });
+
+        function updateStatusAjax(status) {
+            $.ajax({
+                type: 'POST',
+                url: 'updateStatus.php', // Replace with the actual path to your PHP file
+                data: {
+                    turniejId: turniejId,
+                    status: status
+                },
+                success: function(response) {
+                    console.log(response);
+                    checkTournamentStatus();
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+
+        }
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
@@ -358,20 +391,7 @@ function ($start) {
 
 
                 if ($isLeader) {
-                    echo '<form method="post" id="startform">';
-                    echo '<button id="start" name="start" class="button-85" type="submit" margin-top="0px">START</button>';
-                    echo '</form>';
-                    if (isset($_POST['start'])) {
-                        // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
-                        $sql = "UPDATE turnieje SET Status='K' WHERE TurniejId = $turniejid";
-
-                        if ($conn->query($sql) === TRUE) {
-                            $_SESSION['info'] = "Success!";
-                        } else {
-                            $_SESSION['info'] = "Błąd!";
-                            //for debbuging echo . $conn->error;
-                        }
-                    }
+                    echo '<button id="start" name="start" class="button-85" type="submit" padding-top="20px">START</button>';
                 }
 
 

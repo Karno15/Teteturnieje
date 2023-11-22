@@ -11,7 +11,7 @@ if (!isset($_SESSION['TurniejId'])) {
 $turniejId = $_SESSION['TurniejId'];
 
 // Zapytanie SQL do pobrania kategorii
-$sql = "SELECT Category, Rewards, Done FROM `pytania` WHERE TurniejId = ?";
+$sql = "SELECT PytId, Category, Rewards, Done FROM `pytania` WHERE TurniejId = ? order by Category,Rewards";
 
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $turniejId);
@@ -23,6 +23,7 @@ $data = array(); // Initialize an array to store rows
 while ($row = mysqli_fetch_assoc($result)) {
     // Pobrano dane z bazy danych
     $data[] = array(
+        "PytId" => $row['PytId'],
         "Category" => $row['Category'],
         "Rewards" => $row['Rewards'],
         "Done" => $row['Done']

@@ -7,15 +7,24 @@ if (!isset($_SESSION['TurniejId'])) {
     echo json_encode(array("error" => "Brak dostępu."));
     exit();
 }
+if (!isset($_POST['currentQuest'])) {
+    // Nie udało się pobrać identyfikatora turnieju z sesji
+    echo json_encode(array("error" => "Bład questa."));
+    exit();
+}
+
+$pytId=$_POST['currentQuest'];
 
 $turniejId = $_SESSION['TurniejId'];
 
+$_SESSION['currentQuest'] = $pytId;
+
 // Zapytanie SQL do pobrania pytania
 $sql = "SELECT PytId,Quest, TypeId,Category, whoFirst,Rewards FROM `pytania`
-where TurniejId= ? and Done=0 order by PytId limit 1";
+where TurniejId= ? and PytId=? order by PytId limit 1";
 
 $stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $turniejId);
+mysqli_stmt_bind_param($stmt, "ii", $turniejId, $pytId);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 

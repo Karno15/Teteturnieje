@@ -90,11 +90,11 @@ $(document).ready(function () {
 
 
     $(document).on('mouseover', '.category', function () {
-        $(this).addClass('category-done');
+        $(this).addClass('category-over');
     });
     
-    $(document).on('mouseout', '.category-done', function () {
-        $(this).removeClass('category-done').addClass('category');
+    $(document).on('mouseout', '.category-over', function () {
+        $(this).removeClass('category-over').addClass('category');
     });
     
 });
