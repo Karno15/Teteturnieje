@@ -51,7 +51,6 @@ $(document).ready(function () {
     $(document).on('click', '#zapiszKod', function () {
         var turniejId = $(this).data('turniejid');
         var kodTurnieju = $('#kodTurnieju').val(); // Pobieramy wartość z inputa
-        console.log(turniejId);
 
         // Wysyłamy dane do serwera za pomocą AJAX
         $.ajax({
@@ -92,11 +91,11 @@ $(document).ready(function () {
     $(document).on('mouseover', '.category', function () {
         $(this).addClass('category-over');
     });
-    
+
     $(document).on('mouseout', '.category-over', function () {
         $(this).removeClass('category-over').addClass('category');
     });
-    
+
 });
 
 function pokazPytanie(id) {
@@ -179,7 +178,7 @@ function answerPoints(login, pts, answer, turniejId) {
             turniejId: turniejId
         },
         success: function (response) {
-            console.log('Points changed!');
+            checkTournamentStatus();
         },
         error: function (error) {
             console.error('Error changing points:', error);

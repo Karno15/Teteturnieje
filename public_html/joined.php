@@ -55,10 +55,13 @@ function updateStatus($newStatus)
         var username = <?php echo $userId ?>;
         showQuest = false;
         shown = false;
+        var prevstatus = 0;
         status = 0;
         var currentQuest = <?php echo $currentQuest ?>;
         var pts = 0;
         var ptsresponse = 0;
+        var catresponse = 0;
+        var buzzresponse = 0;
         var turniejId = <?php echo $turniejid ?>;
 
         function checkTournamentStatus() {
@@ -101,10 +104,11 @@ function updateStatus($newStatus)
                             '</b><p>Rzule: ' + participantsList + '</p>');
                     }
 
-                    ptsresponse = JSON.stringify(response.participants);
                     /// STATUS KATEGORII --------------------------------------
                     if (status == 'K') {
-
+                        if (prevstatus != status && prevstatus != 0) {
+                            location.reload() //for too much pressure
+                        }
                         if (!shown) {
                             $("#turniej").html("");
                             $.ajax({
@@ -112,25 +116,28 @@ function updateStatus($newStatus)
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
-                                    // Handle the successful response here
-                                    categoriesHTML = "Kategorie<br><div id='categories-container'>";
+                                    if (catresponse != JSON.stringify(response)) {
 
-                                    for (var i = 0; i < response.length; i++) {
-                                        categoriesHTML += "<div class='category";
-                                        (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
-                                        categoriesHTML += "' data-pytid='" + response[i].PytId + "'>" + response[i].Category +
-                                            "<br><br>Pkt:" + response[i].Rewards + "</div>";
-                                    }
-                                    categoriesHTML += "</div>";
-                                    $('.startpopup').html(categoriesHTML);
+                                        catresponse = JSON.stringify(response);
+                                        categoriesHTML = "Kategorie<br><div id='categories-container'>";
 
-                                    if (isLeader) {
+                                        for (var i = 0; i < response.length; i++) {
+                                            categoriesHTML += "<div class='category";
+                                            (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
+                                            categoriesHTML += "' data-pytid='" + response[i].PytId + "'>" + response[i].Category +
+                                                "<br><br>Pkt:" + response[i].Rewards + "</div>";
+                                        }
+                                        categoriesHTML += "</div>";
+                                        $('.startpopup').html(categoriesHTML);
 
-                                        $(document).on('click', '.category', function() {
-                                            var pytId = $(this).data('pytid');
-                                            currentQuest = pytId;
-                                            updateStatusAjax('P', currentQuest);
-                                        });
+                                        if (isLeader) {
+
+                                            $(document).on('click', '.category', function() {
+                                                var pytId = $(this).data('pytid');
+                                                currentQuest = pytId;
+                                                updateStatusAjax('P', currentQuest);
+                                            });
+                                        }
                                     }
                                 },
                                 error: function(error) {
@@ -147,48 +154,52 @@ function updateStatus($newStatus)
                             type: 'POST',
                             dataType: 'json',
                             data: {
-                                pytId: currentQuest
+                                turniejId: turniejId
                             },
                             success: function(response) {
 
-                                // Assuming response has a property named 'buzzes'
-                                var buzzesHTML = '<p>Buzzers:<b><table class="datatables">';
-                                var firstBuzz = 0;
+                                if (buzzresponse != JSON.stringify(response)) {
+
+                                    buzzresponse = JSON.stringify(response);
+                                    var buzzesHTML = '<p>Buzzers:<b><table class="datatables">';
+                                    var firstBuzz = 0;
 
 
-                                for (var i = 0; i < response.buzzes.length; i++) {
-                                    var buzz = response.buzzes[i];
-                                    var buzztime = new Date(buzz.buzztime);
+                                    for (var i = 0; i < response.buzzes.length; i++) {
+                                        var buzz = response.buzzes[i];
+                                        var buzztime = new Date(buzz.buzztime);
 
-                                    buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td>';
+                                        buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td>';
 
-                                    // Show the buzztime only for the second and subsequent logins
-                                    if (i !== 0) {
-                                        var duration = buzztime - firstBuzz;
-                                        buzzesHTML += '<td>' + formatDuration(duration) + '</td>';
-                                    } else {
-                                        firstBuzz = new Date(buzz.buzztime);
-                                        buzzesHTML += '<td>First!</td>';
+                                        // Show the buzztime only for the second and subsequent logins
+                                        if (i !== 0) {
+                                            var duration = buzztime - firstBuzz;
+                                            buzzesHTML += '<td>' + formatDuration(duration) + '</td>';
+                                        } else {
+                                            firstBuzz = new Date(buzz.buzztime);
+                                            buzzesHTML += '<td>First!</td>';
+                                        }
+                                        buzzesHTML += '</tr><tr>';
+
+                                        if (isLeader) {
+                                            buzzesHTML += '<td><button class="okbutton" data-login="' + buzz.Login +
+                                                '">✔️</button></td><td><button class="badbutton" data-login="' + buzz.Login + '">❌</button></td>';
+                                        }
+
+                                        buzzesHTML += '</tr>';
                                     }
-                                    buzzesHTML += '</tr><tr>';
 
-                                    if (isLeader) {
-                                        buzzesHTML += '<td><button class="okbutton" data-login="' + buzz.Login +
-                                            '">✔️</button></td><td><button class="badbutton" data-login="' + buzz.Login + '">❌</button></td>';
-                                    }
+                                    // Remove the trailing comma
+                                    buzzesHTML = buzzesHTML.replace(/,\s*$/, '');
 
-                                    buzzesHTML += '</tr>';
+                                    buzzesHTML += '</b>';
+
+                                    buzzesHTML += '</table></p>';
+                                    // Insert the HTML into the #buzzerInfo element
+                                    $('#buzzerInfo').html(buzzesHTML);
+                                    $('#buzzerInfo').show(); //set block
                                 }
 
-                                // Remove the trailing comma
-                                buzzesHTML = buzzesHTML.replace(/,\s*$/, '');
-
-                                buzzesHTML += '</b>';
-
-                                buzzesHTML += '</table></p>';
-                                // Insert the HTML into the #buzzerInfo element
-                                $('#buzzerInfo').html(buzzesHTML);
-                                $('#buzzerInfo').show(); //set block
                             },
                             error: function() {
                                 $('.info').text('Błąd pobierania buzza.');
@@ -260,41 +271,41 @@ function updateStatus($newStatus)
                         }
                     }
                     /// STATUS ODPOWIEDZI --------------------------------------
-                    if (status == 'O') {
-                        showQuest = true;
+                    if (!shown) {
+                        if (status == 'O') {
+                            shown = true;
+                            if (isLeader)
+                                $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
 
-                        if (isLeader)
-                            $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
+                            $(document).on('click', '#next', function() {
+                                updateStatusAjax('K', 0);
+                                checkTournamentStatus();
+                            });
 
-                        $(document).on('click', '#next', function() {
-                            updateStatusAjax('K', 0);
-                            $('#buzzerInfo').hide();
-                        });
+                            $.ajax({
+                                url: 'getAnswer.php',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: {
+                                    turniejId: turniejId
+                                },
+                                success: function(answer) {
+                                    var PytId = answer.PytId;
+                                    var Answer = answer.Answer;
 
-                        $.ajax({
-                            url: 'getAnswer.php',
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                turniejId: turniejId
-                            },
-                            success: function(answer) {
-                                var PytId = answer.PytId;
-                                var Answer = answer.Answer;
-
-                                if (PytId) {
-                                    $('#answer').html('<hr>' + Answer);
-                                } else {
-                                    $('#answer').html('Błąd pobierania odpowiedzi');
+                                    if (PytId) {
+                                        $('#answer').html('<hr>' + Answer);
+                                    } else {
+                                        $('#answer').html('Błąd pobierania odpowiedzi');
+                                    }
+                                },
+                                error: function() {
+                                    $('.info').text('Błąd podczas pobierania pytań.');
+                                    $('#participantsInfo').html('Error');
                                 }
-                            },
-                            error: function() {
-                                $('.info').text('Błąd podczas pobierania pytań.');
-                                $('#participantsInfo').html('Error');
-                            }
-                        });
+                            });
+                        }
                     }
-
                 },
                 error: function() {
                     $('#statusInfo').text('Błąd podczas sprawdzania statusu turnieju.');
@@ -302,7 +313,7 @@ function updateStatus($newStatus)
                 }
             });
 
-
+            prevstatus = status;
         }
 
         var pressed = false;
@@ -399,8 +410,8 @@ function updateStatus($newStatus)
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
-        setInterval(checkTournamentStatus, 500);
-
+        setInterval(checkTournamentStatus, 300);
+        setInterval(location.reload(), 20 * 60 * 1000)//zabezpiecz refreshem co 25 minut
     });
 </script>
 

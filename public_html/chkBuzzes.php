@@ -4,19 +4,24 @@ session_start();
 
 require('connect.php');
 
-$pytId=$_POST['pytId'];
+$turniejId = $_POST['turniejId'];
 
-// Wykonaj zapytanie w celu pobrania pierwszych buzzerów
-$buzzesQuery = mysqli_query($conn, "SELECT u.Login, MIN(Buzztime) as 'buzz'
-FROM `buzzes` b JOIN `users` u ON u.UserId=b.UserId where PytId=".$pytId ." group by u.Login,TurniejId, PytId
-ORDER BY buzz;"
-);
+$sql = "SELECT u.Login, MIN(Buzztime) as 'buzz' FROM `buzzes` b 
+        JOIN `users` u ON u.UserId=b.UserId 
+        JOIN `turnieje` t ON t.turniejId=b.TurniejId 
+        WHERE t.CurrentQuest=b.PytId AND t.TurniejId=? 
+        GROUP BY u.Login, b.TurniejId, b.PytId 
+        ORDER BY buzz;";
+
+
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $turniejId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 $response = array('buzzes' => array());
 
-// Pętla po wynikach zapytania
-while ($row = mysqli_fetch_assoc($buzzesQuery)) {
-    // Dodawanie wyników do tablicy
+while ($row = mysqli_fetch_assoc($result)) {
     $buzz = array(
         'Login' => $row['Login'],
         'buzztime' => $row['buzz']
@@ -24,11 +29,8 @@ while ($row = mysqli_fetch_assoc($buzzesQuery)) {
     array_push($response['buzzes'], $buzz);
 }
 
-// Konwersja do formatu JSON
-$jsonResponse = json_encode($response);
-
+mysqli_stmt_close($stmt);
 
 mysqli_close($conn);
 
-// Zwróć dane w formie JSON
 echo json_encode($response);
