@@ -19,7 +19,6 @@ require('connect.php');
 $userId = isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null';
 $turniejid = $_SESSION['TurniejId'];
 $currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;
-$_SESSION['currentQuest'];
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
 //echo $userId."+".$turniejid."+".$currentQuest.'+'.$isLeader;
@@ -68,8 +67,6 @@ function updateStatus($newStatus)
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
-
-                    console.log(showQuest)
                     if (status != response.status) {
                         shown = false;
                         showQuest = false;
@@ -93,7 +90,9 @@ function updateStatus($newStatus)
                                 participantsList += '<b>' + response.participants[i].Login + "</b></td>"
                             }
 
-                            participantsList += "<td><div class='score-edit' contenteditable='true' data-login='" +
+                            let editable = (isLeader) ? 'true' : 'false';
+
+                            participantsList += "<td><div class='score-edit' contenteditable=" + editable + " data-login='" +
                                 response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</div></td></tr>';
                         }
                         participantsList += '</table>';
@@ -129,7 +128,6 @@ function updateStatus($newStatus)
 
                                         $(document).on('click', '.category', function() {
                                             var pytId = $(this).data('pytid');
-                                            console.log(pytId)
                                             currentQuest = pytId;
                                             updateStatusAjax('P', currentQuest);
                                         });
@@ -190,6 +188,7 @@ function updateStatus($newStatus)
                                 buzzesHTML += '</table></p>';
                                 // Insert the HTML into the #buzzerInfo element
                                 $('#buzzerInfo').html(buzzesHTML);
+                                $('#buzzerInfo').show(); //set block
                             },
                             error: function() {
                                 $('.info').text('Błąd pobierania buzza.');
@@ -205,7 +204,7 @@ function updateStatus($newStatus)
                             $('#startform').hide();
 
                             if (isLeader)
-                                $("#turniej").html('<button id="status" class="button-85">Pokaż odpowiedź</button>');
+                                $("#turniej").html('<button id="status" href=# class="button-85">Pokaż odpowiedź</button>');
 
                             $(document).on('click', '#status', function() {
                                 updateStatusAjax('O', currentQuest);
@@ -231,11 +230,12 @@ function updateStatus($newStatus)
                                     pts = Rewards;
                                     if (PytId) {
                                         $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
-                                            '</p><span id="quest">' + Quest +
-                                            "</span><div class='quest-options' id='questOptionsContainer'></div>" +
-                                            "<div id='answer'></div>");
-
-                                        wyswietlPozycje(pozycje);
+                                            '</p><span id="quest">' + Quest + "</span>");
+                                        if (wyswietlPozycje(pozycje)) {
+                                            $('.startpopup').append("<div class='quest-options' id='questOptionsContainer'></div>")
+                                            wyswietlPozycje(pozycje)
+                                        }
+                                        $('.startpopup').append("<div id='answer'></div>")
                                     } else {
                                         $('.startpopup').append('Błąd pobierania pytania');
                                     }
@@ -261,7 +261,16 @@ function updateStatus($newStatus)
                     }
                     /// STATUS ODPOWIEDZI --------------------------------------
                     if (status == 'O') {
-                        showQuest = true
+                        showQuest = true;
+
+                        if (isLeader)
+                            $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
+
+                        $(document).on('click', '#next', function() {
+                            updateStatusAjax('K', 0);
+                            $('#buzzerInfo').hide();
+                        });
+
                         $.ajax({
                             url: 'getAnswer.php',
                             type: 'POST',
@@ -320,7 +329,7 @@ function updateStatus($newStatus)
                         pytId: currentQuest
                     },
                     success: function(response) {
-                        console.log('Buzzed!');
+                        checkTournamentStatus();
                     },
                     error: function(error) {
                         console.error('Error buzzing:', error);
@@ -379,7 +388,6 @@ function updateStatus($newStatus)
                     currentQuest: currentQuest
                 },
                 success: function(response) {
-                    console.log(response);
                     checkTournamentStatus();
                 },
                 error: function(error) {
@@ -391,7 +399,7 @@ function updateStatus($newStatus)
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
-        setInterval(checkTournamentStatus, 3000);
+        setInterval(checkTournamentStatus, 500);
 
     });
 </script>

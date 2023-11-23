@@ -134,18 +134,20 @@ function wyswietlPozycje(data) {
     var questOptionsContainer = $('#questOptionsContainer'); // Znajdź kontener za pomocą jQuery
 
     if (data === void 0) {
-        questOptionsContainer.append('<p></p>')
+        questOptionsContainer.append('')
+        return 0;
     }
     else {
-
         data.forEach(function (pozycja) {
             var div = $('<div></div>'); // Utwórz nowy div
             div.addClass('quest-option'); // Dodaj klasę "quest-option" do diva
             div.text(pozycja.Value); // Ustaw treść diva na wartość z JSON
             questOptionsContainer.append(div); // Dodaj div do kontenera
         });
+        return 1;
     }
 }
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

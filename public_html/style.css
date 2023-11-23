@@ -484,14 +484,14 @@ table.datatable thead th:first-child {
 }
 
 #quest {
-  font-size: 28pt;
+  font-size: 26pt;
   margin: -30px;
 }
 
 #answer {
   min-width: 500px;
   margin:  20px;
-  font-size: 28pt;
+  font-size: 26pt;
 }
 
 #buzzer {

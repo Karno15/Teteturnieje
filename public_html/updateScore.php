@@ -37,7 +37,7 @@ if ($result && $result->num_rows > 0) {
             $login = $_POST['login'];
             $newScore = $_POST['newScore'];
             $turniejId = $_SESSION['TurniejId']; // Odbierz TurniejId
-
+            
 
             $sql = "UPDATE turuserzy t JOIN users u ON u.UserId=t.UserId SET t.CurrentScore = ? WHERE u.Login =?
     AND t.turniejId = ?";
