@@ -16,10 +16,12 @@ if (!isset($_SESSION['username'])) {
 }
 
 require('connect.php');
-
+$userId = isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null';
 $turniejid = $_SESSION['TurniejId'];
-
+$currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;$_SESSION['currentQuest'];
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
+
+echo $userId."+".$turniejid."+".$currentQuest.'+'.$isLeader;
 
 function updateStatus($newStatus)
 {
@@ -50,16 +52,15 @@ function updateStatus($newStatus)
         var buzzsfx = new Audio("sounds/buzz.wav");
 
         $('#participantsInfo').html('<div class="loading-spinner"></div>Loading...');
-        var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
+        var username = <?php echo $userId ?>;
         shown = false;
         status = 0;
-        currentQuest = <?php echo isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 'null'; ?>;
+        var currentQuest = <?php echo $currentQuest ?>;
         var pts = 0;
         var ptsresponse = 0;
         var turniejId = <?php echo $turniejid ?>;
 
         function checkTournamentStatus() {
-            console.log(currentQuest);
             $.ajax({
                 url: 'chkStatus.php',
                 type: 'GET',
@@ -126,7 +127,7 @@ function updateStatus($newStatus)
                                             var pytId = $(this).data('pytid');
                                             console.log(pytId)
                                             currentQuest = pytId;
-                                            updateStatusAjax('P');
+                                            updateStatusAjax('P',currentQuest);
                                         });
                                     }
                                 },
@@ -204,7 +205,7 @@ function updateStatus($newStatus)
                                 type: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    currentQuest: currentQuest
+                                    turniejId: turniejId
                                 },
                                 success: function(quests) {
                                     // Tutaj możesz przetwarzać dane zwrócone z quest.php
@@ -217,12 +218,15 @@ function updateStatus($newStatus)
                                     var pozycje = quests.pozycje;
 
                                     pts = Rewards;
-
+                                    if(PytId){
                                     $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
                                         '</p><span id="quest">' + Quest +
                                         "</span><div class='quest-options' id='questOptionsContainer'></div>");
 
                                     wyswietlPozycje(pozycje);
+                                    }else {
+                                        $('.startpopup').append('Błąd pobierania pytania');
+                                    }
                                 },
                                 error: function() {
                                     $('.info').text('Błąd podczas pobierania pytań.');
@@ -313,7 +317,7 @@ function updateStatus($newStatus)
         });
 
         $(document).on('click', '#start', function() {
-            updateStatusAjax('K');
+            updateStatusAjax('K', 0); //dont need current quest so we set it for 0
         });
 
         $(document).on('click', '.okbutton', function() {
@@ -328,13 +332,14 @@ function updateStatus($newStatus)
             checkTournamentStatus();
         });
 
-        function updateStatusAjax(status) {
+        function updateStatusAjax(status, currentQuest) {
             $.ajax({
                 type: 'POST',
                 url: 'updateStatus.php', // Replace with the actual path to your PHP file
                 data: {
                     turniejId: turniejId,
-                    status: status
+                    status: status,
+                    currentQuest: currentQuest
                 },
                 success: function(response) {
                     console.log(response);
@@ -358,7 +363,7 @@ function updateStatus($newStatus)
 <head>
     <title>TTT-TeTeTurnieje</title>
 
-    <link rel="shortcut icon" type="image/gif" href="images/title.png">
+    <link rel="icon" type="image/gif" href="images/title.ico">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

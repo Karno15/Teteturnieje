@@ -7,24 +7,15 @@ if (!isset($_SESSION['TurniejId'])) {
     echo json_encode(array("error" => "Brak dostępu."));
     exit();
 }
-if (!isset($_POST['currentQuest'])) {
-    // Nie udało się pobrać identyfikatora turnieju z sesji
-    echo json_encode(array("error" => "Bład questa."));
-    exit();
-}
-
-$pytId=$_POST['currentQuest'];
-
-$turniejId = $_SESSION['TurniejId'];
-
-$_SESSION['currentQuest'] = $pytId;
+$turniejId = $_POST['turniejId'];
 
 // Zapytanie SQL do pobrania pytania
-$sql = "SELECT PytId,Quest, TypeId,Category, whoFirst,Rewards FROM `pytania`
-where TurniejId= ? and PytId=? order by PytId limit 1";
+$sql = "SELECT p.PytId, p.Quest, p.TypeId, p.Category, p.whoFirst, p.Rewards FROM `pytania` p 
+JOIN `turnieje` t ON t.TurniejId=p.TurniejId
+where p.TurniejId=? and p.PytId=t.CurrentQuest";
 
 $stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "ii", $turniejId, $pytId);
+mysqli_stmt_bind_param($stmt, "i", $turniejId);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
@@ -42,8 +33,10 @@ if ($row = mysqli_fetch_assoc($result)) {
     if ($row['TypeId'] == 1) {
         // Jeśli TypeId = 1, wykonaj dodatkowe zapytanie
 
-        $sql2 = "SELECT pp.pytpozId,pp.pozId, Value,p.Done FROM pytaniapoz pp JOIN pytania p
-        ON pp.PytId=p.PytId WHERE TurniejId = ? and Done=0 order by pp.pytpozId limit 4;";
+        $sql2 = "SELECT pp.pytpozId,pp.pozId, pp.Value,p.Done FROM `pytaniapoz` pp
+        JOIN `pytania` p ON pp.PytId=p.PytId
+        JOIN `turnieje` t ON t.TurniejId=p.TurniejId
+        WHERE p.TurniejId = ? and p.PytId=t.CurrentQuest order by pp.pytpozId limit 4;";
 
         $stmt2 = mysqli_prepare($conn, $sql2);
         mysqli_stmt_bind_param($stmt2, "i", $turniejId);
@@ -61,7 +54,7 @@ if ($row = mysqli_fetch_assoc($result)) {
 
         $data["pozycje"] = $additionalData;
     }
-
+    $_SESSION['currentQuest'] = $row['PytId'];
     echo json_encode($data);
 } else {
     // Nie znaleziono danych w bazie danych

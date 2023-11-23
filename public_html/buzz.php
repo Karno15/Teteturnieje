@@ -3,6 +3,12 @@ session_start();
 
 require 'connect.php';
 
+if (!$_POST['pytId']) {
+    // Nie udało się pobrać identyfikatora turnieju z sesji
+    echo json_encode(array("error" => "Brak pytania."));
+    exit();
+}
+
 // Assuming you have a button click event or some trigger
 if (isset($_POST['userId']) && isset($_POST['turniejId']) && isset($_POST['pytId'])) {
     $userId = $_POST['userId'];
