@@ -18,7 +18,8 @@ if (!isset($_SESSION['username'])) {
 require('connect.php');
 $userId = isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null';
 $turniejid = $_SESSION['TurniejId'];
-$currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;$_SESSION['currentQuest'];
+$currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;
+$_SESSION['currentQuest'];
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
 //echo $userId."+".$turniejid."+".$currentQuest.'+'.$isLeader;
@@ -53,6 +54,7 @@ function updateStatus($newStatus)
 
         $('#participantsInfo').html('<div class="loading-spinner"></div>Loading...');
         var username = <?php echo $userId ?>;
+        showQuest = false;
         shown = false;
         status = 0;
         var currentQuest = <?php echo $currentQuest ?>;
@@ -67,8 +69,10 @@ function updateStatus($newStatus)
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
 
+                    console.log(showQuest)
                     if (status != response.status) {
                         shown = false;
+                        showQuest = false;
                         status = response.status;
                     }
 
@@ -99,7 +103,7 @@ function updateStatus($newStatus)
                     }
 
                     ptsresponse = JSON.stringify(response.participants);
-
+                    /// STATUS KATEGORII --------------------------------------
                     if (status == 'K') {
 
                         if (!shown) {
@@ -127,7 +131,7 @@ function updateStatus($newStatus)
                                             var pytId = $(this).data('pytid');
                                             console.log(pytId)
                                             currentQuest = pytId;
-                                            updateStatusAjax('P',currentQuest);
+                                            updateStatusAjax('P', currentQuest);
                                         });
                                     }
                                 },
@@ -138,8 +142,8 @@ function updateStatus($newStatus)
                             });
                         }
                     }
-
-                    if (status == 'P') {
+                    /// STATUS PYTANIA LUB ODPOWIEDZI --------------------------------------
+                    if (status == 'P' || status == 'O') {
                         $.ajax({
                             url: 'chkBuzzes.php',
                             type: 'POST',
@@ -193,12 +197,19 @@ function updateStatus($newStatus)
                         });
                     }
 
-                    if (!shown) {
-                        shown = true;
-                        if (status == 'P') {
+                    /// STATUS PYTANIA --------------------------------------
+                    if (!showQuest) {
+                        if (status == 'P' || status == 'O') {
+                            showQuest = true;
                             $('.startpopup').html('<button id="buzzer">BUZZ</button>');
                             $('#startform').hide();
-                            $("#turniej").html('<button class="button-85">Pokaż odpowiedź</button>');
+
+                            if (isLeader)
+                                $("#turniej").html('<button id="status" class="button-85">Pokaż odpowiedź</button>');
+
+                            $(document).on('click', '#status', function() {
+                                updateStatusAjax('O', currentQuest);
+                            });
 
                             $.ajax({
                                 url: 'quest.php',
@@ -218,13 +229,14 @@ function updateStatus($newStatus)
                                     var pozycje = quests.pozycje;
 
                                     pts = Rewards;
-                                    if(PytId){
-                                    $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
-                                        '</p><span id="quest">' + Quest +
-                                        "</span><div class='quest-options' id='questOptionsContainer'></div>");
+                                    if (PytId) {
+                                        $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
+                                            '</p><span id="quest">' + Quest +
+                                            "</span><div class='quest-options' id='questOptionsContainer'></div>" +
+                                            "<div id='answer'></div>");
 
-                                    wyswietlPozycje(pozycje);
-                                    }else {
+                                        wyswietlPozycje(pozycje);
+                                    } else {
                                         $('.startpopup').append('Błąd pobierania pytania');
                                     }
                                 },
@@ -247,6 +259,33 @@ function updateStatus($newStatus)
                             };
                         }
                     }
+                    /// STATUS ODPOWIEDZI --------------------------------------
+                    if (status == 'O') {
+                        showQuest = true
+                        $.ajax({
+                            url: 'getAnswer.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                turniejId: turniejId
+                            },
+                            success: function(answer) {
+                                var PytId = answer.PytId;
+                                var Answer = answer.Answer;
+
+                                if (PytId) {
+                                    $('#answer').html('<hr>' + Answer);
+                                } else {
+                                    $('#answer').html('Błąd pobierania odpowiedzi');
+                                }
+                            },
+                            error: function() {
+                                $('.info').text('Błąd podczas pobierania pytań.');
+                                $('#participantsInfo').html('Error');
+                            }
+                        });
+                    }
+
                 },
                 error: function() {
                     $('#statusInfo').text('Błąd podczas sprawdzania statusu turnieju.');
@@ -258,8 +297,6 @@ function updateStatus($newStatus)
         }
 
         var pressed = false;
-
-
 
         function buzz() {
             if (!pressed) {
