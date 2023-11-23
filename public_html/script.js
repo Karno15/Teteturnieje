@@ -41,7 +41,7 @@ $(document).ready(function () {
         // Wyświetlamy wartość ID turnieju w popupie
         $('#popup').html('<button id="closeButton" class="codeconfrim">Zamknij</button><br><p>Rozpocznij turniej: ' + turniejId +
             '<br><button id="generujKodBtn"  class="codeconfrim"> Generuj kod </button>' +
-            '<input  type="number" id="kodTurnieju" class="codeconfrim" placeholder="Wprowadź czterocyfrowy kod turnieju">' +
+            '<input  type="number" id="kodTurnieju" class="codeconfrim" placeholder="Wprowadź czterocyfrowy kod turnieju" min="1000" max="9999">' +
             '<br><button id="zapiszKod" data-turniejid=' + turniejId + ' class="codeconfrim"> Zapisz kod i rozpocznij turniej</button>' +
             '</p>');
 

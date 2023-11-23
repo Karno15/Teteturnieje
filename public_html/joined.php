@@ -21,7 +21,7 @@ $turniejid = $_SESSION['TurniejId'];
 $currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;$_SESSION['currentQuest'];
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
-echo $userId."+".$turniejid."+".$currentQuest.'+'.$isLeader;
+//echo $userId."+".$turniejid."+".$currentQuest.'+'.$isLeader;
 
 function updateStatus($newStatus)
 {

@@ -2,7 +2,7 @@
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['turniejId']) && isset($_POST['kodTurnieju'])) {
+    if (isset($_POST['turniejId']) && isset($_POST['kodTurnieju']) && $_POST['kodTurnieju']>0 AND $_POST['kodTurnieju']<=9999) {
         require "connect.php"; // Załóżmy, że plik connect.php zawiera konfigurację połączenia z bazą danych
 
         $_SESSION['TurniejId'] = $_POST['turniejId'];
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $conn->close();
     } else {
-        echo "Nieprawidłowe dane żądania.";
+        echo "Nieprawidłowy kod.";
     }
 } else {
     echo  "Nieprawidłowa metoda żądania.";
