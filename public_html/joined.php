@@ -90,18 +90,18 @@ function updateStatus($newStatus)
                             if (response.participants[i].Login == username) {
                                 participantsList += '<b><font color="blue">' + response.participants[i].Login + "</font></b></td>"
                             } else {
-                                participantsList += '<b>' + response.participants[i].Login + "</b></td>"
+                                participantsList += '<b>' + response.participants[i].Login + "</b></td></tr>"
                             }
 
                             let editable = (isLeader) ? 'true' : 'false';
 
-                            participantsList += "<td><div class='score-edit' contenteditable=" + editable + " data-login='" +
+                            participantsList += "<tr><td><div class='score-edit' contenteditable=" + editable + " data-login='" +
                                 response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</div></td></tr>';
                         }
                         participantsList += '</table>';
 
-                        $('#participantsInfo').html('Organizator:<b> ' + response.creator +
-                            '</b><p>Rzule: ' + participantsList + '</p>');
+                        $('#participantsInfo').html('<p>Organizator:<b><br> ' + response.creator +
+                            '</b></p><p>Rzule: ' + participantsList + '</p>');
                     }
 
                     /// STATUS KATEGORII --------------------------------------
@@ -161,7 +161,7 @@ function updateStatus($newStatus)
                                 if (buzzresponse != JSON.stringify(response)) {
 
                                     buzzresponse = JSON.stringify(response);
-                                    var buzzesHTML = '<p>Buzzers:<b><table class="datatables">';
+                                    var buzzesHTML = '<p id="aligned">Buzzers:<table class="datatables">';
                                     var firstBuzz = 0;
 
 
@@ -169,21 +169,22 @@ function updateStatus($newStatus)
                                         var buzz = response.buzzes[i];
                                         var buzztime = new Date(buzz.buzztime);
 
-                                        buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td>';
+                                        buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td></tr>';
 
                                         // Show the buzztime only for the second and subsequent logins
                                         if (i !== 0) {
                                             var duration = buzztime - firstBuzz;
-                                            buzzesHTML += '<td>' + formatDuration(duration) + '</td>';
+                                            buzzesHTML += '<tr><td>' + formatDuration(duration) + '</td></tr>';
                                         } else {
                                             firstBuzz = new Date(buzz.buzztime);
-                                            buzzesHTML += '<td>First!</td>';
+                                            buzzesHTML += '<tr><td>First!</td>';
                                         }
                                         buzzesHTML += '</tr><tr>';
 
                                         if (isLeader) {
-                                            buzzesHTML += '<td><button class="okbutton" data-login="' + buzz.Login +
-                                                '">✔️</button></td><td><button class="badbutton" data-login="' + buzz.Login + '">❌</button></td>';
+                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login="' + buzz.Login +
+                                                '">✔️</button><button class="badbutton" data-login="'
+                                                 + buzz.Login + '">❌</button></td></tr>';
                                         }
 
                                         buzzesHTML += '</tr>';
@@ -337,7 +338,6 @@ function updateStatus($newStatus)
                     data: {
                         userId: userId,
                         turniejId: turniejId,
-                        pytId: currentQuest
                     },
                     success: function(response) {
                         checkTournamentStatus();
@@ -410,8 +410,7 @@ function updateStatus($newStatus)
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
-        setInterval(checkTournamentStatus, 300);
-        setInterval(location.reload(), 20 * 60 * 1000)//zabezpiecz refreshem co 25 minut
+        setInterval(checkTournamentStatus, 400);
     });
 </script>
 

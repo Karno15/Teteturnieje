@@ -3,26 +3,19 @@ session_start();
 
 require 'connect.php';
 
-if (!$_POST['pytId']) {
-    // Nie udało się pobrać identyfikatora turnieju z sesji
-    echo json_encode(array("error" => "Brak pytania."));
-    exit();
-}
-
 // Assuming you have a button click event or some trigger
-if (isset($_POST['userId']) && isset($_POST['turniejId']) && isset($_POST['pytId'])) {
+if (isset($_POST['userId']) && isset($_POST['turniejId'])) {
     $userId = $_POST['userId'];
     $turniejId = $_POST['turniejId'];
-    $pytId = $_POST['pytId'];
     // Your SQL query
-    $sql = "INSERT INTO buzzes (UserId, TurniejId, PytId) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO buzzes (UserId, TurniejId, PytId) SELECT ?, ?, t.CurrentQuest from turnieje t where TurniejId= ? ";
 
     try {
         // Prepare the statement
         $stmt = mysqli_prepare($conn, $sql);
 
         // Bind the parameters
-        mysqli_stmt_bind_param($stmt, 'iii', $userId, $turniejId, $pytId);
+        mysqli_stmt_bind_param($stmt, 'iii', $userId, $turniejId, $turniejId);
 
         // Execute the statement
         $execute = mysqli_stmt_execute($stmt);

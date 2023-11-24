@@ -178,7 +178,7 @@ function answerPoints(login, pts, answer, turniejId) {
             turniejId: turniejId
         },
         success: function (response) {
-            checkTournamentStatus();
+         //   checkTournamentStatus();
         },
         error: function (error) {
             console.error('Error changing points:', error);
