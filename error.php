@@ -13,7 +13,7 @@ if (isset($_SESSION['info'])) {
 
 <head>
     <title>TTT-TeTeTurnieje</title>
-    <link rel="icon" type="image/gif" href="images/title.png">
+    <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

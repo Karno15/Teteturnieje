@@ -12,7 +12,7 @@ if (isset($_SESSION['info'])) {
 
 <head>
     <title>TTT-TeTeTurnieje</title>
-    <link rel="icon" type="image/gif" href="images/title.png">
+    <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,6 +71,6 @@ if (isset($_SESSION['info'])) {
         </form>
 
     </div><br>
-    <div id='footer'>Made by @karkarno</div>
+    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
 
 </body>
