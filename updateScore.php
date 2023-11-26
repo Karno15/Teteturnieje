@@ -5,21 +5,22 @@ error_reporting(E_ALL);
 
 session_start();
 
-require 'connect.php'; // Ustal połączenie z bazą danych
-
+require 'connect.php';
 $userId = '';
 
-// Get the user's ID from the session
 if (isset($_SESSION['userid'])) {
     $userId = $_SESSION['userid'];
 }
 
-// Get the TurniejId from the query parameter
 if (isset($_SESSION['TurniejId'])) {
     $turniejId = $_SESSION['TurniejId'];
 }
-// Connect to the database
-require "connect.php"; // Assuming you have a connection script
+
+if (isset($_SESSION['TurniejId'])) {
+    $turniejId = $_SESSION['TurniejId'];
+}
+
+
 
 // Query to check if the TurniejId belongs to the user
 $sql = "SELECT Creator FROM turnieje WHERE TurniejId = $turniejId";

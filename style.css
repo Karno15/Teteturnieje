@@ -13,6 +13,16 @@
   src: url('fonts/play.ttf')
 }
 
+@font-face {
+  font-family: finish;
+  src: url('fonts/finish.ttf')
+}
+
+@font-face {
+  font-family: cartoon;
+  src: url('fonts/cartoon.ttf')
+}
+
 body {
   margin: 0 auto;
   background-image: url('images/bg.webp');
@@ -75,7 +85,7 @@ body {
   background: rgba(255, 255, 0, .5);
   font-family: 'Work Sans', sans-serif;
   border-radius: 0 0 29px 29px;
-  min-height: 60%;
+  min-height: 67%;
 }
 
 .startpopup {
@@ -436,7 +446,7 @@ table.datatable thead th:first-child {
   position: fixed;
   left: 0%;
   top: 50%;
-  transform: translate(0 , -50%);
+  transform: translate(0, -50%);
   text-align: center;
   border-radius: 37px;
   font-size: 18pt;
@@ -461,7 +471,7 @@ table.datatable thead th:first-child {
   position: fixed;
   right: 0%;
   top: 50%;
-  transform: translate(0 , -50%);
+  transform: translate(0, -50%);
   text-align: center;
   border-radius: 37px;
   font-size: 18pt;
@@ -490,7 +500,7 @@ table.datatable thead th:first-child {
   text-align: center;
 }
 
-#aligned{
+#aligned {
   display: flex;
   align-content: center;
   flex-wrap: wrap;
@@ -504,7 +514,7 @@ table.datatable thead th:first-child {
 
 #answer {
   min-width: 500px;
-  margin:  20px;
+  margin: 20px;
   font-size: 26pt;
 }
 
@@ -537,7 +547,7 @@ table.datatable thead th:first-child {
   box-shadow: none;
 }
 
-#answerbuttons{
+#answerbuttons {
   display: flex;
   justify-content: space-between;
 }
@@ -585,7 +595,42 @@ table.datatable thead th:first-child {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
-#questOptionsContainer{
+#questOptionsContainer {
   line-height: 300%;
   font-size: 20pt;
 }
+
+@keyframes float {
+  0% {
+    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+    transform: translatey(0px);
+  }
+
+  50% {
+    box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+    transform: translatey(-20px);
+  }
+
+  100% {
+    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+    transform: translatey(0px);
+  }
+}
+
+#yourScore {
+  font-size-adjust: 2;
+  padding: 60px;
+  background-color: #0093E9;
+  background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
+  border-radius: 20px;
+  transform: translatey(0px);
+  animation: float 2s ease-in-out infinite;
+  font-family: finish;
+  font-size: 32pt;
+  letter-spacing: 4px;
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+

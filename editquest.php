@@ -145,15 +145,15 @@ if (!isset($_GET['turniejid'])) {
                                 <input type='text' class='sinputy' name='option1' value='-'>
                             </div>
                             <div class='quest-option'>Opcja 2: <br>
-                                <input type='radio' name='answer' value='a2'>
+                                <input type='radio' name='answer' value='a2' required>
                                 <input type='text' class='sinputy' name='option2' value='-'>
                             </div><br>
                             <div class='quest-option'>Opcja 3: <br>
-                                <input type='radio' name='answer' value='a3'>
+                                <input type='radio' name='answer' value='a3' required>
                                 <input type='text' class='sinputy' name='option3' value='-'>
                             </div>
                             <div class='quest-option'>Opcja 4: <br>
-                                <input type='radio' name='answer' value='a4'>
+                                <input type='radio' name='answer' value='a4' required>
                                 <input type='text' class='sinputy' name='option4' value='-'>
                             </div>
                         </div><br><br>
@@ -192,6 +192,7 @@ if (!isset($_GET['turniejid'])) {
 
                                 } else {
                                     $(".quest-options").show()
+                                    $("#questionForm input[type='radio']").prop("required", true);
                                 };
                             });
 

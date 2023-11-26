@@ -70,6 +70,24 @@ function updateStatus($newStatus)
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
+                    console.log(response);
+                    if (response.error) {
+                        $.ajax({
+                            url: 'setSession.php',
+                            type: 'POST',
+                            data: {
+                                info: 'Brak pytań w turnieju'
+                            },
+                            success: function(setInfoResponse) {
+                                // Redirect to error.php after setting the session variable
+                                window.location.href = 'error.php';
+                            },
+                            error: function(setInfoError) {
+                                console.error('Error setting session information:', setInfoError);
+                            }
+                        });
+                    }
+
                     if (status != response.status) {
                         shown = false;
                         showQuest = false;
@@ -82,6 +100,7 @@ function updateStatus($newStatus)
                         ptsresponse = JSON.stringify(response.participants)
                         // Wyświetl listę uczestników
                         var participantsList = '<table class="datatables">';
+
 
 
                         for (var i = 0; i < response.participants.length; i++) {
@@ -104,8 +123,8 @@ function updateStatus($newStatus)
                             '</b></p><p>Rzule: ' + participantsList + '</p>');
                     }
 
-                    /// STATUS KATEGORII --------------------------------------
-                    if (status == 'K') {
+                    /// STATUS KATEGORII I KOŃCA KATEGORI (X) --------------------------------------
+                    if (status == 'K' || status == 'X') {
                         if (prevstatus != status && prevstatus != 0) {
                             location.reload() //for too much pressure
                         }
@@ -119,7 +138,7 @@ function updateStatus($newStatus)
                                     if (catresponse != JSON.stringify(response)) {
 
                                         catresponse = JSON.stringify(response);
-                                        categoriesHTML = "Kategorie<br><div id='categories-container'>";
+                                        categoriesHTML = "Wybieranie pytania<br><div id='categories-container'>";
 
                                         for (var i = 0; i < response.length; i++) {
                                             categoriesHTML += "<div class='category";
@@ -137,6 +156,16 @@ function updateStatus($newStatus)
                                                 currentQuest = pytId;
                                                 updateStatusAjax('P', currentQuest);
                                             });
+
+                                        }
+                                        if (isLeader && status == 'X') {
+
+                                            $("#statusInfo").html('<button id="finish" href=# class="button-85">Zakończ</button>');
+
+                                            $(document).on('click', '#finish', function() {
+                                                updateStatusAjax('Z', 0);
+                                            });
+
                                         }
                                     }
                                 },
@@ -183,8 +212,8 @@ function updateStatus($newStatus)
 
                                         if (isLeader) {
                                             buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login="' + buzz.Login +
-                                                '">✔️</button><button class="badbutton" data-login="'
-                                                 + buzz.Login + '">❌</button></td></tr>';
+                                                '">✔️</button><button class="badbutton" data-login="' +
+                                                buzz.Login + '">❌</button></td></tr>';
                                         }
 
                                         buzzesHTML += '</tr>';
@@ -295,7 +324,8 @@ function updateStatus($newStatus)
                                     var Answer = answer.Answer;
 
                                     if (PytId) {
-                                        $('#answer').html('<hr>' + Answer);
+                                        $('#answer').html('<hr id="spliter">' + Answer);
+                                        $("#answer")[0].scrollIntoView();
                                     } else {
                                         $('#answer').html('Błąd pobierania odpowiedzi');
                                     }
@@ -307,6 +337,22 @@ function updateStatus($newStatus)
                             });
                         }
                     }
+                    /// STATUS ZAKOŃCZENIA --------------------------------------
+                    if (!shown) {
+                        if (status == 'Z') {
+                            shown = true;
+                            console.log(shown);
+                            var redirectPage = "finish.php";
+                            var parameter1 = turniejId;
+
+                            // Construct the URL with parameters
+                            var redirectURL = redirectPage + "?turniejId=" + parameter1;
+
+                            // Redirect to the constructed URL
+                            window.location.href = redirectURL;
+                        }
+                    }
+
                 },
                 error: function() {
                     $('#statusInfo').text('Błąd podczas sprawdzania statusu turnieju.');
@@ -410,7 +456,7 @@ function updateStatus($newStatus)
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
-        setInterval(checkTournamentStatus, 400);
+        setInterval(checkTournamentStatus, 4000);
     });
 </script>
 
