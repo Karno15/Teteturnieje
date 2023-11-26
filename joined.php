@@ -70,7 +70,6 @@ function updateStatus($newStatus)
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
-                    console.log(response);
                     if (response.error) {
                         $.ajax({
                             url: 'setSession.php',
@@ -341,7 +340,6 @@ function updateStatus($newStatus)
                     if (!shown) {
                         if (status == 'Z') {
                             shown = true;
-                            console.log(shown);
                             var redirectPage = "finish.php";
                             var parameter1 = turniejId;
 
@@ -456,15 +454,14 @@ function updateStatus($newStatus)
 
         checkTournamentStatus();
         // Uruchamiaj funkcję co 2 sekundy
-        setInterval(checkTournamentStatus, 4000);
+        setInterval(checkTournamentStatus, 400);
     });
 </script>
 
 
 <head>
     <title>TTT-TeTeTurnieje</title>
-
-    <link rel="icon" type="image/gif" href="images/title.ico">
+    <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
