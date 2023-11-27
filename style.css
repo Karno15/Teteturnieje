@@ -103,9 +103,8 @@ body {
   min-width: 80%;
 }
 
-
-.wysiwyg {
-  color: #fff;
+.note-editable {
+  background: rgb(255, 153, 51);
 }
 
 .inputy {
@@ -376,6 +375,12 @@ table.datatable thead th:first-child {
   border-left: none;
 }
 
+.ask {
+  height: 10px;
+  width: 10px;
+  float: right;
+}
+
 #questionForm {
   min-width: 100%;
 }
@@ -508,11 +513,12 @@ table.datatable thead th:first-child {
 }
 
 #quest {
+  min-height: 30px;
   font-size: 26pt;
-  margin: -30px;
 }
 
 #answer {
+  min-height: 30px;
   min-width: 500px;
   margin: 20px;
   font-size: 26pt;
@@ -550,6 +556,10 @@ table.datatable thead th:first-child {
 #answerbuttons {
   display: flex;
   justify-content: space-between;
+}
+
+.disclaimer {
+  font-size: small;
 }
 
 .score-edit {
@@ -628,9 +638,9 @@ table.datatable thead th:first-child {
   font-family: finish;
   font-size: 32pt;
   letter-spacing: 4px;
+
   img {
     width: 100%;
     height: auto;
   }
 }
-

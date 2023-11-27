@@ -60,9 +60,9 @@ else
             require('connect.php'); // Include the connection file
 
             // Fetch records from the "turnieje" table
-            $query = "SELECT t.TurniejId, t.Name, t.Created, t.Code, t.Status FROM
-      turnieje t JOIN users u ON u.UserId=t.Creator where Login='" . $_SESSION['username'] . "' 
-     order by t.Created desc";
+            $query = "SELECT t.TurniejId, t.Name, t.Created, t.Code, d.Label, d.Description FROM turnieje t JOIN users u
+             ON u.UserId=t.Creator JOIN dictionary d ON d.Symbol=t.Status where Login='" . $_SESSION['username'] . "'
+              order by t.Created desc";
             $result = mysqli_query($conn, $query);
 
             // Check for errors in the query
@@ -77,7 +77,8 @@ else
               echo "<td>" . $row['Name'] . "</td>";
               echo "<td>" . $row['Created'] . "</td>";
               echo "<td>" . $row['Code'] . "</td>";
-              echo "<td>" . $row['Status'] . "</td>";
+              echo "<td>" . $row['Label'] . "<img class='ask' src='images/questionmark.svg' alt='questionmark' ";
+              echo "title='" . $row['Description'] . "' ></td>";
               echo "<td> <a href='edit.php?turniejid=" . $row['TurniejId'] . "' ><img src='images/edit.png' alt='edit' height='40px' width='40px'</a></td>";
               echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
               echo "</tr>";
@@ -89,6 +90,8 @@ else
             </tbody>
           </table>
         </div>
+        <span class="disclaimer">Tip: Najedź na
+          <img src='images/questionmark.svg' alt='questionmark' height=10 width=10> przy danym statusie aby zobaczyć jego opis.</span>
       </div>
 
       <div>

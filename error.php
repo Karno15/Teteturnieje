@@ -9,6 +9,12 @@ if (isset($_SESSION['info'])) {
     unset($_SESSION['info']);
 }
 
+if (isset($_GET['info'])) {
+    echo "<div class='info'>";
+    echo $_GET['info'];
+    echo "</div>";
+}
+
 ?>
 
 <head>
