@@ -20,20 +20,13 @@ if (!isset($_GET['turniejid'])) {
         $after = $_POST["after"];
 
 
-        if (!isset($_POST["whoFirst"])) {
-            $whoFirst = 0;
-        } else {
-            $whoFirst = 1; //1 lub 0
-        }
-
-
         $sql =
-            "INSERT INTO `pytania`( `TurniejId`, `Quest`, `TypeId`, `whoFirst`, `Rewards`,`Category`,`After`) 
+            "INSERT INTO `pytania`( `TurniejId`, `Quest`, `TypeId`, `Rewards`,`Category`,`After`) 
             VALUES (" .
             $_GET["turniejid"] .
             ",'" .
             $tresc .
-            "',$type, $whoFirst,$rewards,'$category','$after')";
+            "',$type, $rewards,'$category','$after')";
 
         //Perform a query, check for error
         if (!$conn->query($sql)) {
@@ -76,13 +69,13 @@ if (!isset($_GET['turniejid'])) {
     <head>
         <title>TTT-TeTeTurnieje</title>
         <link rel="icon" type="image/gif" href="images/favicon.ico">
-        <link rel="stylesheet" href="style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+        <link rel="stylesheet" href="style.css">
         <script src="script.js"></script>
     </head>
 
@@ -129,16 +122,13 @@ if (!isset($_GET['turniejid'])) {
                             });
                         </script>
                         <br>
-                        Kto pierszy ten lepszy?
-                        <input type='checkbox' name='whoFirst'><br><br>
                         <hr>
                         Typ pytania:
                         <select name='type' class='codeconfrim'>
                             <option value='1'>Zamknięte</option>
                             <option value='2'>Otwarte</option>
                         </select><br>
-                        <span class='questinfo'></span>
-                        <span class='quest-options'>Zaznacz prawdiłową odpowiedź klikając w checkbox</span><br>
+                        <span class='disclaimer'>Zaznacz prawdiłową odpowiedź klikając w checkbox*</span><br>
                         <div class='quest-options'>
                             <div class='quest-option'>Opcja 1: <br>
                                 <input type='radio' name='answer' value='a1' required>
@@ -160,11 +150,11 @@ if (!isset($_GET['turniejid'])) {
                         Ilość punktów do zdobycia:
                         <input type='number' name='rewards' value='50' class='codeconfrim'>
                         <br><br>
-                        Treść do wyświetlenia po odpowiedzi:
+                        Treść do wyświetlenia odpowiedzi:
                         <textarea class="summernote" name="after"></textarea>
                         <script>
                             $('.summernote').summernote({
-                                placeholder: 'Umieść tutaj treść pytania',
+                                placeholder: 'Umieść tutaj treść odpowiedzi',
                                 tabsize: 2,
                                 height: 200,
                                 toolbar: [
@@ -188,9 +178,11 @@ if (!isset($_GET['turniejid'])) {
                                 var opcja = $('select option:selected').text();
                                 if (opcja == 'Otwarte') {
                                     $(".quest-options").hide();
+                                    $(".disclaimer").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
 
                                 } else {
+                                    $(".disclaimer").show();
                                     $(".quest-options").show()
                                     $("#questionForm input[type='radio']").prop("required", true);
                                 };

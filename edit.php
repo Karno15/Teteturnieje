@@ -121,7 +121,6 @@ if (!isset($_GET['turniejid'])) {
                                             <th>Typ Pytania</th>
                                             <th>Kategoria</th>
                                             <th>Punkty</th>
-                                            <th>Kto pierwszy?</th>
                                             <th>Zobacz</th>
                                             <th>Usuń</th>
                                         </tr>
@@ -152,10 +151,6 @@ if (!isset($_GET['turniejid'])) {
                                 echo "</td>";
                                 echo "<td>" . $row['Category'] . "</td>";
                                 echo "<td>" . $row['Rewards'] . "</td>";
-                                echo "<td>";
-                                $whoFirst = $row['whoFirst'] ?  "✔️" : "❌";
-                                echo $whoFirst;
-                                echo "</td>";
                                 echo "<td><button class='codeconfrim' onclick='pokazPytanie(" . $row['PytId'] . ")'>Zobacz</button></td>";
                                 echo "<td><form method='post'>
                 <input type='hidden' name='question_id' value='" . $row['PytId'] . "'>

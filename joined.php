@@ -71,20 +71,8 @@ function updateStatus($newStatus)
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
                     if (response.error) {
-                        $.ajax({
-                            url: 'setSession.php',
-                            type: 'POST',
-                            data: {
-                                info: 'Brak pytań w turnieju'
-                            },
-                            success: function(setInfoResponse) {
-                                // Redirect to error.php after setting the session variable
-                                window.location.href = 'error.php';
-                            },
-                            error: function(setInfoError) {
-                                console.error('Error setting session information:', setInfoError);
-                            }
-                        });
+                        $('#popup').html("<div class='info'>" + response.error + "</div>");
+                        window.location.href = 'error.php?info=' + response.error;
                     }
 
                     if (status != response.status) {
@@ -92,6 +80,21 @@ function updateStatus($newStatus)
                         showQuest = false;
                         status = response.status;
                     }
+
+                    if (response.participants.length == 0) {
+                        $(document).on('click', '#start', function() {
+                            $('#popup').show();
+                            $('#popup').html("<div class='info'>" + 'Brak uczestników!' + "</div>");
+                            $('.info').delay(3000).fadeOut();
+                        });
+                    } else {
+                        $(document).on('click', '#start', function() {
+                            $('#popup').hide();
+                            updateStatusAjax('K', 0); //dont need current quest so we set it for 0
+                        })
+                    }
+
+
 
                     if (ptsresponse != JSON.stringify(response.participants)) {
                         var creator = response.creator
@@ -240,7 +243,7 @@ function updateStatus($newStatus)
                     if (!showQuest) {
                         if (status == 'P' || status == 'O') {
                             showQuest = true;
-                            $('.startpopup').html('<button id="buzzer">BUZZ</button>');
+                            $('.startpopup').html('<span class="disclaimer">(spacja również działa jak przycisk BUZZ)</span><button id="buzzer">BUZZ</button>');
                             $('#startform').hide();
 
                             if (isLeader)
@@ -263,19 +266,59 @@ function updateStatus($newStatus)
                                     var Quest = quests.Quest;
                                     var Category = quests.Category;
                                     var TypeId = quests.TypeId;
-                                    var whoFirst = quests.whoFirst;
                                     var Rewards = quests.Rewards;
                                     var pozycje = quests.pozycje;
 
                                     pts = Rewards;
                                     if (PytId) {
-                                        $('.startpopup').append('<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
-                                            '</p><span id="quest">' + Quest + "</span>");
+
+
+                                        questHTML = '<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
+                                            '</p><span id="quest">' + Quest + "</span>";
                                         if (wyswietlPozycje(pozycje)) {
-                                            $('.startpopup').append("<div class='quest-options' id='questOptionsContainer'></div>")
-                                            wyswietlPozycje(pozycje)
+                                            questHTML += "<div class='quest-options' id='questOptionsContainer'></div>";
+                                            wyswietlPozycje(pozycje);
                                         }
-                                        $('.startpopup').append("<div id='answer'></div>")
+                                        questHTML += "<div id='answer'></div>";
+
+                                        $('.startpopup').append(questHTML);
+
+
+                                        /// STATUS ODPOWIEDZI --------------------------------------
+                                        if (status == 'O') {
+                                            shown = true;
+                                            if (isLeader)
+                                                $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
+
+                                            $(document).on('click', '#next', function() {
+                                                updateStatusAjax('K', 0);
+                                                checkTournamentStatus();
+                                            });
+
+                                            $.ajax({
+                                                url: 'getAnswer.php',
+                                                type: 'POST',
+                                                dataType: 'json',
+                                                data: {
+                                                    turniejId: turniejId
+                                                },
+                                                success: function(answer) {
+                                                    var PytId = answer.PytId;
+                                                    var Answer = answer.Answer;
+
+                                                    if (PytId) {
+                                                        $('#answer').html('<hr id="spliter">' + Answer);
+                                                        $("#answer")[0].scrollIntoView();
+                                                    } else {
+                                                        $('#answer').html('Błąd pobierania odpowiedzi');
+                                                    }
+                                                },
+                                                error: function() {
+                                                    $('.info').text('Błąd podczas pobierania pytań.');
+                                                    $('#participantsInfo').html('Error');
+                                                }
+                                            });
+                                        }
                                     } else {
                                         $('.startpopup').append('Błąd pobierania pytania');
                                     }
@@ -298,43 +341,7 @@ function updateStatus($newStatus)
                                 }
                             };
                         }
-                    }
-                    /// STATUS ODPOWIEDZI --------------------------------------
-                    if (!shown) {
-                        if (status == 'O') {
-                            shown = true;
-                            if (isLeader)
-                                $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
 
-                            $(document).on('click', '#next', function() {
-                                updateStatusAjax('K', 0);
-                                checkTournamentStatus();
-                            });
-
-                            $.ajax({
-                                url: 'getAnswer.php',
-                                type: 'POST',
-                                dataType: 'json',
-                                data: {
-                                    turniejId: turniejId
-                                },
-                                success: function(answer) {
-                                    var PytId = answer.PytId;
-                                    var Answer = answer.Answer;
-
-                                    if (PytId) {
-                                        $('#answer').html('<hr id="spliter">' + Answer);
-                                        $("#answer")[0].scrollIntoView();
-                                    } else {
-                                        $('#answer').html('Błąd pobierania odpowiedzi');
-                                    }
-                                },
-                                error: function() {
-                                    $('.info').text('Błąd podczas pobierania pytań.');
-                                    $('#participantsInfo').html('Error');
-                                }
-                            });
-                        }
                     }
                     /// STATUS ZAKOŃCZENIA --------------------------------------
                     if (!shown) {
@@ -417,10 +424,6 @@ function updateStatus($newStatus)
             });
         });
 
-        $(document).on('click', '#start', function() {
-            updateStatusAjax('K', 0); //dont need current quest so we set it for 0
-        });
-
         $(document).on('click', '.okbutton', function() {
             var login = $(this).data('login');
             answerPoints(login, pts, 1, turniejId);
@@ -498,7 +501,7 @@ function updateStatus($newStatus)
             <div id="statusInfo"></div>
             <div id="participantsInfo"></div>
             <div id="buzzerInfo"></div>
-
+            <div id="popup"></div>
 
 
 </body>

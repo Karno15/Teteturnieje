@@ -10,7 +10,7 @@ if (!isset($_SESSION['TurniejId'])) {
 $turniejId = $_POST['turniejId'];
 
 // Zapytanie SQL do pobrania pytania
-$sql = "SELECT p.PytId, p.Quest, p.TypeId, p.Category, p.whoFirst, p.Rewards FROM `pytania` p 
+$sql = "SELECT p.PytId, p.Quest, p.TypeId, p.Category, p.Rewards FROM `pytania` p 
 JOIN `turnieje` t ON t.TurniejId=p.TurniejId
 where p.TurniejId=? and p.PytId=t.CurrentQuest";
 
@@ -26,8 +26,7 @@ if ($row = mysqli_fetch_assoc($result)) {
         "Quest" => $row['Quest'],
         "Rewards" => $row['Rewards'],
         "TypeId" => $row['TypeId'],
-        "whoFirst" => $row['whoFirst'],
-        "Category" => $row['Category'],
+        "Category" => $row['Category']
     );
 
     if ($row['TypeId'] == 1) {
