@@ -10,18 +10,23 @@ if (!isset($_SESSION['TurniejId'])) {
 $turniejId = $_POST['turniejId'];
 
 // Zapytanie SQL do pobrania pytania
-$sql = "SELECT p.PytId, p.After FROM `pytania` p JOIN `turnieje` t ON t.TurniejId=p.TurniejId where t.TurniejId= ? and p.PytId=t.CurrentQuest;";
+$sql = "SELECT distinct p.PytId, p.After, po.PozId FROM `pytania` p JOIN `turnieje` t ON t.TurniejId=p.TurniejId 
+LEFT JOIN `prawiodpo` po ON p.PytId=po.PytId LEFT JOIN `pytaniapoz` pp ON p.PytId=pp.PytId
+ where t.TurniejId= ? and p.PytId=t.CurrentQuest;";
 
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $turniejId);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
+
+
 if ($row = mysqli_fetch_assoc($result)) {
     // Pobrano dane z bazy danych
     $data = array(
         "PytId" => $row['PytId'],
         "Answer" => $row['After'],
+        "PozId" => intval($row['PozId'])
     );
     echo json_encode($data);
 } else {

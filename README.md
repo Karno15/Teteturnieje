@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.3] - 2023-11-28
+
+### Changed
+
+- Fixed showing Quest Positions
+- Added correct position when answer is showed
+- Added decimal values for points
+
 ## [1.2] - 2023-11-27
 
 ### Changed
@@ -11,7 +19,7 @@ All notable changes to this project will be documented in this file
 - Deleted unused stuff
 - Added Statuses dictionary and their description
 - Tournament can't be started without questions
-- Tournament can't be started without particiapnts
+- Tournament can't be started without participants
 - Another possible fix for favicon.ico
 
 ## [1.1] - 2023-11-26

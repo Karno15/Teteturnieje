@@ -272,17 +272,25 @@ function updateStatus($newStatus)
                                     pts = Rewards;
                                     if (PytId) {
 
-
                                         questHTML = '<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
                                             '</p><span id="quest">' + Quest + "</span>";
-                                        if (wyswietlPozycje(pozycje)) {
+
+
+
+                                        if (typeof pozycje !== 'undefined')
                                             questHTML += "<div class='quest-options' id='questOptionsContainer'></div>";
-                                            wyswietlPozycje(pozycje);
-                                        }
-                                        questHTML += "<div id='answer'></div>";
+
 
                                         $('.startpopup').append(questHTML);
 
+                                        if (typeof pozycje !== 'undefined') {
+                                            pozycjeHTML = "";
+                                            pozycje.forEach(function(pozycja) {
+                                                pozycjeHTML += '<div class="quest-option">' + pozycja.Value + '</div>';
+                                            });
+                                            $('#questOptionsContainer').append(pozycjeHTML);
+                                        }
+                                        $('.startpopup').append("<div id='answer'></div>");
 
                                         /// STATUS ODPOWIEDZI --------------------------------------
                                         if (status == 'O') {
@@ -305,8 +313,12 @@ function updateStatus($newStatus)
                                                 success: function(answer) {
                                                     var PytId = answer.PytId;
                                                     var Answer = answer.Answer;
-
+                                                    var PozId = answer.PozId;
                                                     if (PytId) {
+                                                        if (PozId) {
+                                                            $(".quest-option").eq(PozId-1).attr('id', 'correct');
+                                                            //przypisz id correct do pozycji która jest prawidłowa
+                                                        }
                                                         $('#answer').html('<hr id="spliter">' + Answer);
                                                         $("#answer")[0].scrollIntoView();
                                                     } else {

@@ -21,7 +21,7 @@ if (isset($_POST['login']) && isset($_POST['pts']) && isset($_POST['answer']) &&
         $stmt = mysqli_prepare($conn, $sql);
 
         // Bind the parameters
-        mysqli_stmt_bind_param($stmt, 'siii', $login, $pts, $answer, $turniejId);
+        mysqli_stmt_bind_param($stmt, 'sdii', $login, $pts, $answer, $turniejId);
 
         // Execute the statement
         $execute = mysqli_stmt_execute($stmt);

@@ -26,7 +26,8 @@ if ($statusResult->num_rows > 0) {
     $creator = $statusRow['Creator'];
     $currentQuest = $statusRow['CurrentQuest'];
 
-    $participantsQuery = "SELECT Login, CurrentScore FROM turuserzy t JOIN users u ON u.UserId=t.UserId WHERE turniejid = ?";
+    $participantsQuery = "SELECT Login, ROUND(CurrentScore, 3) as 'CurrentScore' FROM
+     turuserzy t JOIN users u ON u.UserId=t.UserId WHERE turniejid = ?";
     $participantsStmt = $conn->prepare($participantsQuery);
     $participantsStmt->bind_param("i", $turniejId);
     $participantsStmt->execute();
