@@ -148,7 +148,7 @@ if (!isset($_GET['turniejid'])) {
                             </div>
                         </div><br><br>
                         Ilość punktów do zdobycia:
-                        <input type='number' name='rewards' value='50' class='codeconfrim'>
+                        <input type='number' name='rewards' value='50' step=".01" class='codeconfrim'>
                         <br><br>
                         Treść do wyświetlenia odpowiedzi:
                         <textarea class="summernote" name="after"></textarea>
