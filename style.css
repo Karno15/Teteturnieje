@@ -426,6 +426,7 @@ table.datatable thead th:first-child {
 
 #correct {
   outline: 4px solid green;
+  z-index: 2;
 }
 
 #back,
