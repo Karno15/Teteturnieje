@@ -55,11 +55,40 @@ ALTER TABLE `questbids`
   MODIFY `questbidId` int(11) NOT NULL AUTO_INCREMENT;
 
 
---czy działa
-ALTER TABLE `pytania` ADD `IsBid` BOOLEAN NOT NULL AFTER `whoFirst`; 
+ALTER TABLE `pytania` ADD `IsBid` BOOLEAN NOT NULL AFTER `Rewards`; 
+
+
+DROP TRIGGER IF EXISTS `trg_UpdateOverallScore`;CREATE DEFINER=`root`@`localhost` TRIGGER `trg_UpdateOverallScore` AFTER UPDATE ON `turnieje` FOR EACH ROW BEGIN
+    IF NEW.Status = 'Z' THEN
+
+        -- Insert winners into the 'winners' table
+        INSERT INTO winners (UserId, TurniejId)
+        SELECT tu.UserId, tu.TurniejId
+        FROM turuserzy tu
+        WHERE tu.TurniejId = NEW.TurniejId
+        AND tu.CurrentScore = (
+            SELECT MAX(CurrentScore)
+            FROM turuserzy
+            WHERE TurniejId = NEW.TurniejId
+        );
+    END IF;
+    
+END
+
 
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateOverallScore`(
+	IN turniejId INT(11)
+)
+BEGIN
+UPDATE users u JOIN turuserzy tu ON tu.UserId = u.UserId 
+SET u.OverallScore = u.OverallScore + tu.CurrentScore WHERE tu.TurniejId = turniejId;
+END$$
+DELIMITER ;
