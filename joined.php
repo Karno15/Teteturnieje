@@ -326,6 +326,12 @@ function updateStatus($newStatus)
                                                         }
                                                         $('#answer').html('<hr id="spliter">' + Answer);
                                                         $("#answer")[0].scrollIntoView();
+
+                                                        if (Answer.toLowerCase().includes('volcarona') || Answer.toLowerCase().includes('larvesta')) {
+                                                            $('body').append('<div class="flier1"><img src="images/larvesta.png"></div><div class="flier2"><img src="images/volcarona.png"></div>')
+                                                        }
+
+
                                                     } else {
                                                         $('#answer').html('Błąd pobierania odpowiedzi');
                                                     }
