@@ -46,7 +46,7 @@ function updateStatus($newStatus)
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function() {    
         var isLeader = <?php echo json_encode($isLeader); ?>;
 
         var buzzsfx = new Audio("sounds/buzz.wav");
@@ -63,6 +63,7 @@ function updateStatus($newStatus)
         var catresponse = 0;
         var buzzresponse = 0;
         var turniejId = <?php echo $turniejid ?>;
+        var ee_shown = false;
 
         function checkTournamentStatus() {
             $.ajax({
@@ -70,6 +71,14 @@ function updateStatus($newStatus)
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
+                    
+                    //easter eggs
+                    if(getCookie('EE_Larvolcarona') && ee_shown==false){
+                        $('body').append('<img class="flier1" src="images/larvesta.png"><img class="flier2" src="images/volcarona.png">')
+                        ee_shown=true ;
+                    }
+                    
+
                     if (response.error) {
                         $('#popup').html("<div class='info'>" + response.error + "</div>");
                         window.location.href = 'error.php?info=' + response.error;
@@ -326,11 +335,6 @@ function updateStatus($newStatus)
                                                         }
                                                         $('#answer').html('<hr id="spliter">' + Answer);
                                                         $("#answer")[0].scrollIntoView();
-
-                                                        if (Answer.toLowerCase().includes('volcarona') || Answer.toLowerCase().includes('larvesta')) {
-                                                            $('body').append('<div class="flier1"><img src="images/larvesta.png"></div><div class="flier2"><img src="images/volcarona.png"></div>')
-                                                        }
-
 
                                                     } else {
                                                         $('#answer').html('Błąd pobierania odpowiedzi');

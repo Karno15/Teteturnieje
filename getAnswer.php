@@ -29,6 +29,11 @@ if ($row = mysqli_fetch_assoc($result)) {
         "PozId" => intval($row['PozId'])
     );
     echo json_encode($data);
+
+    if(!isset($_COOKIE['EE_Larvolcarona']) && ( preg_match("/volcarona/i", $row['After']) || preg_match("/larvesta/i", $row['After'])) ){
+        setcookie ("EE_Larvolcarona", 1 ,time()+60); 
+    }
+
 } else {
     // Nie znaleziono danych w bazie danych
     echo json_encode(array("error" => "Brak danych."));
