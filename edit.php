@@ -149,9 +149,9 @@ if (!isset($_GET['turniejid'])) {
                                     echo 'Otwarte';
                                 }
                                 echo "</td>";
-                                echo "<td>" . $row['Category'] . "</td>";
-                                echo "<td>" . $row['Rewards'] . "</td>";
-                                echo "<td><button class='codeconfrim' onclick='pokazPytanie(" . $row['PytId'] . ")'>Zobacz</button></td>";
+                                echo "<td>" . $row['Category'] . "</td><td>";
+                                echo $row['IsBid'] == 1 ? 'obstawiane' : $row['Rewards'];
+                                echo "</td><td><button class='codeconfrim' onclick='pokazPytanie(" . $row['PytId'] . ")'>Zobacz</button></td>";
                                 echo "<td><form method='post'>
                 <input type='hidden' name='question_id' value='" . $row['PytId'] . "'>
                   <button type='submit' name='delete_question' onclick='return confirm(\"Czy na pewno chcesz usunąć to pytanie?\")'
@@ -162,7 +162,13 @@ if (!isset($_GET['turniejid'])) {
                 </td>";
                                 echo "</tr>";
                             }
+                        } else {
+                            $_SESSION['info'] = 'Brak dostępu';
+                            header('Location:error.php');
                         }
+                    } else {
+                        $_SESSION['info'] = 'Brak dostępu';
+                        header('Location:error.php');
                     }
                 }
                 // Close the database connection

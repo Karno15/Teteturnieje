@@ -49,6 +49,7 @@ body {
   text-align: center;
   font-family: "JetBrains Mono", monospace;
   font-size: 15pt;
+  z-index: 3;
 }
 
 #main-container {
@@ -57,6 +58,7 @@ body {
   border-radius: 37px;
   font-size: 30pt;
   min-height: 80%;
+  z-index: 2;
 }
 
 #head {
@@ -277,6 +279,7 @@ body {
 }
 
 .info {
+  z-index: 6;
   position: fixed;
   top: 20%;
   left: 10%;
@@ -303,7 +306,7 @@ body {
   font-family: 'Work Sans', sans-serif;
   line-height: 250%;
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-  z-index: 2;
+  z-index: 5;
   max-height: 80%;
   overflow-y: scroll;
   padding-right: 17px;
@@ -324,7 +327,7 @@ body {
   /* Kolor tła */
   display: none;
   /* Początkowo ukryj tło */
-  z-index: 1;
+  z-index: 4;
   /* Wyżej niż inne elementy, ale niższy niż popup */
 }
 
@@ -426,6 +429,7 @@ table.datatable thead th:first-child {
 
 #correct {
   outline: 4px solid green;
+  z-index: 2;
 }
 
 #back,
@@ -643,4 +647,44 @@ table.datatable thead th:first-child {
     width: 100%;
     height: auto;
   }
+}
+
+
+@keyframes flyAnimation {
+  0% {
+      transform: translate(-10vw, -10vh);
+  }
+  5%, 20% {
+      transform: translate(110vw, 95vh );
+  }
+  50%, 70% {
+      transform: translate(110vw, -10vh);
+  }
+  75%, 95% {
+      transform: translate(-10vw, 110vh);
+  }
+  100% {
+      transform: translate(-10vw, -10vh);
+  }
+}
+
+.flier1,
+.flier2 {
+  pointer-events: none;
+  position: fixed;
+  top:-20vh;
+  left: -20vw;
+  animation: flyAnimation 25s linear infinite;
+  z-index: 1;
+  display: block;
+  width: 250px;
+  height: 250px;
+}
+
+.flier1 {
+  animation-delay: 0s;
+}
+
+.flier2 {
+  animation-delay: 1s;
 }

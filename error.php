@@ -27,6 +27,8 @@ if (isset($_GET['info'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="script.js"></script>
 </head>
+<div class="flier1"><img src="images/larvesta.png" width="200"/></div>
+<div class="flier2"><img src="images/volcarona.png" width="200"/></div>
 
 <body>
     <div class="popup-overlay"></div>

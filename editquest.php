@@ -15,19 +15,31 @@ if (!isset($_GET['turniejid'])) {
         require "connect.php";
         $category = $_POST["category"];
         $tresc = $_POST["tresc"];
-        $rewards = $_POST["rewards"];
         $type = $_POST["type"]; //1- zamknięte, 2- otwarte
         $after = $_POST["after"];
 
+        if (isset($_POST["isbid"])) {
+            $isbid = $_POST["isbid"];
+
+            if ($isbid == 'on') {
+                $isbid = 1;
+                $rewards = 0;
+            } elseif ($isbid == 'off')
+                $isbid = 0;
+        } else {
+            $isbid = 0;
+            $rewards = $_POST["rewards"];
+        }
 
         $sql =
-            "INSERT INTO `pytania`( `TurniejId`, `Quest`, `TypeId`, `Rewards`,`Category`,`After`) 
+            "INSERT INTO `pytania`( `TurniejId`, `Quest`, `TypeId`, `Rewards`,`Category`,`IsBid`,`After`) 
             VALUES (" .
             $_GET["turniejid"] .
             ",'" .
             $tresc .
-            "',$type, $rewards,'$category','$after')";
+            "',$type, $rewards,'$category',$isbid,'$after');";
 
+        echo $sql;
         //Perform a query, check for error
         if (!$conn->query($sql)) {
             $_SESSION['info'] = "Error description: " . $conn->error;
@@ -149,6 +161,8 @@ if (!isset($_GET['turniejid'])) {
                         </div><br><br>
                         Ilość punktów do zdobycia:
                         <input type='number' name='rewards' value='50' step=".01" class='codeconfrim'>
+                        <span> Obstawianie punktów: <input type='checkbox' name='isbid'></span>
+
                         <br><br>
                         Treść do wyświetlenia odpowiedzi:
                         <textarea class="summernote" name="after"></textarea>
@@ -173,6 +187,21 @@ if (!isset($_GET['turniejid'])) {
                     </form>
                     <script>
                         $(document).ready(function() {
+
+                            $('input[name="isbid"]').on('change', function() {
+                                rewards = $('input[name="rewards"]');
+                                if (rewards.attr('type') != 'text') {
+                                    rewards.attr('disabled', 'disabled');
+                                    rewards.attr('type', 'text');
+                                    rewards.attr('value', '(do obstawienia)');
+                                } else {
+                                    rewards.removeAttr('disabled');
+                                    rewards.attr('value', 50);
+                                    rewards.attr('type', 'number');
+                                }
+                            });
+
+
                             //otwieranie zamykanie zależnie pd typu formularza
                             $('select[name="type"]').on('change', function() {
                                 var opcja = $('select option:selected').text();

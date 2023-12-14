@@ -46,7 +46,7 @@ function updateStatus($newStatus)
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function() {    
         var isLeader = <?php echo json_encode($isLeader); ?>;
 
         var buzzsfx = new Audio("sounds/buzz.wav");
@@ -63,6 +63,7 @@ function updateStatus($newStatus)
         var catresponse = 0;
         var buzzresponse = 0;
         var turniejId = <?php echo $turniejid ?>;
+        var ee_shown = false;
 
         function checkTournamentStatus() {
             $.ajax({
@@ -70,6 +71,14 @@ function updateStatus($newStatus)
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
+                    
+                    //easter eggs
+                    if(getCookie('EE_Larvolcarona') && ee_shown==false){
+                        $('body').append('<img class="flier1" src="images/larvesta.png"><img class="flier2" src="images/volcarona.png">')
+                        ee_shown=true ;
+                    }
+                    
+
                     if (response.error) {
                         $('#popup').html("<div class='info'>" + response.error + "</div>");
                         window.location.href = 'error.php?info=' + response.error;
@@ -131,6 +140,7 @@ function updateStatus($newStatus)
                             location.reload() //for too much pressure
                         }
                         if (!shown) {
+                            shown = true;
                             $("#turniej").html("");
                             $.ajax({
                                 url: 'getCategory.php',
@@ -146,7 +156,9 @@ function updateStatus($newStatus)
                                             categoriesHTML += "<div class='category";
                                             (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
                                             categoriesHTML += "' data-pytid='" + response[i].PytId + "'>" + response[i].Category +
-                                                "<br><br>Pkt:" + response[i].Rewards + "</div>";
+                                                "<br><br>Pkt:"
+                                            categoriesHTML += response[i].IsBid ? "Do obstawienia" : response[i].Rewards;
+                                            categoriesHTML += "</div>";
                                         }
                                         categoriesHTML += "</div>";
                                         $('.startpopup').html(categoriesHTML);
@@ -268,12 +280,14 @@ function updateStatus($newStatus)
                                     var TypeId = quests.TypeId;
                                     var Rewards = quests.Rewards;
                                     var pozycje = quests.pozycje;
+                                    var isBid = quests.IsBid;
 
                                     pts = Rewards;
                                     if (PytId) {
 
-                                        questHTML = '<p>Kategoria: ' + Category + '<br>Punkty: ' + Rewards +
-                                            '</p><span id="quest">' + Quest + "</span>";
+                                        questHTML = '<p>Kategoria: ' + Category + '<br>Punkty: '
+                                        questHTML += isBid ? 'Do obstawienia' : Rewards;
+                                        questHTML += '</p><span id="quest">' + Quest + "</span>";
 
 
 
@@ -316,11 +330,12 @@ function updateStatus($newStatus)
                                                     var PozId = answer.PozId;
                                                     if (PytId) {
                                                         if (PozId) {
-                                                            $(".quest-option").eq(PozId-1).attr('id', 'correct');
+                                                            $(".quest-option").eq(PozId - 1).attr('id', 'correct');
                                                             //przypisz id correct do pozycji która jest prawidłowa
                                                         }
                                                         $('#answer').html('<hr id="spliter">' + Answer);
                                                         $("#answer")[0].scrollIntoView();
+
                                                     } else {
                                                         $('#answer').html('Błąd pobierania odpowiedzi');
                                                     }
