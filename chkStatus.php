@@ -4,6 +4,7 @@ session_start();
 
 require('connect.php');
 
+if (isset($_POST['userId']) && isset($_POST['turniejId'])) {
 $turniejId = $_SESSION['TurniejId'];
 
 // Wykonaj zapytanie w celu pobrania statusu turnieju i organizera
@@ -56,3 +57,6 @@ mysqli_close($conn);
 
 // Zwróć dane w formie JSON
 echo json_encode($response);
+}else {
+    echo "Błąd danych.";
+}

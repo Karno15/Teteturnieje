@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (validateUser($username, $password)) {
         // Redirect the user to a logged-in page
-        header("Location: host.php");
+        header("Location: logged.php");
         exit();
     } else {
         // Show an error message

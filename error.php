@@ -27,9 +27,6 @@ if (isset($_GET['info'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="script.js"></script>
 </head>
-<div class="flier1"><img src="images/larvesta.png" width="200"/></div>
-<div class="flier2"><img src="images/volcarona.png" width="200"/></div>
-
 <body>
     <div class="popup-overlay"></div>
     <div id="main-container">
@@ -44,28 +41,30 @@ if (isset($_GET['info'])) {
             if (!isset($_SESSION['userid'])) {
             ?>
                 <button id='login' class='codeconfrim'>Zaloguj się</button>
-                <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-                    LOGOWANIE
-                    <br>
-                    <form action="login.php" method="post">
-                        Login:<br>
-                        <input type="text" name="login" class='inputlogin' maxlength="12" required>
 
-                        <div id='definput'>
-                            Hasło:
-                            </br>
-                            <input type="password" name="pass" class='inputlogin' required>
-                        </div>
-
-                        <button type='submit' class='codeconfrim'>Loguj</button>
-                    </form>
-
-
-                </div><br>
             <?php
             }
 
             ?>
         </div>
+    </div>
+    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
+        LOGOWANIE
+        <br>
+        <form action="login.php" method="post">
+            Login:<br>
+            <input type="text" name="login" class='inputlogin' maxlength="12" required>
+
+            <div id='definput'>
+                Hasło:
+                </br>
+                <input type="password" name="pass" class='inputlogin' required>
+            </div>
+
+            <button type='submit' class='codeconfrim'>Loguj</button>
+        </form>
+
+
+    </div><br>
 
 </body>

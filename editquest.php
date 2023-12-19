@@ -5,10 +5,10 @@ session_start();
 
 if (!isset($_GET['turniejid'])) {
     $_SESSION['info'] = 'Nie znaleziono turnieju';
-    header('Location:error.php');
+    header('Location:host.php');
 } elseif (!isset($_SESSION['userid'])) {
     $_SESSION['info'] = 'Brak dostępu';
-    header('Location:error.php');
+    header('Location:index.php');
 } else {
 
     if (isset($_POST["submity"])) {

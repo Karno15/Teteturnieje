@@ -3,7 +3,7 @@
 session_start();
 
 require('connect.php');
-
+if (isset($_POST['userId']) && isset($_POST['turniejId'])) {
 $turniejId = $_POST['turniejId'];
 
 $sql = "SELECT u.Login, MIN(Buzztime) as 'buzz' FROM `buzzes` b 
@@ -34,3 +34,6 @@ mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 echo json_encode($response);
+}else {
+    echo "Błąd danych.";
+}
