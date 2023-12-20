@@ -34,7 +34,7 @@ if (isset($_GET['info'])) {
             <span>TETETURNIEJE</span>
         </div>
         <div id='content'>
-            Not found
+            error
 
             <?php
             //echo $_SESSION['userid'];

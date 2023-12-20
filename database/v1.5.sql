@@ -10,7 +10,7 @@ CREATE TABLE `id20965121_teteturnieje`.`masters` (
 
 
 INSERT INTO `masters`(`Login`, `Pass`, `OverallScore`, `Created`, `LastLogged`) 
-SELECT Login, Pass, OverallScore, Created, LastLogged from users where Pass is not null
+SELECT Login, Pass, OverallScore, Created, LastLogged from users where Pass is not null;
 
 
 ALTER TABLE `users` ADD `masterId` INT NULL DEFAULT NULL AFTER `Pass`;

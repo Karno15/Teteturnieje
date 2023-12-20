@@ -14,7 +14,7 @@ function validateUser($username, $password)
 
     $password = md5($password);
     // Query the database for the user
-    $query = "SELECT UserId,Login FROM users WHERE Login=UPPER('$username') AND Pass='$password'";
+    $query = "SELECT masterId,Login FROM masters WHERE Login=UPPER('$username') AND Pass='$password'";
     $result = mysqli_query($conn, $query);
 
     $resultrow = mysqli_fetch_row($result);

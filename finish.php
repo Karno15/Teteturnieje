@@ -14,6 +14,7 @@ require('connect.php');
 
 
 if (!isset($_GET['turniejId'])) {
+    $_SESSION['info'] = 'Nie znaleziono turnieju';
     header("Location: index.php");
 }
 

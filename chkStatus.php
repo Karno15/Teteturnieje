@@ -4,59 +4,59 @@ session_start();
 
 require('connect.php');
 
-if (isset($_POST['userId']) && isset($_POST['turniejId'])) {
-$turniejId = $_SESSION['TurniejId'];
+if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
+    $turniejId = $_SESSION['TurniejId'];
 
-// Wykonaj zapytanie w celu pobrania statusu turnieju i organizera
-$statusQuery = "SELECT t.Status, u.Login AS 'Creator', CurrentQuest FROM turnieje t
+    // Wykonaj zapytanie w celu pobrania statusu turnieju i organizera
+    $statusQuery = "SELECT t.Status, u.Login AS 'Creator', CurrentQuest FROM turnieje t
 JOIN users u ON u.UserId=t.Creator 
 JOIN pytania p ON p.TurniejId=t.TurniejId 
 WHERE t.TurniejId=?";
-$statusStmt = $conn->prepare($statusQuery);
-$statusStmt->bind_param("i", $turniejId);
-$statusStmt->execute();
-$statusResult = $statusStmt->get_result();
-$statusRow = $statusResult->fetch_assoc();
+    $statusStmt = $conn->prepare($statusQuery);
+    $statusStmt->bind_param("i", $turniejId);
+    $statusStmt->execute();
+    $statusResult = $statusStmt->get_result();
+    $statusRow = $statusResult->fetch_assoc();
 
-$statusStmt->close();
+    $statusStmt->close();
 
-$response = array();
+    $response = array();
 
-if ($statusResult->num_rows > 0) {
-    $status = $statusRow['Status'];
-    $creator = $statusRow['Creator'];
-    $currentQuest = $statusRow['CurrentQuest'];
+    if ($statusResult->num_rows > 0) {
+        $status = $statusRow['Status'];
+        $creator = $statusRow['Creator'];
+        $currentQuest = $statusRow['CurrentQuest'];
 
-    $participantsQuery = "SELECT Login, ROUND(CurrentScore, 3) as 'CurrentScore' FROM
+        $participantsQuery = "SELECT Login, ROUND(CurrentScore, 3) as 'CurrentScore' FROM
      turuserzy t JOIN users u ON u.UserId=t.UserId WHERE turniejid = ?";
-    $participantsStmt = $conn->prepare($participantsQuery);
-    $participantsStmt->bind_param("i", $turniejId);
-    $participantsStmt->execute();
-    $participantsResult = $participantsStmt->get_result();
-    $participants = array();
+        $participantsStmt = $conn->prepare($participantsQuery);
+        $participantsStmt->bind_param("i", $turniejId);
+        $participantsStmt->execute();
+        $participantsResult = $participantsStmt->get_result();
+        $participants = array();
 
-    while ($participantsRow = $participantsResult->fetch_assoc()) {
-        $participants[] = $participantsRow;
+        while ($participantsRow = $participantsResult->fetch_assoc()) {
+            $participants[] = $participantsRow;
+        }
+
+        $participantsStmt->close();
+
+        // Utwórz tablicę, która zawiera status i uczestników
+        $response = array(
+            "status" => $status,
+            "participants" => $participants,
+            "creator" => $creator,
+            "currentQuest" => $currentQuest
+        );
+    } else {
+        // Jeżeli brak danych, zwróć odpowiednią informację
+        $response['error'] = 'Brak pytań';
     }
 
-    $participantsStmt->close();
+    mysqli_close($conn);
 
-    // Utwórz tablicę, która zawiera status i uczestników
-    $response = array(
-        "status" => $status,
-        "participants" => $participants,
-        "creator" => $creator,
-        "currentQuest" => $currentQuest
-    );
+    // Zwróć dane w formie JSON
+    echo json_encode($response);
 } else {
-    // Jeżeli brak danych, zwróć odpowiednią informację
-    $response['error'] = 'Brak pytań';
-}
-
-mysqli_close($conn);
-
-// Zwróć dane w formie JSON
-echo json_encode($response);
-}else {
-    echo "Błąd danych.";
+    echo "Błąd danych";
 }

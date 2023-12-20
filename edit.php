@@ -14,8 +14,8 @@ require('connect.php');
 
 if (isset($_POST['formname'])) {
     $sql = "INSERT INTO `turnieje`( `TypeId`, `Creator`, `Name`, `Status`)
-select 1, m.masterId, '". $_POST['formname'] ."', 'N' from users u JOIN masters m ON
-u.masterId=m.masterId where m.masterId= ". $_SESSION['userid'] ."  limit 1; ";
+select 1, m.masterId, '" . $_POST['formname'] . "', 'N' from users u JOIN masters m ON
+u.masterId=m.masterId where m.masterId= " . $_SESSION['userid'] . "  limit 1; ";
 
     $execute = $conn->query($sql);
 
@@ -164,11 +164,11 @@ if (!isset($_GET['turniejid'])) {
                             }
                         } else {
                             $_SESSION['info'] = 'Brak dostępu';
-                            header('Location:error.php');
+                            header('Location:index.php');
                         }
                     } else {
                         $_SESSION['info'] = 'Brak dostępu';
-                        header('Location:error.php');
+                        header('Location:index.php');
                     }
                 }
                 // Close the database connection

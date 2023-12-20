@@ -2,7 +2,7 @@
 session_start();
 require('connect.php');
 
-if (!isset($_SESSION['TurniejId'])) {
+if (!isset($_SESSION['TurniejId'])|| !isset($_POST['turniejId'])) {
     // Nie udało się pobrać identyfikatora turnieju z sesji
     echo json_encode(array("error" => "Brak dostępu."));
     exit();

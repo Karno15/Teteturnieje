@@ -2,18 +2,6 @@
 
 session_start();
 
-if (isset($_SESSION['info'])) {
-    echo "<div class='info'>";
-    echo $_SESSION['info'];
-    echo "</div>";
-    unset($_SESSION['info']);
-}
-
-if (isset($_GET['info'])) {
-    echo "<div class='info'>";
-    echo $_GET['info'];
-    echo "</div>";
-}
 
 ?>
 
@@ -39,6 +27,20 @@ if (isset($_GET['info'])) {
 
             <?php
             if (!isset($_SESSION['userid'])) {
+
+                if (isset($_SESSION['info'])) {
+                    echo "<div class='info'>";
+                    echo $_SESSION['info'];
+                    echo "</div>";
+                    unset($_SESSION['info']);
+                }
+                
+                if (isset($_GET['info'])) {
+                    echo "<div class='info'>";
+                    echo $_GET['info'];
+                    echo "</div>";
+                }
+                
             ?>
                 <button id='login' class='codeconfrim'>Zaloguj się</button>
 

@@ -35,6 +35,8 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
 
             // Pobierz UserId nowo utworzonego użytkownika
             $userid = mysqli_insert_id($conn);
+
+            $usernamemaster = $masterid;
         } else {
             $sql = "UPDATE users SET LastLogged=CURRENT_TIMESTAMP() WHERE Login=?";
             $stmt = mysqli_prepare($conn, $sql);
@@ -47,6 +49,7 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
             $usernamemaster = $row['masterId'];
         }
         if ($usernamemaster != $masterid || $usernamemaster == null) {
+
             $_SESSION['info'] = "Nickname należy już do kogoś innego!";
             header("Location: logged.php");
         } else {
@@ -96,5 +99,5 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
         header("Location: logged.php");
     }
 } else {
-    echo "error";
+    echo "Błąd danych";
 }

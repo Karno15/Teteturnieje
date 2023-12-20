@@ -28,11 +28,11 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
     // Check if the TurniejId's creator matches the user's ID - if no do the error
     if ($masterId != $userId) {
       $_SESSION['info'] = 'Brak dostępu';
-      header('Location:error.php');
+      header('Location:index.php');
     }
   } else {
     $_SESSION['info'] = 'Brak dowiązania!';
-    header('Location:error.php');
+    header('Location:index.php');
   }
 }
 ?>

@@ -10,6 +10,30 @@ if (!isset($_GET['turniejid'])) {
     $_SESSION['info'] = 'Brak dostępu';
     header('Location:index.php');
 } else {
+    // Get the user's ID from the session
+    $userId = $_SESSION['userid'];
+
+    // Get the TurniejId from the query parameter
+    $turniejId = $_GET['turniejid'];
+
+    // Connect to the database
+    require "connect.php"; // Assuming you have a connection script
+
+    // Query to check if the TurniejId belongs to the user
+    $sql = "SELECT Creator FROM turnieje WHERE TurniejId = $turniejId";
+
+    $result = $conn->query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $creatorId = $row['Creator'];
+
+        // Check if the TurniejId's creator matches the user's ID - if yes do the rest
+        if ($creatorId != $userId) {
+            $_SESSION['info'] = 'Nie znaleziono turnieju';
+            header('Location:index.php');
+        }
+    }
 
     if (isset($_POST["submity"])) {
         require "connect.php";
