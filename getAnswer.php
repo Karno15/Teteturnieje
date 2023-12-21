@@ -31,7 +31,7 @@ if ($row = mysqli_fetch_assoc($result)) {
     echo json_encode($data);
 
     if(!isset($_COOKIE['EE_Larvolcarona']) && ( preg_match("/volcarona/i", $row['After']) || preg_match("/larvesta/i", $row['After'])) ){
-        setcookie ("EE_Larvolcarona", 1 ,time()+60); 
+        setcookie ("EE_Larvolcarona", 1 ,time()+30); 
     }
 
 } else {

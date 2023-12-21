@@ -40,21 +40,23 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                 <?php
 
                 require('connect.php');
-                $sql = "SELECT m.Login FROM masters m JOIN users u ON u.masterId=m.masterId WHERE u.userId= ? ";
+                $sql = "SELECT m.Login FROM masters m JOIN users u ON u.masterId=m.masterId WHERE u.masterId= ? ";
                 $stmt = mysqli_prepare($conn, $sql);
                 mysqli_stmt_bind_param($stmt, "s", $_SESSION['userid']);
                 mysqli_stmt_execute($stmt);
                 $result = mysqli_stmt_get_result($stmt);
                 $row = mysqli_fetch_assoc($result);
-                echo $row['Login'];
-
+                if (isset($row['Login'])) {
+                    echo $row['Login'];
+                }
                 if ($result->num_rows > 0 && $_SESSION['username'] != $row['Login']) {
-                    echo " (".$_SESSION['username'].")";
+                    echo "(" . $_SESSION['username'] . ")";
                 }
 
                 ?>
             </div>
             <div class='startpopup'>
+
                 <span id='titlejoin'>DOŁĄCZ DO TURNIEJU</span>
                 <div id='definput'>
                     Wpisz nickname:
@@ -69,6 +71,20 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                 <button type='submit' class='codeconfrim'>Zatwierdź</button>
                 </form>
             </div><br>
+            <div id='join-back-cont'></div><br>
+            <script>
+                $.ajax({
+                    url: 'chkStatus.php',
+                    type: 'GET',
+                    dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
+                    success: function(response) {
+                        $('#join-back-cont').html("<a href='joined.php' id='join-back'>TURNIEJ W TRAKCIE</a>");
+                    },
+                    error: function(response) {
+                        console.log('asd');
+                    }
+                });
+            </script>
             <button class="button-85" id='host'>Hostuj turniej</button>
         </div>
         <div>
@@ -89,7 +105,6 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 
             <button type='submit' class='codeconfrim'>Loguj</button>
         </form>
-
     </div><br>
     <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
 

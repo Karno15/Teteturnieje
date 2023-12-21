@@ -2,12 +2,23 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.5] - 2023-12-21
+
+### Changed
+
+- Big change to logging system
+- Added Logout button
+- You can go back to game after closing your tab
+- Security audit fixes
+- Fixed easter egg error
+- Styling fixes
+
 ## [1.4] - 2023-12-14
 
 ### Changed
 
 - Added bidding on question points
-- Changed the current system of Overal Score (not yet implemented)
+- Changed the current system of Overall Score (not yet implemented)
 - Easter egg! Good luck finding it c: 
 
 ## [1.3] - 2023-11-29
