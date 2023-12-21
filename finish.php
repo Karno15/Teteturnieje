@@ -243,10 +243,9 @@ $stmt->close();
                     <a class='button-85' href='index.php'>Powrót</a>
                     <?php
                     //echo $_SESSION['userid'];
-                    if (!isset($_SESSION['userid'])) {
-                    ?>
-                        <button id='login' class='codeconfrim'>Zaloguj się</button>
-                    <?php
+                    if (isset($_SESSION['userid'])) {
+                        unset($_SESSION['TurniejId']);
+                        unset($_SESSION['currentQuest']);
                     }
 
                     ?>

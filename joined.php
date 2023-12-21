@@ -10,18 +10,17 @@ if (isset($_SESSION['info'])) {
 }
 
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) || !isset($_SESSION['TurniejId'])) {
     $_SESSION['info'] = 'Brak dostępu';
     header('Location:index.php');
 }
 
 require('connect.php');
 $userId = isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null';
-$turniejid = $_SESSION['TurniejId'];
+$turniejid = isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null';
 $currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
-//echo $userId."+".$turniejid."+".$currentQuest.'+'.$isLeader;
 
 function updateStatus($newStatus)
 {
