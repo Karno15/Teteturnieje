@@ -8,10 +8,9 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
     $turniejId = $_SESSION['TurniejId'];
 
     // Wykonaj zapytanie w celu pobrania statusu turnieju i organizera
-    $statusQuery = "SELECT t.Status, u.Login AS 'Creator', CurrentQuest FROM turnieje t
-JOIN users u ON u.UserId=t.Creator 
-JOIN pytania p ON p.TurniejId=t.TurniejId 
-WHERE t.TurniejId=?";
+    $statusQuery = "SELECT t.Status, m.Login AS 'Creator', t.CurrentQuest FROM turnieje t
+    JOIN masters m ON m.masterId=t.Creator 
+    WHERE t.TurniejId= ?";
     $statusStmt = $conn->prepare($statusQuery);
     $statusStmt->bind_param("i", $turniejId);
     $statusStmt->execute();

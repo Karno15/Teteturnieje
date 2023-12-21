@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.6] - 2023-12-21
+
+### Hotfix for 1.5
+
+- Fixed Tournaments not starting
+
 ## [1.5] - 2023-12-21
 
 ### Changed
