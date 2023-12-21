@@ -12,7 +12,7 @@ if (isset($_SESSION['info'])) {
 
 if (!isset($_SESSION['username'])) {
     $_SESSION['info'] = 'Brak dostępu';
-    header('Location:error.php');
+    header('Location:index.php');
 }
 
 require('connect.php');

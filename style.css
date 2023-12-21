@@ -49,7 +49,7 @@ body {
   text-align: center;
   font-family: "JetBrains Mono", monospace;
   font-size: 15pt;
-  z-index: 3;
+  z-index: 5;
 }
 
 #main-container {
@@ -58,7 +58,7 @@ body {
   border-radius: 37px;
   font-size: 30pt;
   min-height: 80%;
-  z-index: 2;
+  z-index: 4;
 }
 
 #head {
@@ -306,11 +306,12 @@ body {
   font-family: 'Work Sans', sans-serif;
   line-height: 250%;
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-  z-index: 5;
+  z-index: 6;
   max-height: 80%;
   overflow-y: scroll;
   padding-right: 17px;
   box-sizing: content-box;
+  padding-left: 10px;
 }
 
 ::-webkit-scrollbar {
@@ -327,9 +328,56 @@ body {
   /* Kolor tła */
   display: none;
   /* Początkowo ukryj tło */
-  z-index: 4;
+  z-index: 6;
   /* Wyżej niż inne elementy, ale niższy niż popup */
 }
+
+
+#nickname{
+  position: relative;
+  font-size: 13pt;
+  font-weight: bolder;
+  left:40%;
+}
+
+
+
+#join-back {
+  color: black;
+  font-family: chooseFont;
+  padding: 20px;
+  font-size: 15pt;
+  font-weight: bolder;
+  margin-top: -10%;
+  margin-bottom: 4%;
+  text-decoration: none;
+  --c:  #0e9d2a; /* the color*/
+  
+  box-shadow: 0 0 0 .1em inset var(--c); 
+  --_g: linear-gradient(var(--c) 0 0) no-repeat;
+  background: 
+    var(--_g) calc(var(--_p,0%) - 100%) 0%,
+    var(--_g) calc(200% - var(--_p,0%)) 0%,
+    var(--_g) calc(var(--_p,0%) - 100%) 100%,
+    var(--_g) calc(200% - var(--_p,0%)) 100%;
+  background-size: 50.5% calc(var(--_p,0%)/2 + .5%);
+  outline-offset: .1em;
+  transition: background-size .4s, background-position 0s .4s;
+  background-color: rgb(116, 214, 207);
+  border-radius: 20px;
+  border: 3px solid black;
+}
+#join-back:hover {
+  background-color: rgb(116, 214, 207);
+  --_p: 100%;
+  transition: background-position .4s, background-size 0s;
+}
+#join-back:active {
+  box-shadow: 0 0 9e9q inset #0009; 
+  background-color: var(--c);
+  background-color: rgb(116, 214, 207);
+}
+
 
 .datatable {
   font-family: 'Work Sans', sans-serif;
@@ -687,4 +735,9 @@ table.datatable thead th:first-child {
 
 .flier2 {
   animation-delay: 1s;
+}
+
+.logout{
+  margin-top: -4.5%;
+  left: 40%;
 }

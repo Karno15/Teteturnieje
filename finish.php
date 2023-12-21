@@ -14,7 +14,8 @@ require('connect.php');
 
 
 if (!isset($_GET['turniejId'])) {
-    header("Location: error.php");
+    $_SESSION['info'] = 'Nie znaleziono turnieju';
+    header("Location: index.php");
 }
 
 $turniejId = $_GET['turniejId'];
@@ -186,8 +187,6 @@ $stmt->close();
             position: absolute;
             z-index: -1;
         }
-
-
     </style>
 </head>
 
@@ -209,7 +208,7 @@ $stmt->close();
                             <?php
                             while ($row = $result->fetch_assoc()) {
                                 if ($row['ScoreRank'] == 1) {
-                                echo '<div class="ribbon"></div>';
+                                    echo '<div class="ribbon"></div>';
                                 }
                                 echo  '<tr><td class="number">' . $row['ScoreRank'] . '</td>';
                                 echo  '<td class="name">' . $row['Login'] . '</td>';
@@ -229,46 +228,47 @@ $stmt->close();
                         </table>
                     </div>
                 </main>
-                    <?php
+                <?php
 
-                    if (isset($yourScore)) {
+                if (isset($yourScore)) {
+                ?>
+
+                    <div id='yourscore'>
+                    <?php
+                    echo "Twój wynik: <br>" . $yourScore;
+                }
                     ?>
 
-                <div id='yourscore'>
-                <?php
-                        echo "Twój wynik: <br>" . $yourScore;
+                    </div>
+                    <a class='button-85' href='index.php'>Powrót</a>
+                    <?php
+                    //echo $_SESSION['userid'];
+                    if (!isset($_SESSION['userid'])) {
+                    ?>
+                        <button id='login' class='codeconfrim'>Zaloguj się</button>
+                    <?php
                     }
-                ?>
-                
-                </div>
-                <a class='button-85' href='index.php'>Powrót</a>
-                <?php
-                //echo $_SESSION['userid'];
-                if (!isset($_SESSION['userid'])) {
-                ?>
-                    <button id='login' class='codeconfrim'>Zaloguj się</button>
-                    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-                        LOGOWANIE
-                        <br>
-                        <form action="login.php" method="post">
-                            Login:<br>
-                            <input type="text" name="login" class='inputlogin' maxlength="12" required>
 
-                            <div id='definput'>
-                                Hasło:
-                                </br>
-                                <input type="password" name="pass" class='inputlogin' required>
-                            </div>
-
-                            <button type='submit' class='codeconfrim'>Loguj</button>
-                        </form>
-
-
-                    </div><br>
-                <?php
-                }
-
-                ?>
+                    ?>
             </div>
+        </div>
+    </div>
+    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
+                            LOGOWANIE
+                            <br>
+                            <form action="login.php" method="post">
+                                Login:<br>
+                                <input type="text" name="login" class='inputlogin' maxlength="12" required>
 
+                                <div id='definput'>
+                                    Hasło:
+                                    </br>
+                                    <input type="password" name="pass" class='inputlogin' required>
+                                </div>
+
+                                <button type='submit' class='codeconfrim'>Loguj</button>
+                            </form>
+
+
+                        </div><br>
 </body>

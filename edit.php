@@ -14,10 +14,10 @@ require('connect.php');
 
 if (isset($_POST['formname'])) {
     $sql = "INSERT INTO `turnieje`( `TypeId`, `Creator`, `Name`, `Status`)
-VALUES (1," . $_SESSION['userid'] . ",'" . $_POST['formname'] . "','N')";
+select 1, m.masterId, '" . $_POST['formname'] . "', 'N' from users u JOIN masters m ON
+u.masterId=m.masterId where m.masterId= " . $_SESSION['userid'] . "  limit 1; ";
+
     $execute = $conn->query($sql);
-
-
 
     $query = "SELECT TurniejId FROM turnieje order by TurniejId desc limit 1";
     $result = mysqli_query($conn, $query);
@@ -34,10 +34,10 @@ VALUES (1," . $_SESSION['userid'] . ",'" . $_POST['formname'] . "','N')";
 
 if (!isset($_GET['turniejid'])) {
     $_SESSION['info'] = 'Nie znaleziono turnieju';
-    header('Location:error.php');
+    header('Location:host.php');
 } elseif (!isset($_SESSION['userid'])) {
     $_SESSION['info'] = 'Brak dostępu';
-    header('Location:error.php');
+    header('Location:index.php');
 } else {
     // Get the user's ID from the session
     $userId = $_SESSION['userid'];
@@ -164,11 +164,11 @@ if (!isset($_GET['turniejid'])) {
                             }
                         } else {
                             $_SESSION['info'] = 'Brak dostępu';
-                            header('Location:error.php');
+                            header('Location:index.php');
                         }
                     } else {
                         $_SESSION['info'] = 'Brak dostępu';
-                        header('Location:error.php');
+                        header('Location:index.php');
                     }
                 }
                 // Close the database connection

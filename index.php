@@ -2,12 +2,7 @@
 
 session_start();
 
-if (isset($_SESSION['info'])) {
-    echo "<div class='info'>";
-    echo $_SESSION['info'];
-    echo "</div>";
-    unset($_SESSION['info']);
-}
+
 ?>
 
 <head>
@@ -24,34 +19,37 @@ if (isset($_SESSION['info'])) {
 <body>
     <div class="popup-overlay"></div>
     <div id="main-container">
-
         <div id='head'>
             <span>TETETURNIEJE</span>
         </div>
         <div id='content'>
-            <div class='startpopup'>
-                <span id='titlejoin'>DOŁĄCZ DO TURNIEJU</span>
-                <div id='definput'>
-                    Wpisz nickname:
-                    <form action="join.php" method="post">
-                        <input type="text" class="inputy" name="login" maxlength="12" required>
-                </div>
-                <div id='definput'>
-                    Wpisz kod:
-                    </br>
-                    <input type="text" i class="inputy" name="gamecode" pattern="[0-9]{4}" maxlength="4" required>
-                </div>
-                <button type='submit' class='codeconfrim'>Zatwierdź</button>
-                </form>
-            </div><br>
-            <button class="button-85" <?php
-                                        if (isset($_SESSION['userid']))
-                                            echo "id='host'";
-                                        else
-                                            echo "id='login'";
-                                        ?>>Hostuj turniej</button>
-        </div>
-        <div>
+
+
+            <?php
+            if (!isset($_SESSION['userid'])) {
+
+                if (isset($_SESSION['info'])) {
+                    echo "<div class='info'>";
+                    echo $_SESSION['info'];
+                    echo "</div>";
+                    unset($_SESSION['info']);
+                }
+                
+                if (isset($_GET['info'])) {
+                    echo "<div class='info'>";
+                    echo $_GET['info'];
+                    echo "</div>";
+                }
+                
+            ?>
+                <button id='login' class='codeconfrim'>Zaloguj się</button>
+
+            <?php
+            }else{
+                header('Location:logged.php');
+            }
+
+            ?>
         </div>
     </div>
     <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
@@ -70,7 +68,7 @@ if (isset($_SESSION['info'])) {
             <button type='submit' class='codeconfrim'>Loguj</button>
         </form>
 
+
     </div><br>
-    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
 
 </body>
