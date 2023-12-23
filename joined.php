@@ -21,7 +21,6 @@ $turniejid = isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null';
 $currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
-
 function updateStatus($newStatus)
 {
     require('connect.php');
@@ -405,15 +404,14 @@ function updateStatus($newStatus)
                 $('#buzzer').css("border-color", "dimgray");
                 $('#buzzer').css("box-shadow", "3px 7px 0px 0px #4d4d4d");
 
-                var userId = <?php echo isset($_SESSION['userid']) ? $_SESSION['userid'] : 'null'; ?>;
+                var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
                 var turniejId = <?php echo isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null'; ?>;
-
                 // AJAX request to insert a record into the 'buzzes' table
                 $.ajax({
                     url: 'buzz.php',
                     type: 'POST',
                     data: {
-                        userId: userId,
+                        username: username,
                         turniejId: turniejId,
                     },
                     success: function(response) {
@@ -452,14 +450,18 @@ function updateStatus($newStatus)
 
         $(document).on('click', '.okbutton', function() {
             var login = $(this).data('login');
+            if(pts!=0){
             answerPoints(login, pts, 1, turniejId);
             checkTournamentStatus();
+            }
         });
 
         $(document).on('click', '.badbutton', function() {
             var login = $(this).data('login');
+            if(pts!=0){
             answerPoints(login, pts, 0, turniejId);
             checkTournamentStatus();
+            }
         });
 
         function updateStatusAjax(status, currentQuest) {

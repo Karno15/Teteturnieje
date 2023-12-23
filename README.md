@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.7] - 2023-12-23
+
+### Fixed
+
+- No tournament in progress after finishing tournament
+- Fixed Buzzing info not showing
+
 ## [1.6] - 2023-12-21
 
 ### Hotfix for 1.5
