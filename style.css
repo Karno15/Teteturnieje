@@ -351,8 +351,7 @@ body {
   margin-top: -10%;
   margin-bottom: 4%;
   text-decoration: none;
-  --c:  #0e9d2a; /* the color*/
-  
+  --c:  #0e269d; /* the color*/
   box-shadow: 0 0 0 .1em inset var(--c); 
   --_g: linear-gradient(var(--c) 0 0) no-repeat;
   background: 
@@ -371,6 +370,7 @@ body {
   background-color: rgb(116, 214, 207);
   --_p: 100%;
   transition: background-position .4s, background-size 0s;
+  color:white;
 }
 #join-back:active {
   box-shadow: 0 0 9e9q inset #0009; 

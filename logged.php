@@ -81,7 +81,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                         $('#join-back-cont').html("<a href='joined.php' id='join-back'>TURNIEJ W TRAKCIE</a>");
                     },
                     error: function(response) {
-                        console.log('asd');
+                        $('#join-back-cont').html("");
                     }
                 });
             </script>
