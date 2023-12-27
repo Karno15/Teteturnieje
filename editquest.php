@@ -20,9 +20,10 @@ if (!isset($_GET['turniejid'])) {
     require "connect.php"; // Assuming you have a connection script
 
     // Query to check if the TurniejId belongs to the user
-    $sql = "SELECT Creator FROM turnieje WHERE TurniejId = $turniejId";
-
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare("SELECT Creator FROM turnieje WHERE TurniejId = ?");
+    $stmt->bind_param("i", $turniejId);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
@@ -31,9 +32,52 @@ if (!isset($_GET['turniejid'])) {
         // Check if the TurniejId's creator matches the user's ID - if yes do the rest
         if ($creatorId != $userId) {
             $_SESSION['info'] = 'Nie znaleziono turnieju';
-            header('Location:index.php');
+            header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
+        }
+    } else {
+        $_SESSION['info'] = 'Nie znaleziono turnieju';
+        header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
+    }
+
+    if (isset($_GET["pytid"])) {
+        $pytid = $_GET["pytid"];
+        // Query to check if the PytId exists
+        $stmt = $conn->prepare("SELECT PytId, Quest, TypeId, Category, IsBid, Rewards, After FROM pytania WHERE TurniejId = ? AND PytId = ?");
+        $stmt->bind_param("ii", $turniejId, $pytid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $row = $result->fetch_assoc();
+
+        if ($result->num_rows == 0) {
+            $_SESSION['info'] = 'Nie znaleziono pytania';
+            echo $_SESSION['info'];
+            header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
+        }
+        $stmt->close();
+
+        if ($row['TypeId'] == 1) {
+            // Query to get positions
+            $stmtpoz = $conn->prepare("SELECT PozId,Value FROM `pytaniapoz`where PytId= ? ;");
+            $stmtpoz->bind_param("i", $pytid);
+            $stmtpoz->execute();
+            $resultpoz = $stmtpoz->get_result();
+            while ($rowpoz = mysqli_fetch_assoc($resultpoz)) {
+                //to do - make an array for positions and dont forget to decode md5
+            }
+
+            $stmtans = $conn->prepare("SELECT PozId FROM `prawiodpo` where PytId= ? ;");
+            $stmtans->bind_param("i", $pytid);
+            $stmtans->execute();
+            $resultans = $stmtans->get_result();
+
+            $rowans = $resultans->fetch_assoc();
+
+            $stmtans->close();
+            $stmtpoz->close();
         }
     }
+
 
     if (isset($_POST["submity"])) {
         require "connect.php";
@@ -55,47 +99,65 @@ if (!isset($_GET['turniejid'])) {
             $rewards = $_POST["rewards"];
         }
 
-        $sql =
-            "INSERT INTO `pytania`( `TurniejId`, `Quest`, `TypeId`, `Rewards`,`Category`,`IsBid`,`After`) 
-            VALUES (" .
-            $_GET["turniejid"] .
-            ",'" .
-            $tresc .
-            "',$type, $rewards,'$category',$isbid,'$after');";
+        // Prepare the INSERT statement
+        $stmt = $conn->prepare("INSERT INTO `pytania`(`TurniejId`, `Quest`, `TypeId`, `Rewards`, `Category`, `IsBid`, `After`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isidsis", $turniejId, $tresc, $type, $rewards, $category, $isbid, $after);
 
-        echo $sql;
+        $stmt->execute();
         //Perform a query, check for error
-        if (!$conn->query($sql)) {
-            $_SESSION['info'] = "Error description: " . $conn->error;
+        if ($stmt->error) {
+            $_SESSION['info'] = "Error description: " . $stmt->error;
         } else {
-            $pytanie_id = $conn->insert_id; // Get the inserted question ID
+            $pytanie_id = $stmt->insert_id; // Get the inserted question ID
             if ($type == 1) {
-                // For closed-type questions, insert answers into "pytaniapoz" table
+                // Prepare the INSERT statement for pytaniapoz table
+                $stmt1 = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
+
+                // Prepare the INSERT statement for prawiodpo table
+                $stmt2 = $conn->prepare("INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES (?, ?)");
+
+                // Loop through the options
                 $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
                 $i = 1;
                 foreach ($options as $op) {
-                    $odpowiedz = base64_encode(trim($op)); // Usuń ewentualne białe znaki na początku i końcu odpowiedzi;base64
+                    $odpowiedz = base64_encode(trim($op));
 
-                    // Wstaw odpowiedź do tabeli "pytaniapoz"
-                    $sql3 = "INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES ($pytanie_id, $i, '$odpowiedz')";
-                    $i++;
-                    if ($conn->query($sql3) === FALSE) {
-                        $_SESSION['info'] = $conn->error;
+                    // Bind parameters and execute the pytaniapoz INSERT statement
+                    $stmt1->bind_param("iss", $pytanie_id, $i, $odpowiedz);
+                    $stmt1->execute();
+
+                    // Check for errors in the pytaniapoz INSERT statement
+                    if ($stmt1->error) {
+                        $_SESSION['info'] = $stmt1->error;
+                        break; // Exit the loop if an error occurs
                     }
+
+                    // Check if this option is the correct answer
+                    $selectedAnswer = $_POST["answer"];
+                    $selectedAnswerId = substr($selectedAnswer, 1);
+
+                    // Bind parameters and execute the prawiodpo INSERT statement for the correct answer
+                    if ($i == $selectedAnswerId) {
+                        $stmt2->bind_param("ii", $pytanie_id, $i);
+                        $stmt2->execute();
+
+                        // Check for errors in the prawiodpo INSERT statement
+                        if ($stmt2->error) {
+                            $_SESSION['info'] = $stmt2->error;
+                            break; // Exit the loop if an error occurs
+                        }
+                    }
+
+                    $i++;
                 }
 
-                // Check which radio button was selected for the correct answer
-                $selectedAnswer = $_POST["answer"];
-                $selectedAnswerId = substr($selectedAnswer, 1); // Remove the first character "a" from the answer value
-
-                // Insert the selected answer and its value into the "prawiodpo" table
-                $sql4 = "INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES ($pytanie_id, $selectedAnswerId)";
-                if ($conn->query($sql4) === FALSE) {
-                    $_SESSION['info'] = $conn->error;
-                }
+                // Close prepared statements
+                $stmt1->close();
+                $stmt2->close();
             }
 
-            $conn->close();
+
+
             header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
             exit();
         }
@@ -128,7 +190,12 @@ if (!isset($_GET['turniejid'])) {
                 ?>
 
 
-                <b> NOWE PYTANIE</b>
+                <b>
+                    <?php
+                    echo isset($pytid) ? 'EDYCJA PYTANIA' : 'NOWE PYTANIE';
+                    ?>
+                </b>
+
 
                 <div class='startpopup'>
 
@@ -138,12 +205,12 @@ if (!isset($_GET['turniejid'])) {
                         <input type='text' name='category' style='width:50%;
     height:40px;
     font-size: 20pt;
-    '><br><br>
+    ' value='<?php echo isset($pytid) ? $row['Category'] : ''; ?>'><br><br>
                         Treść:
                         <textarea class="summernote" name="tresc"></textarea>
                         <script>
                             $('.summernote').summernote({
-                                placeholder: 'Umieść tutaj treść pytania',
+                                placeholder: ' ',
                                 tabsize: 2,
                                 height: 200,
                                 toolbar: [
@@ -184,7 +251,7 @@ if (!isset($_GET['turniejid'])) {
                             </div>
                         </div><br><br>
                         Ilość punktów do zdobycia:
-                        <input type='number' name='rewards' value='50' step=".01" class='codeconfrim'>
+                        <input type='number' name='rewards' step=".01" class='codeconfrim' value='50'>
                         <span> Obstawianie punktów: <input type='checkbox' name='isbid'></span>
 
                         <br><br>
@@ -192,7 +259,7 @@ if (!isset($_GET['turniejid'])) {
                         <textarea class="summernote" name="after"></textarea>
                         <script>
                             $('.summernote').summernote({
-                                placeholder: 'Umieść tutaj treść odpowiedzi',
+                                placeholder: ' ',
                                 tabsize: 2,
                                 height: 200,
                                 toolbar: [
@@ -207,21 +274,72 @@ if (!isset($_GET['turniejid'])) {
                             });
                         </script>
                         <br><br>
-                        <input type='submit' name='submity' value='Dodaj' class='codeconfrim'>
+                        <input type='submit' name='submity' value='Zapisz' class='codeconfrim'>
                     </form>
                     <script>
                         $(document).ready(function() {
+                            var pytid = getUrlParameter('pytid');
+
+                            if (pytid) {
+                                var tresc = <?php echo json_encode($row['Quest'] ?? ''); ?>;
+
+                                // If 'pytid' exists, set content based on the parameter value
+                                $('.note-editable').html(tresc);
+
+                                var pts = <?php echo json_encode($row['Rewards'] ?? ''); ?>;
+
+                                var answer = <?php echo json_encode($row['After'] ?? ''); ?>;
+
+                                // If 'pytid' exists, set content based on the parameter value
+                                $('.note-editable').eq(1).html(answer);
+
+                                var isBid = <?php echo json_encode($row['IsBid'] ?? ''); ?>;
+                                if (isBid) {
+                                    $('input[name="isbid"]').attr('checked', 'checked');
+                                    $('input[name="rewards"]').prop('type', 'text');
+                                    $('input[name="rewards"]').val('(do obstawienia)');
+                                } else {
+                                    $('input[name="rewards"]').val(pts);
+                                }
+
+                                var typeid = <?php echo json_encode($row['TypeId'] ?? ''); ?>;
+                                if (typeid == 2) {
+                                    $(".quest-options").hide();
+                                    $(".disclaimer").hide();
+                                    $("#questionForm input[type='radio']").removeAttr("required");
+                                    $("select[name='type'] option[value=2]").prop("selected", "selected")
+                                }
+
+                            } else {
+                                $('.note-placeholder').html('Umieść tutaj treść pytania');
+                                // If 'pytid' doesn't exist, set a placeholder content
+                                $('.note-placeholder').eq(1).html('Umieść tutaj treść odpowiedzi');
+                            }
 
                             $('input[name="isbid"]').on('change', function() {
-                                rewards = $('input[name="rewards"]');
-                                if (rewards.attr('type') != 'text') {
-                                    rewards.attr('disabled', 'disabled');
-                                    rewards.attr('type', 'text');
-                                    rewards.attr('value', '(do obstawienia)');
+                                var rewards = $('input[name="rewards"]');
+
+                                if (rewards.prop('type') !== 'text') {
+                                    // Switch to text input
+                                    rewards.prop('disabled', true);
+                                    rewards.prop('type', 'text');
+                                    rewards.val('(do obstawienia)');
                                 } else {
-                                    rewards.removeAttr('disabled');
-                                    rewards.attr('value', 50);
-                                    rewards.attr('type', 'number');
+                                    // Switch to number input
+                                    rewards.prop('disabled', false);
+                                    rewards.prop('type', 'number');
+
+
+                                    if (!pts) {
+                                        pts = 50;
+                                    }
+                                    // Set a default numeric value if 'pts' is not numeric
+                                    var numericPts = parseFloat(rewards.val());
+                                    if (!isNaN(numericPts)) {
+                                        rewards.val(numericPts);
+                                    } else {
+                                        rewards.val(pts); // Default value if 'pts' is not a valid number
+                                    }
                                 }
                             });
 
@@ -246,7 +364,7 @@ if (!isset($_GET['turniejid'])) {
                             // Funkcja do walidacji formularza
                             function validateForm(event) {
                                 // Sprawdzamy, czy treść edytora "summernote" nie jest pusta
-                                var content = $("#summernote").summernote('code').trim();
+                                var content = $(".note-editable").summernote('code').trim();
                                 if (content === '') {
                                     // Jeśli treść jest pusta, zatrzymujemy wysłanie formularza
                                     event.preventDefault();
