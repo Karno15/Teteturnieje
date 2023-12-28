@@ -56,26 +56,33 @@ if (!isset($_GET['turniejid'])) {
         }
         $stmt->close();
 
-        if ($row['TypeId'] == 1) {
-            // Query to get positions
-            $stmtpoz = $conn->prepare("SELECT PozId,Value FROM `pytaniapoz`where PytId= ? ;");
-            $stmtpoz->bind_param("i", $pytid);
-            $stmtpoz->execute();
-            $resultpoz = $stmtpoz->get_result();
-            while ($rowpoz = mysqli_fetch_assoc($resultpoz)) {
-                //to do - make an array for positions and dont forget to decode md5
-            }
 
-            $stmtans = $conn->prepare("SELECT PozId FROM `prawiodpo` where PytId= ? ;");
-            $stmtans->bind_param("i", $pytid);
-            $stmtans->execute();
-            $resultans = $stmtans->get_result();
+        $positions = array(); // Initialize an array to store positions
 
-            $rowans = $resultans->fetch_assoc();
+        // Query to get positions
+        $stmtpoz = $conn->prepare("SELECT PozId, Value FROM `pytaniapoz` WHERE PytId = ? order by PozId;");
+        $stmtpoz->bind_param("i", $pytid);
+        $stmtpoz->execute();
+        $resultpoz = $stmtpoz->get_result();
 
-            $stmtans->close();
-            $stmtpoz->close();
+        $stmtans = $conn->prepare("SELECT PozId FROM `prawiodpo` where PytId= ? ;");
+        $stmtans->bind_param("i", $pytid);
+        $stmtans->execute();
+        $resultans = $stmtans->get_result();
+
+        while ($rowpoz = mysqli_fetch_assoc($resultpoz)) {
+            $position = array(
+                'PozId' => $rowpoz['PozId'],
+                'Value' => base64_decode($rowpoz['Value']) // Assuming you want to base64 hash the 'Value'
+            );
+            $positions[] = $position; // Add the position to the array
         }
+
+        $rowans = $resultans->fetch_assoc();
+        $correct = $rowans['PozId'] ?? null;
+
+        $stmtans->close();
+        $stmtpoz->close();
     }
 
 
@@ -99,65 +106,172 @@ if (!isset($_GET['turniejid'])) {
             $rewards = $_POST["rewards"];
         }
 
-        // Prepare the INSERT statement
-        $stmt = $conn->prepare("INSERT INTO `pytania`(`TurniejId`, `Quest`, `TypeId`, `Rewards`, `Category`, `IsBid`, `After`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("isidsis", $turniejId, $tresc, $type, $rewards, $category, $isbid, $after);
+        if (!isset($pytid)) {
+            // Insert operation
+            $stmt = $conn->prepare("INSERT INTO `pytania`(`TurniejId`, `Quest`, `TypeId`, `Rewards`, `Category`, `IsBid`, `After`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isidsis", $turniejId, $tresc, $type, $rewards, $category, $isbid, $after);
+            $stmt->execute();
 
-        $stmt->execute();
-        //Perform a query, check for error
-        if ($stmt->error) {
-            $_SESSION['info'] = "Error description: " . $stmt->error;
-        } else {
-            $pytanie_id = $stmt->insert_id; // Get the inserted question ID
-            if ($type == 1) {
-                // Prepare the INSERT statement for pytaniapoz table
-                $stmt1 = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
+            // Check for errors
+            if ($stmt->error) {
+                $_SESSION['info'] = "Error description: " . $stmt->error;
+            } else {
+                $pytanie_id = $stmt->insert_id; // Get the inserted question ID
 
-                // Prepare the INSERT statement for prawiodpo table
-                $stmt2 = $conn->prepare("INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES (?, ?)");
+                if ($type == 1) {
+                    // Insert operation for pytaniapoz table
+                    $stmt1 = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
 
-                // Loop through the options
-                $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
-                $i = 1;
-                foreach ($options as $op) {
-                    $odpowiedz = base64_encode(trim($op));
+                    // Insert operation for prawiodpo table
+                    $stmt2 = $conn->prepare("INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES (?, ?)");
 
-                    // Bind parameters and execute the pytaniapoz INSERT statement
-                    $stmt1->bind_param("iss", $pytanie_id, $i, $odpowiedz);
-                    $stmt1->execute();
+                    // Loop through the options
+                    $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
+                    $i = 1;
+                    foreach ($options as $op) {
+                        $odpowiedz = base64_encode(trim($op));
+                        // Bind parameters and execute the pytaniapoz INSERT statement
+                        $stmt1->bind_param("iss", $pytanie_id, $i, $odpowiedz);
+                        $stmt1->execute();
 
-                    // Check for errors in the pytaniapoz INSERT statement
-                    if ($stmt1->error) {
-                        $_SESSION['info'] = $stmt1->error;
-                        break; // Exit the loop if an error occurs
-                    }
-
-                    // Check if this option is the correct answer
-                    $selectedAnswer = $_POST["answer"];
-                    $selectedAnswerId = substr($selectedAnswer, 1);
-
-                    // Bind parameters and execute the prawiodpo INSERT statement for the correct answer
-                    if ($i == $selectedAnswerId) {
-                        $stmt2->bind_param("ii", $pytanie_id, $i);
-                        $stmt2->execute();
-
-                        // Check for errors in the prawiodpo INSERT statement
-                        if ($stmt2->error) {
-                            $_SESSION['info'] = $stmt2->error;
+                        // Check for errors in the pytaniapoz INSERT statement
+                        if ($stmt1->error) {
+                            $_SESSION['info'] = $stmt1->error;
                             break; // Exit the loop if an error occurs
                         }
+
+                        // Check if this option is the correct answer
+                        $selectedAnswer = $_POST["answer"];
+                        $selectedAnswerId = substr($selectedAnswer, 1);
+
+                        // Bind parameters and execute the prawiodpo INSERT statement for the correct answer
+                        if ($i == $selectedAnswerId) {
+                            $stmt2->bind_param("ii", $pytanie_id, $i);
+                            $stmt2->execute();
+
+                            // Check for errors in the prawiodpo INSERT statement
+                            if ($stmt2->error) {
+                                $_SESSION['info'] = $stmt2->error;
+                                break; // Exit the loop if an error occurs
+                            }
+                        }
+
+                        $i++;
                     }
 
-                    $i++;
+                    // Close prepared statements
+                    $stmt1->close();
+                    $stmt2->close();
                 }
 
-                // Close prepared statements
-                $stmt1->close();
-                $stmt2->close();
+                header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
+                exit();
+            }
+        } else {
+            // Update operation
+            $stmtUpdate = $conn->prepare("UPDATE `pytania` SET `Quest` = ?, `TypeId` = ?, `Rewards` = ?, `Category` = ?, `IsBid` = ?, `After` = ? WHERE `PytId` = ?");
+            $stmtUpdate->bind_param("sidsisi", $tresc, $type, $rewards, $category, $isbid, $after, $pytid);
+            $stmtUpdate->execute();
+
+            if ($stmtUpdate->error) {
+                $_SESSION['info'] = "Error updating pytania table: " . $stmtUpdate->error;
+            } else {
+                // Check and update pytaniapoz table only for closed-type questions
+                if ($type == 1) {
+
+                    if ($positions > 0 && $correct) {
+                        // The array is not empty.
+
+                        // Update existing records in pytaniapoz for the current question
+                        $stmtUpdatePoz = $conn->prepare("UPDATE pytaniapoz SET `Value` = ? WHERE `PytId` = ? AND `PozId` = ?");
+
+                        $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
+
+                        foreach ($options as $i => $op) {
+                            $odpowiedz = base64_encode(trim($op));
+                            $inc = $i + 1;
+                            // Bind parameters and execute the pytaniapoz UPDATE statement
+                            $stmtUpdatePoz->bind_param("sii", $odpowiedz, $pytid, $inc);
+                            $stmtUpdatePoz->execute();
+
+                            // Check for errors in the pytaniapoz UPDATE statement
+                            if ($stmtUpdatePoz->error) {
+                                $_SESSION['info'] = "Error updating pytaniapoz records: " . $stmtUpdatePoz->error;
+                                break; // Exit the loop if an error occurs
+                            }
+                        }
+
+                        // Close the prepared statement for pytaniapoz
+                        $stmtUpdatePoz->close();
+                    } else {
+                        // Insert operation for pytaniapoz table
+                        $stmt1 = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
+
+                        // Insert operation for prawiodpo table
+                        $stmt2 = $conn->prepare("INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES (?, ?)");
+
+                        // Loop through the options
+                        $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
+                        $i = 1;
+                        foreach ($options as $op) {
+                            $odpowiedz = base64_encode(trim($op));
+                            // Bind parameters and execute the pytaniapoz INSERT statement
+                            $stmt1->bind_param("iss", $pytid, $i, $odpowiedz);
+                            $stmt1->execute();
+
+                            // Check for errors in the pytaniapoz INSERT statement
+                            if ($stmt1->error) {
+                                $_SESSION['info'] = $stmt1->error;
+                                break; // Exit the loop if an error occurs
+                            }
+
+                            // Check if this option is the correct answer
+                            $selectedAnswer = $_POST["answer"];
+                            $selectedAnswerId = substr($selectedAnswer, 1);
+
+                            // Bind parameters and execute the prawiodpo INSERT statement for the correct answer
+                            if ($i == $selectedAnswerId) {
+                                $stmt2->bind_param("ii", $pytid, $i);
+                                $stmt2->execute();
+
+                                // Check for errors in the prawiodpo INSERT statement
+                                if ($stmt2->error) {
+                                    $_SESSION['info'] = $stmt2->error;
+                                    break; // Exit the loop if an error occurs
+                                }
+                            }
+
+                            $i++;
+                        }
+
+                        // Close prepared statements
+                        $stmt1->close();
+                        $stmt2->close();
+                    }
+                }
+
+                // Update existing records in prawiodpo for the current question
+                $stmtUpdateOdp = $conn->prepare("UPDATE prawiodpo SET `PozId` = ? WHERE `PytId` = ?");
+                $selectedAnswer = $_POST["answer"];
+                $selectedAnswerId = substr($selectedAnswer, 1);
+
+                // Bind parameters and execute the prawiodpo UPDATE statement for the correct answer
+                $stmtUpdateOdp->bind_param("ii", $selectedAnswerId, $pytid);
+                $stmtUpdateOdp->execute();
+
+                // Check for errors in the prawiodpo UPDATE statement
+                if ($stmtUpdateOdp->error) {
+                    $_SESSION['info'] = "Error updating prawiodpo records: " . $stmtUpdateOdp->error;
+                }
+
+                // Close the prepared statement for prawiodpo
+                $stmtUpdateOdp->close();
             }
 
+            // Close the prepared statement for pytania
+            $stmtUpdate->close();
 
-
+            // Redirect to the edit page
             header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
             exit();
         }
@@ -276,6 +390,11 @@ if (!isset($_GET['turniejid'])) {
                         <br><br>
                         <input type='submit' name='submity' value='Zapisz' class='codeconfrim'>
                     </form>
+                    <?php
+                    echo '<script>';
+                    echo 'var positions = ' . json_encode($positions ?? '') . ';';
+                    echo '</script>';
+                    ?>
                     <script>
                         $(document).ready(function() {
                             var pytid = getUrlParameter('pytid');
@@ -285,6 +404,7 @@ if (!isset($_GET['turniejid'])) {
 
                                 // If 'pytid' exists, set content based on the parameter value
                                 $('.note-editable').html(tresc);
+                                $('.summernote').html(tresc);
 
                                 var pts = <?php echo json_encode($row['Rewards'] ?? ''); ?>;
 
@@ -292,6 +412,7 @@ if (!isset($_GET['turniejid'])) {
 
                                 // If 'pytid' exists, set content based on the parameter value
                                 $('.note-editable').eq(1).html(answer);
+                                $('.summernote').eq(1).html(answer);
 
                                 var isBid = <?php echo json_encode($row['IsBid'] ?? ''); ?>;
                                 if (isBid) {
@@ -308,6 +429,23 @@ if (!isset($_GET['turniejid'])) {
                                     $(".disclaimer").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
                                     $("select[name='type'] option[value=2]").prop("selected", "selected")
+                                } else {
+                                    // get correct pos
+                                    var correct = <?php echo json_encode($correct ?? ''); ?>;
+                                    // Access the positions array in JavaScript
+                                    for (var i = 0; i < positions.length; i++) {
+                                        var pozId = positions[i]['PozId'];
+                                        var Value = positions[i]['Value'];
+
+                                        // Assuming PozId starts from 1, adjust the index accordingly
+                                        $(".sinputy[name='option" + pozId + "']").val(Value);
+
+                                        if (pozId == correct) {
+                                            $("input[value='a" + pozId + "']").attr('checked', 'checked');
+                                        }
+                                    }
+
+
                                 }
 
                             } else {
@@ -359,27 +497,6 @@ if (!isset($_GET['turniejid'])) {
                                 };
                             });
 
-
-
-                            // Funkcja do walidacji formularza
-                            function validateForm(event) {
-                                // Sprawdzamy, czy treść edytora "summernote" nie jest pusta
-                                var content = $(".note-editable").summernote('code').trim();
-                                if (content === '') {
-                                    // Jeśli treść jest pusta, zatrzymujemy wysłanie formularza
-                                    event.preventDefault();
-                                    alert("Treść pytania nie może być pusta.");
-                                }
-                            }
-
-                            // Dodajemy event listener do formularza po kliknięciu przycisku "Wyślij"
-                            $("#questionForm").submit(validateForm);
-
-                            // Delegacja zdarzeń do przycisku "submit" dla dynamicznie tworzonego pola "summernote"
-                            $(document).on('click', '#questionForm :submit', function(event) {
-                                // Wywołujemy funkcję walidacji formularza
-                                validateForm(event);
-                            });
                         });
                     </script>
 

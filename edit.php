@@ -170,13 +170,13 @@ if (!isset($_GET['turniejid'])) {
                                 echo "</td>";
                                 echo "<td>" . $row['Category'] . "</td><td>";
                                 echo $row['IsBid'] == 1 ? 'obstawiane' : $row['Rewards'];
-                                echo "</td><td><img src='images/unowneyeclose.png' onclick='pokazPytanie(" . $row['PytId'] . ")' alt='unownclose' height='40px' width='40px'></button></td>";
-                                echo "<td> <a href='editquest.php?turniejid=" . $row['TurniejId'] . "&pytid=". $row['PytId'] ."'><img src='images/edit.png' alt='edit' height='40px' width='40px'</a></td>";
+                                echo "</td><td><img class='view' src='images/unowneyeclose.png' onclick='pokazPytanie(" . $row['PytId'] . ")' alt='unownclose' height='40px' width='40px'></button></td>";
+                                echo "<td> <a href='editquest.php?turniejid=" . $row['TurniejId'] . "&pytid=". $row['PytId'] ."'><img class='wrench' src='images/edit.png' alt='edit' height='40px' width='40px'</a></td>";
                                 echo "<td><form method='post'>
                 <input type='hidden' name='question_id' value='" . $row['PytId'] . "'>
                   <button type='submit' name='delete_question' onclick='return confirm(\"Czy na pewno chcesz usunąć to pytanie?\")'
                   style='background: none; border: none; cursor: pointer;'>
-                   <img src='images/trash.png' alt='trash' height='40px' width='40px'>
+                   <img class='trash' src='images/trash.png' alt='trash' height='40px' width='40px'>
                   </button>
                         </form>
                 </td>";

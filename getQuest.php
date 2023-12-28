@@ -13,7 +13,7 @@ if (isset($_GET['id'])) {
     $id_pytania = $conn->real_escape_string($id_pytania);
 
     // Wykonanie zapytania SQL z przygotowanym wyrażeniem
-    $sql = "SELECT * FROM `pytania` WHERE PytId = $id_pytania";
+    $sql = "SELECT Quest, After, TypeId FROM `pytania` WHERE PytId = $id_pytania";
     $result = $conn->query($sql);
 
     // Sprawdzenie, czy zapytanie powiodło się
@@ -29,6 +29,7 @@ if (isset($_GET['id'])) {
         if (isset($row1['Quest'])) {
             $after = $row1['After'];
         }
+        $typeId = $row1['TypeId'];
     }
 
     $sql = "SELECT pp.PytId,pp.PozId,Value,po.PozId as 'correct' FROM `pytaniapoz` pp LEFT JOIN prawiodpo po ON po.PytId=pp.PytId where pp.PytId=$id_pytania;";
@@ -44,7 +45,7 @@ if (isset($_GET['id'])) {
     // Wyświetlenie zawartości tabeli "pytania"
 
 
-    if (mysqli_num_rows($result1) > 0) {
+    if (mysqli_num_rows($result1) > 0 && $typeId==1) {
         echo    "<div class='quest-options'>";
         while ($row = $result1->fetch_assoc()) {
             echo    "<div class='quest-option' ";
