@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.8] - 2023-12-29
+
+### Changed
+
+- Added custom number of options for question
+- Increased the max characters for question Category
+- Added editing questions
+- Added some animations for buttons
+
 ## [1.7] - 2023-12-23
 
 ### Fixed

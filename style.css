@@ -397,8 +397,8 @@ table.datatable {
 table.datatable td,
 table.datatable th {
   border: 1px solid #AAAAAA;
-  padding: 6px 2px;
   color: black;
+  padding: 10px;
 }
 
 table.datatable tbody td {
@@ -766,14 +766,18 @@ table.datatable thead th:first-child {
 }
 
 .trash{
+  padding-top:10px;
+}
+
+.trash, .monke{
   cursor: pointer;
 }
 
-.trash:hover {
+.trash:hover, .monke:hover {
   animation: shake 0.5s;
   animation-iteration-count: 1;
 }
-.trash:active {
+.trash:active, .monke:active {
   transform: translateY(5px);
 }
 

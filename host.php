@@ -102,8 +102,8 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                 echo "<td>" . $row['Code'] . "</td>";
                 echo "<td>" . $row['Label'] . "<img class='ask' src='images/questionmark.svg' alt='questionmark' ";
                 echo "title='" . $row['Description'] . "' ></td>";
-                echo "<td> <a href='edit.php?turniejid=" . $row['TurniejId'] . "' ><img class='wrench' src='images/edit.png' alt='edit' height='40px' width='40px'</a></td>";
-                echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img class='trash' src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
+                echo "<td> <a href='edit.php?turniejid=" . $row['TurniejId'] . "' ><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'</a></td>";
+                echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img class='monke' src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
                 echo "</tr>";
               }
 
