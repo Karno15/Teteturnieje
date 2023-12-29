@@ -36,7 +36,7 @@ if ($row = mysqli_fetch_assoc($result)) {
         $sql2 = "SELECT pp.pytpozId,pp.pozId, pp.Value,p.Done FROM `pytaniapoz` pp
         JOIN `pytania` p ON pp.PytId=p.PytId
         JOIN `turnieje` t ON t.TurniejId=p.TurniejId
-        WHERE p.TurniejId = ? and p.PytId=t.CurrentQuest order by pp.pytpozId limit 4;";
+        WHERE p.TurniejId = ? and p.PytId=t.CurrentQuest order by pp.pytpozId;";
 
         $stmt2 = mysqli_prepare($conn, $sql2);
         mysqli_stmt_bind_param($stmt2, "i", $turniejId);
