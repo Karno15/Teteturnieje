@@ -6,10 +6,11 @@ All notable changes to this project will be documented in this file
 
 ### Changed
 
-- Added custom number of options for question
-- Increased the max characters for question Category
 - Added editing questions
 - Added some animations for buttons
+- Increased the max characters for question Category
+- Sound is played also when other players press buzzer
+- Added customable number of options for question
 
 ## [1.7] - 2023-12-23
 

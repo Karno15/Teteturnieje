@@ -202,6 +202,12 @@ function updateStatus($newStatus)
                                 if (buzzresponse != JSON.stringify(response)) {
 
                                     buzzresponse = JSON.stringify(response);
+                                    console.log(buzzresponse);
+                                    if(buzzresponse != '{"buzzes":[]}'){
+                                        buzzsfx.play();
+                                        
+                                    }
+
                                     var buzzesHTML = '<p id="aligned">Buzzers:<table class="datatables">';
                                     var firstBuzz = 0;
 
@@ -397,7 +403,6 @@ function updateStatus($newStatus)
 
         function buzz() {
             if (!pressed) {
-                buzzsfx.play();
                 $('#buzzer').prop('disabled', true);
                 pressed = true;
                 $('#buzzer').css("background", "gray");

@@ -78,6 +78,7 @@ if (!isset($_GET['turniejid'])) {
             $positions[] = $position; // Add the position to the array
         }
 
+        $numPositions = count($positions) ? count($positions) : null;
         $rowans = $resultans->fetch_assoc();
         $correct = $rowans['PozId'] ?? null;
 
@@ -125,8 +126,14 @@ if (!isset($_GET['turniejid'])) {
                     // Insert operation for prawiodpo table
                     $stmt2 = $conn->prepare("INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES (?, ?)");
 
-                    // Loop through the options
-                    $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
+                    $options = array();
+
+                    // Loop through the submitted form data
+                    for ($i = 1; isset($_POST["option{$i}"]); $i++) {
+                        // Add each option to the array
+                        $options[] = $_POST["option{$i}"];
+                    }
+
                     $i = 1;
                     foreach ($options as $op) {
                         $odpowiedz = base64_encode(trim($op));
@@ -181,28 +188,48 @@ if (!isset($_GET['turniejid'])) {
 
                     if ($positions > 0 && $correct) {
                         // The array is not empty.
+                        // Delete existing options
+                        $stmtDeleteOptions = $conn->prepare("DELETE FROM pytaniapoz WHERE PytId = ?");
+                        $stmtDeleteOptions->bind_param("i", $pytid);
+                        $stmtDeleteOptions->execute();
 
-                        // Update existing records in pytaniapoz for the current question
-                        $stmtUpdatePoz = $conn->prepare("UPDATE pytaniapoz SET `Value` = ? WHERE `PytId` = ? AND `PozId` = ?");
+                        // Check for errors in the delete statement
+                        if ($stmtDeleteOptions->error) {
+                            $_SESSION['info'] = "Error deleting pytaniapoz records: " . $stmtDeleteOptions->error;
+                        } else {
+                            // Insert new options
+                            $stmtInsertOptions = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
 
-                        $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
+                            $options = array();
 
-                        foreach ($options as $i => $op) {
-                            $odpowiedz = base64_encode(trim($op));
-                            $inc = $i + 1;
-                            // Bind parameters and execute the pytaniapoz UPDATE statement
-                            $stmtUpdatePoz->bind_param("sii", $odpowiedz, $pytid, $inc);
-                            $stmtUpdatePoz->execute();
-
-                            // Check for errors in the pytaniapoz UPDATE statement
-                            if ($stmtUpdatePoz->error) {
-                                $_SESSION['info'] = "Error updating pytaniapoz records: " . $stmtUpdatePoz->error;
-                                break; // Exit the loop if an error occurs
+                            // Loop through the submitted form data
+                            for ($i = 1; isset($_POST["option{$i}"]); $i++) {
+                                // Add each option to the array
+                                $options[] = $_POST["option{$i}"];
                             }
+
+                            $i = 1;
+                            foreach ($options as $op) {
+                                $odpowiedz = base64_encode(trim($op));
+                                // Bind parameters and execute the pytaniapoz INSERT statement
+                                $stmtInsertOptions->bind_param("iss", $pytid, $i, $odpowiedz);
+                                $stmtInsertOptions->execute();
+
+                                // Check for errors in the pytaniapoz INSERT statement
+                                if ($stmtInsertOptions->error) {
+                                    $_SESSION['info'] = "Error inserting pytaniapoz records: " . $stmtInsertOptions->error;
+                                    break; // Exit the loop if an error occurs
+                                }
+
+                                $i++;
+                            }
+
+                            // Close prepared statements
+                            $stmtInsertOptions->close();
                         }
 
-                        // Close the prepared statement for pytaniapoz
-                        $stmtUpdatePoz->close();
+                        // Close the delete statement for pytaniapoz
+                        $stmtDeleteOptions->close();
                     } else {
                         // Insert operation for pytaniapoz table
                         $stmt1 = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
@@ -210,8 +237,14 @@ if (!isset($_GET['turniejid'])) {
                         // Insert operation for prawiodpo table
                         $stmt2 = $conn->prepare("INSERT INTO prawiodpo (`PytId`, `PozId`) VALUES (?, ?)");
 
-                        // Loop through the options
-                        $options = array($_POST["option1"], $_POST["option2"], $_POST["option3"], $_POST["option4"]);
+                        $options = array();
+
+                        // Loop through the submitted form data
+                        for ($i = 1; isset($_POST["option{$i}"]); $i++) {
+                            // Add each option to the array
+                            $options[] = $_POST["option{$i}"];
+                        }
+
                         $i = 1;
                         foreach ($options as $op) {
                             $odpowiedz = base64_encode(trim($op));
@@ -345,25 +378,35 @@ if (!isset($_GET['turniejid'])) {
                             <option value='1'>Zamknięte</option>
                             <option value='2'>Otwarte</option>
                         </select><br>
-                        <span class='disclaimer'>Zaznacz prawdiłową odpowiedź klikając w checkbox*</span><br>
-                        <div class='quest-options'>
-                            <div class='quest-option'>Opcja 1: <br>
-                                <input type='radio' name='answer' value='a1' required>
-                                <input type='text' class='sinputy' name='option1' value='-'>
-                            </div>
-                            <div class='quest-option'>Opcja 2: <br>
-                                <input type='radio' name='answer' value='a2' required>
-                                <input type='text' class='sinputy' name='option2' value='-'>
-                            </div><br>
-                            <div class='quest-option'>Opcja 3: <br>
-                                <input type='radio' name='answer' value='a3' required>
-                                <input type='text' class='sinputy' name='option3' value='-'>
-                            </div>
-                            <div class='quest-option'>Opcja 4: <br>
-                                <input type='radio' name='answer' value='a4' required>
-                                <input type='text' class='sinputy' name='option4' value='-'>
-                            </div>
-                        </div><br><br>
+                        <span class='disclaimer'>Dodaj lub usuń liczbę opcji</span><br>
+
+                        <button type="button" id="addOptionBtn" class="codeconfrim">+</button>
+                        <button type="button" id="removeOptionBtn" class="codeconfrim">-</button>
+
+                        <!-- Container to hold the quest options -->
+                        <div class='quest-options' id='questOptionsContainer'>
+                            <!-- Initial quest options -->
+                            <?php
+                            // Set the desired number of options (customize as needed)
+                            $numOptions = $numPositions ?? 4;
+
+                            // Loop to generate HTML for each option
+                            for ($i = 1; $i <= $numOptions; $i++) {
+                                echo "
+        <div class='quest-option' id='option{$i}'>
+            Opcja {$i}:
+            <input type='radio' name='answer' value='a{$i}' required>
+            <input type='text' class='sinputy' name='option{$i}' value='-'>
+        </div>
+    ";
+                            }
+                            ?>
+
+                        </div>
+
+                        <br>
+                        <span class='disclaimer'>Zaznacz prawdiłową odpowiedź klikając w checkbox</span><br>
+                        <br><br>
                         Ilość punktów do zdobycia:
                         <input type='number' name='rewards' step=".01" class='codeconfrim' value='50'>
                         <span> Obstawianie punktów: <input type='checkbox' name='isbid'></span>
@@ -397,6 +440,34 @@ if (!isset($_GET['turniejid'])) {
                     ?>
                     <script>
                         $(document).ready(function() {
+                            var optionCounter = <?php echo json_encode($numPositions ?? 4); ?>; // Start with 4 initial options
+
+                            // Function to add a new quest option
+                            $("#addOptionBtn").click(function() {
+                                if (optionCounter < 30) {
+                                    optionCounter++;
+
+                                    // Set the HTML content for the new option
+                                    var newOptionHTML = `
+Opcja ${optionCounter}:
+<input type='radio' name='answer' value='a${optionCounter}' required>
+<input type='text' class='sinputy' name='option${optionCounter}' value='-'>
+`;
+
+                                    // Append the new option to the container
+                                    $("#questOptionsContainer").append(`<div class='quest-option' id='option${optionCounter}'>${newOptionHTML}</div>`);
+                                }
+                            });
+
+                            // Function to remove the last quest option
+                            $("#removeOptionBtn").click(function() {
+                                if (optionCounter > 2) {
+                                    // Remove the last option
+                                    $(`#option${optionCounter}`).remove();
+                                    optionCounter--;
+                                }
+                            });
+
                             var pytid = getUrlParameter('pytid');
 
                             if (pytid) {
@@ -427,6 +498,8 @@ if (!isset($_GET['turniejid'])) {
                                 if (typeid == 2) {
                                     $(".quest-options").hide();
                                     $(".disclaimer").hide();
+                                    $("#addOptionBtn").hide();
+                                    $("#removeOptionBtn").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
                                     $("select[name='type'] option[value=2]").prop("selected", "selected")
                                 } else {
@@ -488,11 +561,35 @@ if (!isset($_GET['turniejid'])) {
                                 if (opcja == 'Otwarte') {
                                     $(".quest-options").hide();
                                     $(".disclaimer").hide();
+                                    $("#addOptionBtn").hide();
+                                    $("#removeOptionBtn").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
 
                                 } else {
                                     $(".disclaimer").show();
                                     $(".quest-options").show()
+                                    $("#addOptionBtn").show();
+                                    $("#removeOptionBtn").show();
+
+                                    // Set the desired number of options
+                                    var optionCounter = <?php echo json_encode($numPositions ?? 4); ?>;
+                                    console.log(optionCounter)
+                                    // Initialize an empty string to store the options HTML
+                                    var optionsHTML = '';
+
+                                    // Loop to generate HTML for each option
+                                    for (var i = 1; i <= optionCounter; i++) {
+                                        optionsHTML += `
+        <div class='quest-option' id='option${i}'>
+            Opcja ${i}:
+            <input type='radio' name='answer' value='a${i}' required>
+            <input type='text' class='sinputy' name='option${i}' value='-'>
+        </div>
+    `;
+                                    }
+
+                                    // Set the HTML content of questOptionsContainer
+                                    $("#questOptionsContainer").html(optionsHTML);
                                     $("#questionForm input[type='radio']").prop("required", true);
                                 };
                             });
