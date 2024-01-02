@@ -3,44 +3,79 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['turniejId']) && isset($_POST['kodTurnieju']) && $_POST['kodTurnieju'] > 0 and $_POST['kodTurnieju'] <= 9999) {
-        require "connect.php"; // Załóżmy, że plik connect.php zawiera konfigurację połączenia z bazą danych
+        require "connect.php"; // Assuming that the connect.php file contains the database connection configuration
+
+        $turniejId = $_POST['turniejId'];
+        $kodTurnieju = $_POST['kodTurnieju'];
+        $userId = $_SESSION['userid'];
+
+        // Query to check if the TurniejId belongs to the user
+        $stmt = $conn->prepare("SELECT Creator FROM turnieje WHERE TurniejId = ?");
+        $stmt->bind_param("i", $turniejId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $creatorId = $row['Creator'];
+    
+            // Check if the TurniejId's creator matches the user's ID - if yes do the rest
+            if ($creatorId != $userId) {
+                echo 'Nie znaleziono turnieju';
+                exit();
+            }
+        } else {
+            echo 'Nie znaleziono turnieju';
+            exit();
+        }
 
 
-        $turniejId = mysqli_real_escape_string($conn, $_POST['turniejId']);
-        $kodTurnieju = mysqli_real_escape_string($conn, $_POST['kodTurnieju']);
+        // Check if the code already exists
+        $checkSql = "SELECT TurniejId FROM turnieje WHERE Code = ? AND TurniejId != ?";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("ii", $kodTurnieju, $turniejId);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
 
-
-        //sprawdzenie czy kod istnieje
-        $checkSql = "SELECT turniejId FROM turnieje WHERE Code = '$kodTurnieju' and TurniejId !=  $turniejId ";
-        $result = $conn->query($checkSql);
-
-        if ($result->num_rows > 0) {
+        if ($checkResult->num_rows > 0) {
             echo "Błąd: Taki kod już istnieje";
         } else {
+            // Check if there are questions
+            $countSql = "SELECT PytId FROM pytania WHERE TurniejId = ?";
+            $countStmt = $conn->prepare($countSql);
+            $countStmt->bind_param("i", $turniejId);
+            $countStmt->execute();
+            $resultcount = $countStmt->get_result();
 
-            //sprawdzenie czy pytania istnieją
-            $countSql = "SELECT PytId FROM pytania WHERE TurniejId = $turniejId;";
-            $resultcount = $conn->query($countSql);
             if ($resultcount->num_rows == 0) {
                 echo "Błąd: Brak pytań w turnieju";
             } else {
-                // Wykonaj zapytanie do bazy danych, aby zaktualizować kod turnieju
-                $sql = "UPDATE turnieje SET Code =$kodTurnieju, Status='A' WHERE TurniejId = $turniejId";
-                if ($conn->query($sql) === TRUE) {
-                    $_SESSION['leader'] = $turniejId; //znacznik sesji sugeruje turniej którego leaderem jest user
+                // Update the tournament code
+                $updateSql = "UPDATE turnieje SET Code = ?, Status = 'A' WHERE TurniejId = ?";
+                $updateStmt = $conn->prepare($updateSql);
+                $updateStmt->bind_param("ii", $kodTurnieju, $turniejId);
 
-                    $_SESSION['TurniejId'] = $_POST['turniejId'];
+                if ($updateStmt->execute()) {
+                    $_SESSION['leader'] = $turniejId;
+                    $_SESSION['TurniejId'] = $turniejId;
                     echo "success";
                 } else {
-                    echo "Nieprawidłowy kod turnieju. ";
-                    //for debbuging echo . $conn->error;
+                    echo "Nieprawidłowy kod turnieju.";
+                    // For debugging: echo $updateStmt->error;
                 }
+                $updateStmt->close();
             }
+            $countStmt->close();
         }
+
+        $stmt->close();
+        // Close the statements
+        $checkStmt->close();
+        // Close the connection
         $conn->close();
     } else {
         echo "Nieprawidłowy kod.";
     }
 } else {
-    echo  "Nieprawidłowa metoda żądania.";
+    echo "Nieprawidłowa metoda żądania.";
 }

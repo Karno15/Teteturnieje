@@ -61,6 +61,7 @@ $(document).ready(function () {
                 kodTurnieju: kodTurnieju
             },
             success: function (response) {
+                console.log(response);
                 if (response === 'success') {
                     // Ukrywamy popup
                     $('#popup').hide();

@@ -745,18 +745,17 @@ table.datatable thead th:first-child {
 .view {
   content:url("images/unowneyeclose.png");
   cursor: pointer;
-  transition: content 0.4s;
 }
 .view:hover {
   content:url("images/unowneyeopen.png");
 }
 .view:active {
-  content:url("images/unowneyeopen.png");
-  transform: translateY(5px);
+  content:url("images/unowneyeclosed.png");
+  transform: translateY(0px);
 }
 
 .wrench {
-  transition: transform .5s ease-in-out;
+  transition: transform .2s ease-in-out;
 }
 .wrench:hover {
   transform: rotate(-60deg);

@@ -202,7 +202,6 @@ function updateStatus($newStatus)
                                 if (buzzresponse != JSON.stringify(response)) {
 
                                     buzzresponse = JSON.stringify(response);
-                                    console.log(buzzresponse);
                                     if(buzzresponse != '{"buzzes":[]}'){
                                         buzzsfx.play();
                                         
