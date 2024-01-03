@@ -638,9 +638,10 @@ table.datatable thead th:first-child {
 .category,
 .category-done,
 .category-none {
+  padding: 10px;
   font-size: medium;
   overflow-wrap: break-word;
-  width: 182px;
+  width: 80%;
   height: 100px;
   margin: 5px;
   background-color: rgb(27, 226, 206);
@@ -751,7 +752,7 @@ table.datatable thead th:first-child {
 }
 .view:active {
   content:url("images/unowneyeclosed.png");
-  transform: translateY(0px);
+  transform: translateY(3px);
 }
 
 .wrench {
@@ -792,4 +793,15 @@ table.datatable thead th:first-child {
   80% { transform: translate(-1px, -1px) rotate(1deg); }
   90% { transform: translate(1px, 2px) rotate(0deg); }
   100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+.gridpopup {
+  min-width: 100%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* Default 3 columns, you can customize this */
+  gap: 10px;
+  margin: 10px;
 }

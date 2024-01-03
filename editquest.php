@@ -573,7 +573,6 @@ Opcja ${optionCounter}:
 
                                     // Set the desired number of options
                                     var optionCounter = <?php echo json_encode($numPositions ?? 4); ?>;
-                                    console.log(optionCounter)
                                     // Initialize an empty string to store the options HTML
                                     var optionsHTML = '';
 

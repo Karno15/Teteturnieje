@@ -148,8 +148,8 @@ function updateStatus($newStatus)
                                     if (catresponse != JSON.stringify(response)) {
 
                                         catresponse = JSON.stringify(response);
-                                        categoriesHTML = "Wybieranie pytania<br><div id='categories-container'>";
-
+                                        categoriesHTML = 'Wybieranie pytania<br><div class="gridpopup"><div id="grid-container" class="grid-container">';
+                                        
                                         for (var i = 0; i < response.length; i++) {
                                             categoriesHTML += "<div class='category";
                                             (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
@@ -158,9 +158,9 @@ function updateStatus($newStatus)
                                             categoriesHTML += response[i].IsBid ? "Do obstawienia" : response[i].Rewards;
                                             categoriesHTML += "</div>";
                                         }
-                                        categoriesHTML += "</div>";
+                                        categoriesHTML += "</div></div>";
                                         $('.startpopup').html(categoriesHTML);
-
+                                        $('#grid-container').css('grid-template-columns', 'repeat(' + response[0].Columns + ', 1fr)');
                                         if (isLeader) {
 
                                             $(document).on('click', '.category', function() {
