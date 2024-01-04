@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.9] - 2024-01-04
+
+### Changed
+
+- Fixed background overlay when popups are showing
+- Added loading screen for editing question
+- Added optimization for various things
+- Added ordering questions and customable number of columns
+
 ## [1.8] - 2023-12-29
 
 ### Changed

@@ -50,7 +50,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 </head>
 
 <body>
-
+  <div class="popup-overlay"></div>
   <div id="main-container">
     <div id='head'>
       <span>TETETURNIEJE</span>
@@ -117,9 +117,10 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
           <img src='images/questionmark.svg' alt='questionmark' height=10 width=10> przy danym statusie aby zobaczyć jego opis.</span>
       </div>
       <button onclick="location.href='logged.php'" id='back' class='codeconfrim'>
-                            POWRÓT</button>
+        POWRÓT</button>
       <div>
       </div>
     </div>
+  </div>
+  <div id='popup'></div>
 </body>
-<div id='popup'></div>

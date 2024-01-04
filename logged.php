@@ -68,20 +68,22 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                     </br>
                     <input type="text" i class="inputy" name="gamecode" pattern="[0-9]{4}" maxlength="4" required>
                 </div>
-                <button type='submit' class='codeconfrim'>Zatwierdź</button>
+                <button type='submit' class='codeconfrim'>Dołącz!</button>
                 </form>
             </div><br>
-            <div id='join-back-cont'></div><br>
+            <div id='join-back-cont'></div>
             <script>
                 $.ajax({
                     url: 'chkStatus.php',
                     type: 'GET',
                     dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                     success: function(response) {
-                        $('#join-back-cont').html("<a href='joined.php' id='join-back'>TURNIEJ W TRAKCIE</a>");
+                        $('#join-back-cont').html("<a href='joined.php' id='join-back'>TURNIEJ W TRAKCIE</a><br><br>");
+                        $('#join-back-cont').show();
                     },
                     error: function(response) {
                         $('#join-back-cont').html("");
+                        $('#join-back-cont').hide();
                     }
                 });
             </script>

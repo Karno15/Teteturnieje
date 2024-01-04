@@ -2,11 +2,18 @@
 
 session_start();
 
+
 if (isset($_SESSION['info'])) {
     echo "<div class='info'>";
     echo $_SESSION['info'];
     echo "</div>";
     unset($_SESSION['info']);
+}
+
+if (isset($_GET['info'])) {
+    echo "<div class='info'>";
+    echo $_GET['info'];
+    echo "</div>";
 }
 
 
@@ -63,24 +70,24 @@ if (!isset($_GET['turniejid'])) {
 
             if (isset($_POST["delete_question"])) {
                 $question_id = $_POST["question_id"];
-            
+
                 // Prepare the DELETE statement for pytania table
                 $stmt1 = $conn->prepare("DELETE FROM pytania WHERE PytId = ?");
                 $stmt1->bind_param("i", $question_id);
-                
+
                 // Prepare the DELETE statement for pytaniapoz table
                 $stmt2 = $conn->prepare("DELETE FROM pytaniapoz WHERE PytId = ?");
                 $stmt2->bind_param("i", $question_id);
-                
+
                 // Prepare the DELETE statement for prawiodpo table
                 $stmt3 = $conn->prepare("DELETE FROM prawiodpo WHERE PytId = ?");
                 $stmt3->bind_param("i", $question_id);
-            
+
                 // Execute the DELETE statements
                 $stmt1->execute();
                 $stmt2->execute();
                 $stmt3->execute();
-            
+
                 // Check for errors in the prepared statements
                 if ($stmt1->error || $stmt2->error || $stmt3->error) {
                     $_SESSION['info'] = "Error description: " . $stmt1->error . $stmt2->error . $stmt3->error;
@@ -89,13 +96,13 @@ if (!isset($_GET['turniejid'])) {
                     header("Location: edit.php?turniejid=" . $_GET["turniejid"]);
                     exit();
                 }
-            
+
                 // Close prepared statements
                 $stmt1->close();
                 $stmt2->close();
                 $stmt3->close();
             }
-            
+
 
 ?>
 
@@ -122,11 +129,16 @@ if (!isset($_GET['turniejid'])) {
 
 
 
-                        <div class='startpopup'>
+                        <div class='startpopup' style='flex-direction: row; justify-content: space-around'>
                             <?php
                             echo "<form action='editquest.php?turniejid=" . $_GET['turniejid'] . "' method='POST'>";
                             ?>
-                            <br> <button class="button-85" type='submit' margin-top='0px'>Dodaj nowe pytanie</button>
+                            <button class="button-85" type='submit' margin-top='0px'>Dodaj nowe pytanie</button>
+                            </form>
+                            <?php
+                            echo "<form action='editgrid.php?turniejid=" . $_GET['turniejid'] . "' method='POST' >";
+                            ?>
+                            <button class="button-85" type='submit' margin-top='0px'>Edytuj ułożenie pytań</button>
                             </form>
                         </div><br>
 
@@ -171,7 +183,7 @@ if (!isset($_GET['turniejid'])) {
                                 echo "<td>" . $row['Category'] . "</td><td>";
                                 echo $row['IsBid'] == 1 ? 'obstawiane' : $row['Rewards'];
                                 echo "</td><td><img class='view' src='images/unowneyeclose.png' onclick='pokazPytanie(" . $row['PytId'] . ")' alt='unownclose' height='40px' width='40px'></button></td>";
-                                echo "<td> <a href='editquest.php?turniejid=" . $row['TurniejId'] . "&pytid=". $row['PytId'] ."'><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'</a></td>";
+                                echo "<td> <a href='editquest.php?turniejid=" . $row['TurniejId'] . "&pytid=" . $row['PytId'] . "'><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'</a></td>";
                                 echo "<td><form method='post'>
                 <input type='hidden' name='question_id' value='" . $row['PytId'] . "'>
                   <button type='submit' name='delete_question' onclick='return confirm(\"Czy na pewno chcesz usunąć to pytanie?\")'

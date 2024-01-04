@@ -21,11 +21,14 @@ if (isset($_POST['username']) && isset($_POST['turniejId'])) {
         // Execute the statement
         $execute = mysqli_stmt_execute($stmt);
 
-        if ($execute) {
+        // Check the number of affected rows
+        $affectedRows = mysqli_stmt_affected_rows($stmt);
+
+        if ($execute && $affectedRows > 0) {
             echo "Buzzed!";
         } else {
-            // Handle any other errors
-            echo "Error buzz other!";
+            // Handle the case where no rows are affected
+            echo "You cant buzz on this tournament!";
         }
 
         // Close the statement

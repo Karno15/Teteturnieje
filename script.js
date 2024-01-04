@@ -44,7 +44,7 @@ $(document).ready(function () {
             '<input  type="number" id="kodTurnieju" class="codeconfrim" placeholder="Wprowadź czterocyfrowy kod turnieju" min="1000" max="9999">' +
             '<br><button id="zapiszKod" data-turniejid=' + turniejId + ' class="codeconfrim"> Zapisz kod i rozpocznij turniej</button>' +
             '</p>');
-
+        $('.popup-overlay').show();
         $('#popup').show(); // Pokazujemy popup
     });
 
@@ -100,6 +100,7 @@ $(document).ready(function () {
 
 function pokazPytanie(id) {
     var popup = $("#popup");
+    $('.popup-overlay').show();
     $("#popup").show();
     popup.html('<button id="closeButton" class="codeconfrim">Zamknij</button><br>');
     // Wyświetl popup
@@ -136,6 +137,7 @@ function sleep(ms) {
 // Add click event for the close button using event delegation
 $(document).on('click', '#closeButton', function () {
     $('#popup').hide(); //schowaj popup
+    $('.popup-overlay').hide();
 });
 
 function formatDuration(duration) {
