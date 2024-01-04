@@ -2,11 +2,18 @@
 
 session_start();
 
+
 if (isset($_SESSION['info'])) {
     echo "<div class='info'>";
     echo $_SESSION['info'];
     echo "</div>";
     unset($_SESSION['info']);
+}
+
+if (isset($_GET['info'])) {
+    echo "<div class='info'>";
+    echo $_GET['info'];
+    echo "</div>";
 }
 
 
@@ -122,11 +129,11 @@ if (!isset($_GET['turniejid'])) {
 
 
 
-                        <div class='startpopup'  style='flex-direction: row; justify-content: space-around'>
+                        <div class='startpopup' style='flex-direction: row; justify-content: space-around'>
                             <?php
                             echo "<form action='editquest.php?turniejid=" . $_GET['turniejid'] . "' method='POST'>";
                             ?>
-                             <button class="button-85" type='submit' margin-top='0px'>Dodaj nowe pytanie</button>
+                            <button class="button-85" type='submit' margin-top='0px'>Dodaj nowe pytanie</button>
                             </form>
                             <?php
                             echo "<form action='editgrid.php?turniejid=" . $_GET['turniejid'] . "' method='POST' >";

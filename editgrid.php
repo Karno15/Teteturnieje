@@ -50,8 +50,6 @@ if (!isset($_GET['turniejid'])) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
         <link rel="stylesheet" href="style.css">
         <script src="script.js"></script>
         <meta charset="UTF-8">
@@ -78,7 +76,7 @@ if (!isset($_GET['turniejid'])) {
                     EDYTUJ UŁOŻENIE
                 </b>
                 <div class="startpopup">
-                     Ilość kolumn <input type="number" id="columnInput"  min="1">
+                    Ilość kolumn <input type="number" id="columnInput" min="1">
                     <button onclick="updateGrid()" class='codeconfrim'>Ustaw kolumny</button>
                     <div class="gridpopup">
                         <div id="grid-container" class="grid-container"></div>
@@ -101,34 +99,43 @@ if (!isset($_GET['turniejid'])) {
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
-                                    gridContainer.empty(); // Clear existing grid items
+                                    if (response.length > 0 && response[0].hasOwnProperty('Columns')) {
+                                        gridContainer.empty(); // Clear existing grid items
 
-                                    // Calculate the default number of columns based on the response length
-                                    var defaultColumns = Math.min(response[0].Columns, maxColumns);
+                                        // Calculate the default number of columns based on the response length
+                                        var defaultColumns = Math.min(response[0].Columns, maxColumns);
 
-                                    for (var i = 0; i < response.length; i++) {
-                                        var gridItem = $("<div class='category' style='cursor:move;' data-pytid='" + response[i].PytId + "'>" + response[i].Category + "<br><br>Pkt:" + (response[i].IsBid ? response[i].Rewards : 'do obstawienia' )  + "</div>");
-                                        gridContainer.append(gridItem);
-                                    }
-
-                                    // Make grid items draggable and sortable
-                                    gridContainer.sortable({
-                                        items: '.category',
-                                        cursor: 'move',
-                                        tolerance: 'pointer',
-                                        update: function(event, ui) {
-                                            saveGridOrder(defaultColumns); // Pass the number of columns to saveGridOrder
+                                        for (var i = 0; i < response.length; i++) {
+                                            var gridItem = $("<div class='category' style='cursor:move;' data-pytid='" + response[i].PytId + "'>" + response[i].Category + "<br><br>Pkt:" + (response[i].IsBid ? 'do obstawienia' : response[i].Rewards) + "</div>");
+                                            gridContainer.append(gridItem);
                                         }
-                                    });
-                                    $('#columnInput').val(defaultColumns);
-                                    // Set the grid columns based on user input or default, limited to the maximum
-                                    gridContainer.css('grid-template-columns', 'repeat(' + defaultColumns + ', 1fr)');
+
+                                        // Make grid items draggable and sortable
+                                        gridContainer.sortable({
+                                            items: '.category',
+                                            cursor: 'move',
+                                            tolerance: 'pointer',
+                                            update: function(event, ui) {
+                                                saveGridOrder(defaultColumns); // Pass the number of columns to saveGridOrder
+                                            }
+                                        });
+                                        $('#columnInput').val(defaultColumns);
+                                        // Set the grid columns based on user input or default, limited to the maximum
+                                        gridContainer.css('grid-template-columns', 'repeat(' + defaultColumns + ', 1fr)');
+                                    } else {
+                                        console.error('Error: Invalid response format or empty response.');
+                                        window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent('Error: Brak danych.');
+                                    }
                                 },
                                 error: function(error) {
                                     // Handle errors here
                                     console.error('Error:', error);
+
+                                    // Redirect to the previous page with error information
+                                    window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent('Error: Brak danych.');
                                 }
                             });
+
                         }
 
                         function saveGridOrder(columns) {

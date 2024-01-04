@@ -318,13 +318,19 @@ if (!isset($_GET['turniejid'])) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+        <link href="summernote/summernote-lite.min.css" rel="stylesheet">
+        <script src="summernote/summernote-lite.min.js"></script>
+        <link rel="stylesheet" href="summernote/summernote-audio.css">
+        <script type="text/javascript" src="summernote/summernote-audio.js"></script>
         <link rel="stylesheet" href="style.css">
         <script src="script.js"></script>
     </head>
 
     <body>
+        <div id="popup">Ładowanie pytania...<br>
+            <div class='loading-spinner'></div>
+        </div>
+        <div class='popup-overlay'></div>
         <div id="main-container">
             <div id='head'>
                 <span>TETETURNIEJE</span>
@@ -366,12 +372,15 @@ if (!isset($_GET['turniejid'])) {
                                     ['color', ['color']],
                                     ['para', ['ul', 'ol', 'paragraph']],
                                     ['table', ['table']],
-                                    ['insert', ['link', 'picture', 'video']],
-                                    ['view', ['fullscreen', 'codeview', ]]
-                                ]
+                                    ['insert', ['link', 'picture', 'video', 'audio']],
+                                    ['view', ['fullscreen', 'codeview', ]],
+                                ],
+                                dialogsInBody: true
                             });
                         </script>
                         <br>
+                        <span class="disclaimer">Tip: Dźwięki audio można przesyłać tylko w formacie <b>mp3</b>.<br>
+                                Zmień rozszerzenie pliku na mp3 przed jego zaimportowaniem. </span>
                         <hr>
                         Typ pytania:
                         <select name='type' class='codeconfrim'>
@@ -425,9 +434,10 @@ if (!isset($_GET['turniejid'])) {
                                     ['color', ['color']],
                                     ['para', ['ul', 'ol', 'paragraph']],
                                     ['table', ['table']],
-                                    ['insert', ['link', 'picture', 'video']],
+                                    ['insert', ['link', 'picture', 'video', 'audio']],
                                     ['view', ['fullscreen', 'codeview', ]]
-                                ]
+                                ],
+                                dialogsInBody: true
                             });
                         </script>
                         <br><br>
@@ -439,7 +449,18 @@ if (!isset($_GET['turniejid'])) {
                     echo '</script>';
                     ?>
                     <script>
+                        function showLoadingSpinner() {
+                            $(".popup-overlay").show();
+                            $("#popup").show();
+                        }
+
+                        function hideLoadingSpinner() {
+                            $(".popup-overlay").hide();
+                            $("#popup").hide();
+                        }
+                        showLoadingSpinner();
                         $(document).ready(function() {
+                            hideLoadingSpinner();
                             var optionCounter = <?php echo json_encode($numPositions ?? 4); ?>; // Start with 4 initial options
 
                             // Function to add a new quest option
@@ -497,7 +518,8 @@ Opcja ${optionCounter}:
                                 var typeid = <?php echo json_encode($row['TypeId'] ?? ''); ?>;
                                 if (typeid == 2) {
                                     $(".quest-options").hide();
-                                    $(".disclaimer").hide();
+                                    $(".disclaimer").eq(1).hide();
+                                    $(".disclaimer").eq(2).hide();
                                     $("#addOptionBtn").hide();
                                     $("#removeOptionBtn").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
@@ -566,7 +588,8 @@ Opcja ${optionCounter}:
                                     $("#questionForm input[type='radio']").removeAttr("required");
 
                                 } else {
-                                    $(".disclaimer").show();
+                                    $(".disclaimer").eq(1).show();
+                                    $(".disclaimer").eq(2).show();
                                     $(".quest-options").show()
                                     $("#addOptionBtn").show();
                                     $("#removeOptionBtn").show();
@@ -596,10 +619,9 @@ Opcja ${optionCounter}:
                         });
                     </script>
 
-
                 </div>
             </div>
-
+        </div>
     </body>
 <?php
 
