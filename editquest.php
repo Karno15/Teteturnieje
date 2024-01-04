@@ -337,11 +337,6 @@ if (!isset($_GET['turniejid'])) {
             </div>
 
             <div id='content'>
-                <?php
-                echo "<button onclick=\"location.href='edit.php?turniejid=" . $_GET['turniejid'] . "'\" id='back'
-             class='codeconfrim'>POWRÓT</button>";
-                ?>
-
 
                 <b>
                     <?php
@@ -358,7 +353,7 @@ if (!isset($_GET['turniejid'])) {
                         <input type='text' name='category' style='width:50%;
     height:40px;
     font-size: 20pt;
-    ' value='<?php echo isset($pytid) ? $row['Category'] : ''; ?>'><br><br>
+    ' value='<?php echo isset($pytid) ? $row['Category'] : ''; ?>'><hr><br>
                         Treść:
                         <textarea class="summernote" name="tresc"></textarea>
                         <script>
@@ -380,13 +375,15 @@ if (!isset($_GET['turniejid'])) {
                         </script>
                         <br>
                         <span class="disclaimer">Tip: Dźwięki audio można przesyłać tylko w formacie <b>mp3</b>.<br>
-                                Zmień rozszerzenie pliku na mp3 przed jego zaimportowaniem. </span>
+                            Zmień rozszerzenie pliku na mp3 przed jego zaimportowaniem. </span>
                         <hr>
                         Typ pytania:
                         <select name='type' class='codeconfrim'>
                             <option value='1'>Zamknięte</option>
                             <option value='2'>Otwarte</option>
-                        </select><br>
+                        </select>
+                        <span class='section-options'>
+                        <br>
                         <span class='disclaimer'>Dodaj lub usuń liczbę opcji</span><br>
 
                         <button type="button" id="addOptionBtn" class="codeconfrim">+</button>
@@ -414,13 +411,14 @@ if (!isset($_GET['turniejid'])) {
                         </div>
 
                         <br>
-                        <span class='disclaimer'>Zaznacz prawdiłową odpowiedź klikając w checkbox</span><br>
-                        <br><br>
+                        <span class='disclaimer'>Zaznacz prawdiłową odpowiedź klikając w checkbox</span>
+                        </span><hr>
+                        <br>
                         Ilość punktów do zdobycia:
                         <input type='number' name='rewards' step=".01" class='codeconfrim' value='50'>
                         <span> Obstawianie punktów: <input type='checkbox' name='isbid'></span>
 
-                        <br><br>
+                        <hr><br>
                         Treść do wyświetlenia odpowiedzi:
                         <textarea class="summernote" name="after"></textarea>
                         <script>
@@ -440,8 +438,12 @@ if (!isset($_GET['turniejid'])) {
                                 dialogsInBody: true
                             });
                         </script>
-                        <br><br>
-                        <input type='submit' name='submity' value='Zapisz' class='codeconfrim'>
+                        <?php
+                        echo "<button  type='button' onclick=\"location.href='edit.php?turniejid=" . $_GET['turniejid'] . "'\" id='back'
+             class='codeconfrim'>POWRÓT</button>";
+                        ?>
+
+                        <input type='submit' name='submity' value='ZAPISZ' class='codeconfrim'>
                     </form>
                     <?php
                     echo '<script>';
@@ -517,11 +519,7 @@ Opcja ${optionCounter}:
 
                                 var typeid = <?php echo json_encode($row['TypeId'] ?? ''); ?>;
                                 if (typeid == 2) {
-                                    $(".quest-options").hide();
-                                    $(".disclaimer").eq(1).hide();
-                                    $(".disclaimer").eq(2).hide();
-                                    $("#addOptionBtn").hide();
-                                    $("#removeOptionBtn").hide();
+                                    $(".section-options").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
                                     $("select[name='type'] option[value=2]").prop("selected", "selected")
                                 } else {
@@ -581,18 +579,11 @@ Opcja ${optionCounter}:
                             $('select[name="type"]').on('change', function() {
                                 var opcja = $('select option:selected').text();
                                 if (opcja == 'Otwarte') {
-                                    $(".quest-options").hide();
-                                    $(".disclaimer").hide();
-                                    $("#addOptionBtn").hide();
-                                    $("#removeOptionBtn").hide();
+                                    $(".section-options").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
 
                                 } else {
-                                    $(".disclaimer").eq(1).show();
-                                    $(".disclaimer").eq(2).show();
-                                    $(".quest-options").show()
-                                    $("#addOptionBtn").show();
-                                    $("#removeOptionBtn").show();
+                                    $(".section-options").show();
 
                                     // Set the desired number of options
                                     var optionCounter = <?php echo json_encode($numPositions ?? 4); ?>;

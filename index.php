@@ -34,18 +34,18 @@ session_start();
                     echo "</div>";
                     unset($_SESSION['info']);
                 }
-                
+
                 if (isset($_GET['info'])) {
                     echo "<div class='info'>";
                     echo $_GET['info'];
                     echo "</div>";
                 }
-                
+
             ?>
                 <button id='login' class='codeconfrim'>Zaloguj się</button>
 
             <?php
-            }else{
+            } else {
                 header('Location:logged.php');
             }
 
@@ -69,6 +69,6 @@ session_start();
         </form>
 
 
-    </div><br>
-
+    </div>
+    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
 </body>

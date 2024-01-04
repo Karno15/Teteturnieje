@@ -66,11 +66,6 @@ if (!isset($_GET['turniejid'])) {
             </div>
 
             <div id='content'>
-                <?php
-                echo "<button onclick=\"location.href='edit.php?turniejid=" . $_GET['turniejid'] . "'\" id='back'
-             class='codeconfrim'>POWRÓT</button>";
-                ?>
-
 
                 <b>
                     EDYTUJ UŁOŻENIE
@@ -82,6 +77,11 @@ if (!isset($_GET['turniejid'])) {
                         <div id="grid-container" class="grid-container"></div>
                     </div>
                 </div>
+                <?php
+                echo "<button onclick=\"location.href='edit.php?turniejid=" . $_GET['turniejid'] . "'\" id='back'
+             class='codeconfrim'>POWRÓT</button>";
+                ?>
+
                 <script>
                     $(document).ready(function() {
                         var turniejidFromURL = getUrlParameter('turniejid');
