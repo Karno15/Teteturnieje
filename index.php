@@ -1,18 +1,14 @@
 <?php
-
+ob_start();
 session_start();
-
 
 ?>
 
 <head>
     <title>TTT-TeTeTurnieje</title>
     <link rel="icon" type="image/gif" href="images/favicon.ico">
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css">    
+    <script src="jquery/jquery.min.js"></script>
     <script src="script.js"></script>
 </head>
 
@@ -54,5 +50,6 @@ session_start();
     </div>
     <div id='popup'>
     </div>
-    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
+    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); 
+    ob_flush();?></span> Made by @karkarno</div>
 </body>

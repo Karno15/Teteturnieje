@@ -45,17 +45,14 @@ if (!isset($_GET['turniejid'])) {
 
     <head>
         <title>TTT-TeTeTurnieje</title>
-        <link rel="icon" type="image/gif" href="images/favicon.ico">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/gif" href="images/favicon.ico">>
+        <script src="jquery/jquery-3.4.1.slim.min.js"></script>
+        <link rel="stylesheet" href="style.css">        
         <script src="script.js"></script>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <link rel="stylesheet" href="jquery/jquery-ui.css">
+        <script src="jquery/jquery-3.6.4.min.js"></script>
+        <script src="jquery/jquery-ui.js"></script>
 
     </head>
 

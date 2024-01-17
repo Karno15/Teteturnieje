@@ -42,7 +42,7 @@ function updateStatus($newStatus)
     }
 }
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="jquery/jquery.min.js"></script>
 <script>
     $(document).ready(function() {    
         var isLeader = <?php echo json_encode($isLeader); ?>;
@@ -498,9 +498,6 @@ function updateStatus($newStatus)
     <title>TTT-TeTeTurnieje</title>
     <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
     <script src="script.js"></script>
 </head>
 

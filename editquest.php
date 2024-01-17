@@ -314,10 +314,7 @@ if (!isset($_GET['turniejid'])) {
     <head>
         <title>TTT-TeTeTurnieje</title>
         <link rel="icon" type="image/gif" href="images/favicon.ico">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="jquery/jquery-3.4.1.slim.min.js"></script>
         <link href="summernote/summernote-lite.min.css" rel="stylesheet">
         <script src="summernote/summernote-lite.min.js"></script>
         <link rel="stylesheet" href="summernote/summernote-audio.css">

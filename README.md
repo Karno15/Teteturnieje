@@ -2,10 +2,19 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.10] - 2024-01-18
+
+### Changed
+
+- Added optimization for library
+- Added Registering function
+
+
 ## [1.9] - 2024-01-04
 
 ### Changed
 
+- You can now add audio file to a question
 - Fixed background overlay when popups are showing
 - Added loading screen for editing question
 - Added optimization for various things

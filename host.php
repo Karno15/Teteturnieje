@@ -40,11 +40,8 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 <head>
   <title>TTT-TeTeTurnieje</title>
   <link rel="icon" type="image/gif" href="images/favicon.ico">
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="style.css">  
+  <script src="jquery/jquery.min.js"></script>
   <script src="script.js"></script>
   <meta http-equiv="refresh" content="x">
 </head>

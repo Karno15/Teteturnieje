@@ -23,6 +23,11 @@
   src: url('fonts/cartoon.ttf')
 }
 
+@font-face {
+  font-family: Work Sans;
+  src: url(fonts/WorkSans.ttf);
+}
+
 body {
   margin: 0 auto;
   background-image: url('images/bg.webp');
@@ -85,7 +90,7 @@ body {
   align-items: center;
   flex-direction: column;
   background: rgba(255, 255, 0, .5);
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   border-radius: 0 0 29px 29px;
   min-height: 67%;
 }
@@ -96,7 +101,7 @@ body {
   align-items: center;
   flex-direction: column;
   text-align: center;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   font-weight: 700;
   border-radius: 20px;
   background: rgba(255, 153, 51, .7);
@@ -288,7 +293,7 @@ body {
   text-align: center;
   border-radius: 37px;
   font-size: 23pt;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   color: white;
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
@@ -303,7 +308,7 @@ body {
   text-align: center;
   border-radius: 37px;
   font-size: 23pt;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   line-height: 250%;
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
   z-index: 8;
@@ -380,7 +385,7 @@ body {
 
 
 .datatable {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   color: #fff;
   text-shadow: none;
   font-weight: 700;
@@ -507,7 +512,7 @@ table.datatable thead th:first-child {
   text-align: center;
   border-radius: 37px;
   font-size: 18pt;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   line-height: 150%;
   background-image: linear-gradient(to right, #ff512f, #f09819);
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
@@ -532,7 +537,7 @@ table.datatable thead th:first-child {
   text-align: center;
   border-radius: 37px;
   font-size: 18pt;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Work Sans';
   line-height: 150%;
   background-image: linear-gradient(to right, #ff512f, #f09819);
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
