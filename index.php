@@ -43,7 +43,7 @@ session_start();
 
             ?>
                 <button id='login' class='codeconfrim'>Zaloguj się</button>
-
+                <button id='register' class='codeconfrim'>Rejestracja</button>
             <?php
             } else {
                 header('Location:logged.php');
@@ -52,23 +52,7 @@ session_start();
             ?>
         </div>
     </div>
-    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-        LOGOWANIE
-        <br>
-        <form action="login.php" method="post">
-            Login:<br>
-            <input type="text" name="login" class='inputlogin' maxlength="12" required>
-
-            <div id='definput'>
-                Hasło:
-                </br>
-                <input type="password" name="pass" class='inputlogin' required>
-            </div>
-
-            <button type='submit' class='codeconfrim'>Loguj</button>
-        </form>
-
-
+    <div id='popup'>
     </div>
     <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
 </body>

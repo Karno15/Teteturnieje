@@ -11,9 +11,26 @@ $(document).ready(function () {
         window.location.href = "host.php";
     });
 
+    loginHTML = '<button id="closeButton" class="codeconfrim">Powrót</button><br>LOGOWANIE<br><form action="login.php" method="post">' +
+        'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
+        '<div id="definput">Hasło:</br><input type="password" name="pass" class="inputlogin" required></div>' +
+        '<button type="submit" class="codeconfrim">Loguj</button></form>'
+    registerHTML = '<button id="closeButton" class="codeconfrim">Powrót</button><br>REJESTRACJA<br><form action="register.php" method="post">' +
+        'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
+        '<div id="definput">Hasło:</br><input type="password" name="pass" class="inputlogin" required></div>' +
+        '<button type="submit" class="codeconfrim">Rejestracja</button></form>'
+    $("#popup").html(loginHTML);
+
+    $("#register").on("click", function () {
+        $("#popup").show();
+        $(".popup-overlay").show(); // Pokaż tylko tło, nie nakładaj go na całą stronę
+        $("#popup").html(registerHTML);
+    });
+
     $("#login").on("click", function () {
         $("#popup").show();
         $(".popup-overlay").show(); // Pokaż tylko tło, nie nakładaj go na całą stronę
+        $("#popup").html(loginHTML);
     });
 
     $('#closeButton').click(function () {
@@ -177,17 +194,16 @@ function getCookie(name) {
         begin = dc.indexOf(prefix);
         if (begin != 0) return null;
     }
-    else
-    {
+    else {
         begin += 2;
         var end = document.cookie.indexOf(";", begin);
         if (end == -1) {
-        end = dc.length;
+            end = dc.length;
         }
     }
 
     return decodeURI(dc.substring(begin + prefix.length, end));
-} 
+}
 
 function getUrlParameter(name) {
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
