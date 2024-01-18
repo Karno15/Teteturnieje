@@ -44,7 +44,7 @@ function updateStatus($newStatus)
 ?>
 <script src="jquery/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {    
+    $(document).ready(function() {
         var isLeader = <?php echo json_encode($isLeader); ?>;
 
         var buzzsfx = new Audio("sounds/buzz.wav");
@@ -69,13 +69,13 @@ function updateStatus($newStatus)
                 type: 'GET',
                 dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
                 success: function(response) {
-                    
+
                     //easter eggs
-                    if(getCookie('EE_Larvolcarona') && ee_shown==false){
+                    if (getCookie('EE_Larvolcarona') && ee_shown == false) {
                         $('body').append('<img class="flier1" src="images/larvesta.png"><img class="flier2" src="images/volcarona.png">')
-                        ee_shown=true ;
+                        ee_shown = true;
                     }
-                    
+
 
                     if (response.error) {
                         $('#popup').html("<div class='info'>" + response.error + "</div>");
@@ -149,7 +149,7 @@ function updateStatus($newStatus)
 
                                         catresponse = JSON.stringify(response);
                                         categoriesHTML = 'Wybieranie pytania<br><div class="gridpopup"><div id="grid-container" class="grid-container">';
-                                        
+
                                         for (var i = 0; i < response.length; i++) {
                                             categoriesHTML += "<div class='category";
                                             (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
@@ -202,9 +202,9 @@ function updateStatus($newStatus)
                                 if (buzzresponse != JSON.stringify(response)) {
 
                                     buzzresponse = JSON.stringify(response);
-                                    if(buzzresponse != '{"buzzes":[]}'){
+                                    if (buzzresponse != '{"buzzes":[]}') {
                                         buzzsfx.play();
-                                        
+
                                     }
 
                                     var buzzesHTML = '<p id="aligned">Buzzers:<table class="datatables">';
@@ -454,17 +454,17 @@ function updateStatus($newStatus)
 
         $(document).on('click', '.okbutton', function() {
             var login = $(this).data('login');
-            if(pts!=0){
-            answerPoints(login, pts, 1, turniejId);
-            checkTournamentStatus();
+            if (pts != 0) {
+                answerPoints(login, pts, 1, turniejId);
+                checkTournamentStatus();
             }
         });
 
         $(document).on('click', '.badbutton', function() {
             var login = $(this).data('login');
-            if(pts!=0){
-            answerPoints(login, pts, 0, turniejId);
-            checkTournamentStatus();
+            if (pts != 0) {
+                answerPoints(login, pts, 0, turniejId);
+                checkTournamentStatus();
             }
         });
 
@@ -510,6 +510,18 @@ function updateStatus($newStatus)
 
         <div id='content'>
             <div class='startpopup'>
+                <?php
+                if (isset($_SESSION['TurniejId'])) {
+
+                    $codeSql = "SELECT Code FROM turnieje WHERE TurniejId = ?";
+                    $codeStmt = $conn->prepare($codeSql);
+                    $codeStmt->bind_param("i", $_SESSION['TurniejId']);
+                    $codeStmt->execute();
+                    $codeResult = $codeStmt->get_result();
+                    $code = $codeResult->fetch_assoc();
+                    echo 'Kod turnieju: '. $code['Code'];
+                }
+                ?>
                 <div class="loading-spinner"></div>
                 Oczekiwanie na rozpoczęcie...<br><br>
 

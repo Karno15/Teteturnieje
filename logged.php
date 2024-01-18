@@ -47,7 +47,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                     echo $row['Login'];
                 }
                 if ($result->num_rows > 0 && $_SESSION['username'] != $row['Login']) {
-                    echo "(" . $_SESSION['username'] . ")";
+                    echo " (" . $_SESSION['username'] . ")";
                 }
 
                 ?>

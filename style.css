@@ -481,8 +481,9 @@ table.datatable thead th:first-child {
 }
 
 #correct {
-  outline: 4px solid green;
+  outline: 4px solid darkorange;
   z-index: 2;
+  background-color: gold;
 }
 
 #back,

@@ -59,8 +59,6 @@ function registerUser($username, $password, $conn)
     }
 
     // Registration successful, set up the session
-    $_SESSION['username'] = strtoupper($username);
-    $_SESSION['userid'] = $masterId;
     $_SESSION['info'] = "Rejestracja udana!";
 
     // Close the statements
