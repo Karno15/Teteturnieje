@@ -1,6 +1,11 @@
 <?php
 
-session_start(); // Start the session
+session_start();
+
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'en';
+}
+
 
 require ('connect.php');
 // Function to check if a username already exists in masters or users (case insensitive)
@@ -20,9 +25,11 @@ function usernameExists($username, $conn)
 // Function to register a new user
 function registerUser($username, $password, $conn)
 {
+    include_once( 'translation/'. $_SESSION['lang'] . ".php");
+    echo $lang['userExistsInfo'];
     // Check if the username already exists
     if (usernameExists($username, $conn)) {
-        $_SESSION['info'] = "Użytkownik o podanej nazwie już istnieje.";
+        $_SESSION['info'] = $lang['userExistsInfo'];
         return false;
     }
 
@@ -36,8 +43,8 @@ function registerUser($username, $password, $conn)
     $resultMaster = mysqli_stmt_execute($stmtMaster);
 
     if (!$resultMaster) {
-        $_SESSION['info'] = "Błąd rejestracji. Spróbuj ponownie.";
-        error_log("Error inserting into masters: " . mysqli_error($conn));
+        $_SESSION['info'] = $lang['registerError'];
+        error_log("Error inserting: " . mysqli_error($conn));
         mysqli_stmt_close($stmtMaster);
         return false;
     }
@@ -52,14 +59,14 @@ function registerUser($username, $password, $conn)
     $resultUser = mysqli_stmt_execute($stmtUser);
 
     if (!$resultUser) {
-        $_SESSION['info'] = "Błąd rejestracji. Spróbuj ponownie.";
+        $_SESSION['info'] = $lang['registerError'];
         error_log("Error inserting into users: " . mysqli_error($conn));
         mysqli_stmt_close($stmtUser);
         return false;
     }
 
     // Registration successful, set up the session
-    $_SESSION['info'] = "Rejestracja udana!";
+    $_SESSION['info'] = $lang['registered'];
 
     // Close the statements
     mysqli_stmt_close($stmtMaster);

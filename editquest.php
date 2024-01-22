@@ -4,10 +4,10 @@ session_start();
 
 
 if (!isset($_GET['turniejid'])) {
-    $_SESSION['info'] = 'Nie znaleziono turnieju';
+    $_SESSION['info'] = $lang["notFound"];
     header('Location:host.php');
 } elseif (!isset($_SESSION['userid'])) {
-    $_SESSION['info'] = 'Brak dostępu';
+    $_SESSION['info'] = $lang["noAccess"];
     header('Location:index.php');
 } else {
     // Get the user's ID from the session
@@ -31,11 +31,11 @@ if (!isset($_GET['turniejid'])) {
 
         // Check if the TurniejId's creator matches the user's ID - if yes do the rest
         if ($creatorId != $userId) {
-            $_SESSION['info'] = 'Nie znaleziono turnieju';
+            $_SESSION['info'] = $lang["notFound"];
             header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
         }
     } else {
-        $_SESSION['info'] = 'Nie znaleziono turnieju';
+        $_SESSION['info'] = $lang["notFound"];
         header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
     }
 
@@ -50,7 +50,7 @@ if (!isset($_GET['turniejid'])) {
         $row = $result->fetch_assoc();
 
         if ($result->num_rows == 0) {
-            $_SESSION['info'] = 'Nie znaleziono pytania';
+            $_SESSION['info'] = $lang["notFound"];
             echo $_SESSION['info'];
             header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
         }
@@ -91,8 +91,16 @@ if (!isset($_GET['turniejid'])) {
         require "connect.php";
         $category = $_POST["category"];
         $tresc = $_POST["tresc"];
-        $type = $_POST["type"]; //1- zamknięte, 2- otwarte
+        $type = $_POST["type"]; //1- closed, 2- open
         $after = $_POST["after"];
+        $maxFileSize =  5 * 1024 * 1024;
+
+        if (strlen($tresc) > $maxFileSize || strlen($after) > $maxFileSize) {
+            $_SESSION['info'] = $lang["limitReached"];
+            header("Location: edit.php?turniejid=" . $_GET["turniejid"]);
+            exit();
+        }
+
 
         if (isset($_POST["isbid"])) {
             $isbid = $_POST["isbid"];
@@ -115,7 +123,7 @@ if (!isset($_GET['turniejid'])) {
 
             // Check for errors
             if ($stmt->error) {
-                $_SESSION['info'] = "Error description: " . $stmt->error;
+                $_SESSION['info'] = "Error: " . $stmt->error;
             } else {
                 $pytanie_id = $stmt->insert_id; // Get the inserted question ID
 
@@ -181,7 +189,7 @@ if (!isset($_GET['turniejid'])) {
             $stmtUpdate->execute();
 
             if ($stmtUpdate->error) {
-                $_SESSION['info'] = "Error updating pytania table: " . $stmtUpdate->error;
+                $_SESSION['info'] = "Error updating: " . $stmtUpdate->error;
             } else {
                 // Check and update pytaniapoz table only for closed-type questions
                 if ($type == 1) {
@@ -195,7 +203,7 @@ if (!isset($_GET['turniejid'])) {
 
                         // Check for errors in the delete statement
                         if ($stmtDeleteOptions->error) {
-                            $_SESSION['info'] = "Error deleting pytaniapoz records: " . $stmtDeleteOptions->error;
+                            $_SESSION['info'] = "Error deleting: " . $stmtDeleteOptions->error;
                         } else {
                             // Insert new options
                             $stmtInsertOptions = $conn->prepare("INSERT INTO pytaniapoz (`PytId`, `PozId`, `Value`) VALUES (?, ?, ?)");
@@ -217,7 +225,7 @@ if (!isset($_GET['turniejid'])) {
 
                                 // Check for errors in the pytaniapoz INSERT statement
                                 if ($stmtInsertOptions->error) {
-                                    $_SESSION['info'] = "Error inserting pytaniapoz records: " . $stmtInsertOptions->error;
+                                    $_SESSION['info'] = "Error inserting: " . $stmtInsertOptions->error;
                                     break; // Exit the loop if an error occurs
                                 }
 
@@ -294,7 +302,7 @@ if (!isset($_GET['turniejid'])) {
 
                 // Check for errors in the prawiodpo UPDATE statement
                 if ($stmtUpdateOdp->error) {
-                    $_SESSION['info'] = "Error updating prawiodpo records: " . $stmtUpdateOdp->error;
+                    $_SESSION['info'] = "Error updating: " . $stmtUpdateOdp->error;
                 }
 
                 // Close the prepared statement for prawiodpo
@@ -309,11 +317,18 @@ if (!isset($_GET['turniejid'])) {
             exit();
         }
     }
+    include_once('translation/' . $_SESSION['lang'] . ".php");
 ?>
 
     <head>
         <title>TTT-TeTeTurnieje</title>
         <link rel="icon" type="image/gif" href="images/favicon.ico">
+        <script>
+            var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+            var lang = langses || 'en';
+            localStorage.setItem("lang", lang);
+        </script>
+        <script src="translation/translation.js"></script>
         <script src="jquery/jquery-3.4.1.slim.min.js"></script>
         <link href="summernote/summernote-lite.min.css" rel="stylesheet">
         <script src="summernote/summernote-lite.min.js"></script>
@@ -324,7 +339,7 @@ if (!isset($_GET['turniejid'])) {
     </head>
 
     <body>
-        <div id="popup">Ładowanie pytania...<br>
+        <div id="popup"><span id='loadingQuest'></span><br>
             <div class='loading-spinner'></div>
         </div>
         <div class='popup-overlay'></div>
@@ -337,7 +352,7 @@ if (!isset($_GET['turniejid'])) {
 
                 <b>
                     <?php
-                    echo isset($pytid) ? 'EDYCJA PYTANIA' : 'NOWE PYTANIE';
+                    echo isset($pytid) ? $lang["editQuestion"] : $lang["newQuestion"];
                     ?>
                 </b>
 
@@ -346,12 +361,13 @@ if (!isset($_GET['turniejid'])) {
 
 
                     <form action="#" method='post' id='questionForm'>
-                        Kategoria:
+                        <span id='category'></span>
                         <input type='text' name='category' style='width:50%;
     height:40px;
     font-size: 20pt;
-    ' value='<?php echo isset($pytid) ? $row['Category'] : ''; ?>'><hr><br>
-                        Treść:
+    ' value='<?php echo isset($pytid) ? $row['Category'] : ''; ?>'>
+                        <hr><br>
+                        <span id='contentQuest'></span>
                         <textarea class="summernote" name="tresc"></textarea>
                         <script>
                             $('.summernote').summernote({
@@ -371,52 +387,52 @@ if (!isset($_GET['turniejid'])) {
                             });
                         </script>
                         <br>
-                        <span class="disclaimer">Tip: Dźwięki audio można przesyłać tylko w formacie <b>mp3</b>.<br>
-                            Zmień rozszerzenie pliku na mp3 przed jego zaimportowaniem. </span>
+                        <span class="disclaimer" id='audioTip'></span>
                         <hr>
-                        Typ pytania:
+                        <span id='questType'></span>
                         <select name='type' class='codeconfrim'>
-                            <option value='1'>Zamknięte</option>
-                            <option value='2'>Otwarte</option>
+                            <option value='1' id='closed'></option>
+                            <option value='2' id='open'></option>
                         </select>
                         <span class='section-options'>
-                        <br>
-                        <span class='disclaimer'>Dodaj lub usuń liczbę opcji</span><br>
+                            <br>
+                            <span class='disclaimer' id='tipOptions'></span><br>
 
-                        <button type="button" id="addOptionBtn" class="codeconfrim">+</button>
-                        <button type="button" id="removeOptionBtn" class="codeconfrim">-</button>
+                            <button type="button" id="addOptionBtn" class="codeconfrim">+</button>
+                            <button type="button" id="removeOptionBtn" class="codeconfrim">-</button>
 
-                        <!-- Container to hold the quest options -->
-                        <div class='quest-options' id='questOptionsContainer'>
-                            <!-- Initial quest options -->
-                            <?php
-                            // Set the desired number of options (customize as needed)
-                            $numOptions = $numPositions ?? 4;
+                            <!-- Container to hold the quest options -->
+                            <div class='quest-options' id='questOptionsContainer'>
+                                <!-- Initial quest options -->
+                                <?php
+                                // Set the desired number of options (customize as needed)
+                                $numOptions = $numPositions ?? 4;
 
-                            // Loop to generate HTML for each option
-                            for ($i = 1; $i <= $numOptions; $i++) {
-                                echo "
-        <div class='quest-option' id='option{$i}'>
-            Opcja {$i}:
+                                // Loop to generate HTML for each option
+                                for ($i = 1; $i <= $numOptions; $i++) {
+                                    echo "
+        <div class='quest-option' id='option{$i}'>" . $lang["option"] . " {$i}:
             <input type='radio' name='answer' value='a{$i}' required>
             <input type='text' class='sinputy' name='option{$i}' value='-'>
         </div>
     ";
-                            }
-                            ?>
+                                }
+                                ?>
 
-                        </div>
+                            </div>
 
+                            <br>
+                            <span class='disclaimer' id='tipCheck'></span>
+                        </span>
+                        <hr>
                         <br>
-                        <span class='disclaimer'>Zaznacz prawdiłową odpowiedź klikając w checkbox</span>
-                        </span><hr>
-                        <br>
-                        Ilość punktów do zdobycia:
+                        <span id='ptsAmount'></span>
                         <input type='number' name='rewards' step=".01" class='codeconfrim' value='50'>
-                        <span> Obstawianie punktów: <input type='checkbox' name='isbid'></span>
+                        <span><span id='ptsBet'></span>
+                            <input type='checkbox' name='isbid'></span>
 
                         <hr><br>
-                        Treść do wyświetlenia odpowiedzi:
+                        <span id='contentAnswer'></span>
                         <textarea class="summernote" name="after"></textarea>
                         <script>
                             $('.summernote').summernote({
@@ -440,7 +456,7 @@ if (!isset($_GET['turniejid'])) {
              class='codeconfrim'>POWRÓT</button>";
                         ?>
 
-                        <input type='submit' name='submity' value='ZAPISZ' class='codeconfrim'>
+                        <input type='submit' id='save' name='submity' value='ZAPISZ' class='codeconfrim'>
                     </form>
                     <?php
                     echo '<script>';
@@ -460,6 +476,9 @@ if (!isset($_GET['turniejid'])) {
                         showLoadingSpinner();
                         $(document).ready(function() {
                             hideLoadingSpinner();
+
+
+
                             var optionCounter = <?php echo json_encode($numPositions ?? 4); ?>; // Start with 4 initial options
 
                             // Function to add a new quest option
@@ -468,8 +487,7 @@ if (!isset($_GET['turniejid'])) {
                                     optionCounter++;
 
                                     // Set the HTML content for the new option
-                                    var newOptionHTML = `
-Opcja ${optionCounter}:
+                                    var newOptionHTML = translations['option'][lang] + ` ${optionCounter}:
 <input type='radio' name='answer' value='a${optionCounter}' required>
 <input type='text' class='sinputy' name='option${optionCounter}' value='-'>
 `;
@@ -509,7 +527,7 @@ Opcja ${optionCounter}:
                                 if (isBid) {
                                     $('input[name="isbid"]').attr('checked', 'checked');
                                     $('input[name="rewards"]').prop('type', 'text');
-                                    $('input[name="rewards"]').val('(do obstawienia)');
+                                    $('input[name="rewards"]').val('('+translations['betting'][lang]+')');
                                 } else {
                                     $('input[name="rewards"]').val(pts);
                                 }
@@ -534,14 +552,12 @@ Opcja ${optionCounter}:
                                             $("input[value='a" + pozId + "']").attr('checked', 'checked');
                                         }
                                     }
-
-
                                 }
 
                             } else {
-                                $('.note-placeholder').html('Umieść tutaj treść pytania');
+                                $('.note-placeholder').html(translations['contentPlaceholder'][lang]);
                                 // If 'pytid' doesn't exist, set a placeholder content
-                                $('.note-placeholder').eq(1).html('Umieść tutaj treść odpowiedzi');
+                                $('.note-placeholder').eq(1).html(translations['answerPlaceholder'][lang]);
                             }
 
                             $('input[name="isbid"]').on('change', function() {
@@ -551,7 +567,7 @@ Opcja ${optionCounter}:
                                     // Switch to text input
                                     rewards.prop('disabled', true);
                                     rewards.prop('type', 'text');
-                                    rewards.val('(do obstawienia)');
+                                    rewards.val('('+translations['betting'][lang]+')');
                                 } else {
                                     // Switch to number input
                                     rewards.prop('disabled', false);
@@ -574,12 +590,12 @@ Opcja ${optionCounter}:
 
                             //otwieranie zamykanie zależnie pd typu formularza
                             $('select[name="type"]').on('change', function() {
-                                var opcja = $('select option:selected').text();
-                                if (opcja == 'Otwarte') {
+                                var opcja = $('select option:selected').val();
+                                if (opcja == 2) {
                                     $(".section-options").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");
 
-                                } else {
+                                } else { //if 1 (closed)
                                     $(".section-options").show();
 
                                     // Set the desired number of options
@@ -589,9 +605,7 @@ Opcja ${optionCounter}:
 
                                     // Loop to generate HTML for each option
                                     for (var i = 1; i <= optionCounter; i++) {
-                                        optionsHTML += `
-        <div class='quest-option' id='option${i}'>
-            Opcja ${i}:
+                                        optionsHTML += `<div class='quest-option' id='option${i}'>` + translations['option'][lang] + ` ${i}:
             <input type='radio' name='answer' value='a${i}' required>
             <input type='text' class='sinputy' name='option${i}' value='-'>
         </div>
@@ -603,7 +617,19 @@ Opcja ${optionCounter}:
                                     $("#questionForm input[type='radio']").prop("required", true);
                                 };
                             });
-
+                            $("#back").html(translations['return'][lang]);
+                            $("#save").val(translations['save'][lang]);
+                            $("#contentQuest").html(translations['contentQuest'][lang] + ":");
+                            $("#audioTip").html(translations['audioTip'][lang]);
+                            $("#tipOptions").html(translations['tipOptions'][lang]);
+                            $("#tipCheck").html(translations['tipCheck'][lang]);
+                            $("#ptsAmount").html(translations['ptsAmount'][lang] + ":");
+                            $("#ptsBet").html(translations['ptsBet'][lang] + ":");
+                            $("#contentAnswer").html(translations['contentAnswer'][lang] + ":");
+                            $("#ptsAmount").html(translations['ptsAmount'][lang] + ":");
+                            $("#questType").html(translations['questType'][lang] + ":");
+                            $("#open").html(translations['open'][lang]);
+                            $("#closed").html(translations['closed'][lang]);
                         });
                     </script>
 

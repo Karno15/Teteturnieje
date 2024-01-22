@@ -29,7 +29,7 @@ $result = $stmt->get_result();
 $stmt->close();
 
 
-
+include_once('translation/' . $_SESSION['lang'] . ".php");
 ?>
 
 <head>
@@ -37,7 +37,13 @@ $stmt->close();
     <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="jquery/jquery.min.js"></script>
+    <script>
+        var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+        var lang = langses || 'en';
+        localStorage.setItem("lang", lang);
+    </script>
     <script src="script.js"></script>
+    <script src="translation/translation.js"></script>
     <style>
         * {
             font-size: 62, 5%;
@@ -197,7 +203,7 @@ $stmt->close();
             <div class='startpopup'>
                 <main>
                     <div id="header">
-                        <h1>Wyniki turnieju:</h1>
+                        <h1 id="turResult"></h1>
                     </div>
                     <div id="leaderboard">
 
@@ -232,39 +238,30 @@ $stmt->close();
 
                     <div id='yourscore'>
                     <?php
-                    echo "Twój wynik: <br>" . $yourScore;
+                    echo  $lang["yourScore"] . ": <br>" . $yourScore;
                 }
                     ?>
 
                     </div>
-                    <a class='button-85' href='index.php'>Powrót</a>
+                    <script>
+                        $(document).ready(function() {
+                            $("#turResult").html(translations['turResult'][lang]);
+                            $("#back").html(translations['return'][lang]);
+
+                            $("#back").click(function() {
+                                window.location.href = 'logged.php';
+                            })
+                        });
+                    </script>
+                    <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
                     <?php
                     //echo $_SESSION['userid'];
                     if (isset($_SESSION['userid'])) {
                         unset($_SESSION['TurniejId']);
                         unset($_SESSION['currentQuest']);
                     }
-
                     ?>
             </div>
         </div>
     </div>
-    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-                            LOGOWANIE
-                            <br>
-                            <form action="login.php" method="post">
-                                Login:<br>
-                                <input type="text" name="login" class='inputlogin' maxlength="12" required>
-
-                                <div id='definput'>
-                                    Hasło:
-                                    </br>
-                                    <input type="password" name="pass" class='inputlogin' required>
-                                </div>
-
-                                <button type='submit' class='codeconfrim'>Loguj</button>
-                            </form>
-
-
-                        </div><br>
 </body>

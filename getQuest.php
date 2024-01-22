@@ -1,15 +1,9 @@
 <?php
-// Pobierz id pytania przekazane w parametrze GET
-// Pobranie ID pytania z zabezpieczeniem przed SQL injection
 if (isset($_GET['id'])) {
     $id_pytania = (int)$_GET['id'];
 
 
-    // Wykonanie połączenia z bazą danych i sprawdzenie, czy udało się nawiązać połączenie
-
-
     require('connect.php');
-    // Zabezpieczenie ID pytania przed SQL injection
     $id_pytania = $conn->real_escape_string($id_pytania);
 
     // Wykonanie zapytania SQL z przygotowanym wyrażeniem
@@ -18,7 +12,7 @@ if (isset($_GET['id'])) {
 
     // Sprawdzenie, czy zapytanie powiodło się
     if (!$result) {
-        die("Query failed: " . $conn->error);
+        die("Error: " . $conn->error);
     }
 
     // Wyświetlenie zawartości tabeli "pytania"
@@ -33,13 +27,11 @@ if (isset($_GET['id'])) {
     }
 
     $sql = "SELECT pp.PytId,pp.PozId,Value,po.PozId as 'correct' FROM `pytaniapoz` pp LEFT JOIN prawiodpo po ON po.PytId=pp.PytId where pp.PytId=$id_pytania;";
-
-    //do zmainy
     $result1 = $conn->query($sql);
 
     // Sprawdzenie, czy zapytanie powiodło się
     if (!$result1) {
-        die("Query failed: " . $conn->error);
+        die("Error: " . $conn->error);
     }
 
     // Wyświetlenie zawartości tabeli "pytania"
@@ -61,11 +53,7 @@ if (isset($_GET['id'])) {
     if (!is_null($after)) {
         echo "<div>" . $after . "</div>";
     }
-
-    // Zamknięcie połączenia z bazą danych
     $conn->close();
 } else {
-    // Obsługa błędu, jeśli brak parametru 'id' w żądaniu
-    // Na przykład przekierowanie na inny widok lub wyświetlenie błędu
-    echo "Błąd danych";
+    echo "No data";
 }

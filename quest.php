@@ -4,7 +4,7 @@ require('connect.php');
 
 if (!isset($_SESSION['TurniejId']) || !isset($_POST['turniejId'])) {
     // Nie udało się pobrać identyfikatora turnieju z sesji
-    echo json_encode(array("error" => "Brak dostępu."));
+    echo json_encode(array("error" => $lang["noAccess"]));
     exit();
 }
 $turniejId = $_POST['turniejId'];
@@ -58,7 +58,7 @@ if ($row = mysqli_fetch_assoc($result)) {
     echo json_encode($data);
 } else {
     // Nie znaleziono danych w bazie danych
-    echo json_encode(array("error" => "Brak danych."));
+    echo json_encode(array("error" => "No data."));
 }
 
 mysqli_stmt_close($stmt);

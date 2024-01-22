@@ -22,8 +22,15 @@ if (isset($_GET['info'])) {
     <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
     <script src="jquery/jquery.min.js"></script>
+    <script>
+        var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+        var lang = langses || 'en';
+        localStorage.setItem("lang", lang);
+    </script>
     <script src="script.js"></script>
+    <script src="translation/translation.js"></script>
 </head>
+
 <body>
     <div class="popup-overlay"></div>
     <div id="main-container">
@@ -31,37 +38,15 @@ if (isset($_GET['info'])) {
             <span>TETETURNIEJE</span>
         </div>
         <div id='content'>
-            error
-
-            <?php
-            //echo $_SESSION['userid'];
-            if (!isset($_SESSION['userid'])) {
-            ?>
-                <button id='login' class='codeconfrim'>Zaloguj się</button>
-
-            <?php
-            }
-
-            ?>
+            error<br>
+            <button class='codeconfrim' id='back'></button>
         </div>
     </div>
-    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-        LOGOWANIE
-        <br>
-        <form action="login.php" method="post">
-            Login:<br>
-            <input type="text" name="login" class='inputlogin' maxlength="12" required>
+    <script>
+        $("#back").click(function() {
+            window.location.href = 'index.php';
+        })
 
-            <div id='definput'>
-                Hasło:
-                </br>
-                <input type="password" name="pass" class='inputlogin' required>
-            </div>
-
-            <button type='submit' class='codeconfrim'>Loguj</button>
-        </form>
-
-
-    </div><br>
-
+        $("#back").html(translations['return'][lang]);
+    </script>
 </body>

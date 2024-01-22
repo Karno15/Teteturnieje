@@ -4,6 +4,7 @@ require "connect.php";
 session_start();
 
 if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
+    include_once( 'translation/'. $_SESSION['lang'] . ".php");
     $gc = $_POST["gamecode"];
     $login = $_POST["login"];
 
@@ -50,7 +51,7 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
         }
         if ($usernamemaster != $masterid || $usernamemaster == null) {
 
-            $_SESSION['info'] = "Nickname należy już do kogoś innego!";
+            $_SESSION['info'] = $lang['nicknameExists'];
             header("Location: logged.php");
         } else {
             // Przypisz UserId do sesji
@@ -81,7 +82,7 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
             // Zakończenie transakcji
             mysqli_commit($conn);
 
-            $_SESSION['info'] = "Dołączono do turnieju. ";
+            $_SESSION['info'] = $lang['joinSuccess'];
 
             // Zamknij połączenie tylko jeśli jest otwarte
             if ($conn) {
@@ -91,7 +92,7 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
             header("Location: joined.php");
         }
     } else {
-        $_SESSION['info'] = "Nie znaleziono turnieju";
+        $_SESSION['info'] = $lang['invalidCode'];;
 
         if ($conn) {
             mysqli_close($conn);
@@ -99,5 +100,5 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
         header("Location: logged.php");
     }
 } else {
-    echo "Błąd danych";
+    echo "No data";
 }

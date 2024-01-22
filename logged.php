@@ -14,17 +14,103 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 }
 
 
+if (!isset($_SESSION['lang'])) {
+    // Set default language to 'en' (English)
+    $userLanguages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
+    // Check if the first language in the list is 'pl' (Polish), otherwise set it to 'en' (English)
+    $_SESSION['lang'] = (stripos($userLanguages[0], 'pl') === 0) ? 'pl' : 'en';
+    //   $_SESSION['lang'] = 'en';
+
+}
+
+
+$lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
+
 ?>
 
 <head>
     <title>TTT-TeTeTurnieje</title>
     <link rel="icon" type="image/gif" href="images/favicon.ico">
-    <link rel="stylesheet" href="style.css">    
+    <link rel="stylesheet" href="style.css">
     <script src="jquery/jquery.min.js"></script>
+    <script>
+        var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+        var lang = langses || 'en';
+        localStorage.setItem("lang", lang);
+    </script>
     <script src="script.js"></script>
+    <script src="translation/translation.js"></script>
 </head>
 
 <body>
+    <div id='lang' class="lang-select-container">
+        <span class="flag" style="cursor: pointer;"></span>
+        <select class="lang-select" name="lang" style="display: none;">
+            <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+            <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+        </select>
+    </div>
+    <div id='lang' class="lang-select-container">
+        <span class="flag" style="cursor: pointer;"></span>
+        <select class="lang-select" name="lang" style="display: none;">
+            <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+            <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+        </select>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Flag click flag
+            var flagClick = false;
+
+            // Set initial flag based on $lang
+            $('.flag').css('background-image', 'url(' + getFlagUrl('<?php echo $lang; ?>') + ')');
+
+            // Change flag on click
+            $('.flag').on('click', function() {
+                flagClick = true; // Set flag to true when flag is clicked
+
+                var currentLang = $('.lang-select').val();
+                var newLang = (currentLang === 'pl') ? 'en' : 'pl';
+
+                // Set the new flag
+                $('.flag').css('background-image', 'url(' + getFlagUrl(newLang) + ')');
+
+                // Change the selected option in the hidden select element
+                $('.lang-select').val(newLang);
+
+                // Trigger the change event to handle the language change
+                $('.lang-select').trigger('change');
+            });
+
+            // Change flag on select change
+            $('.lang-select').on('change', function() {
+                if (!flagClick) { // Check if the change event was triggered by the flag click
+                    let lang = $(this).val();
+                    localStorage.setItem("lang", lang);
+                    // Make an AJAX call to setlang.php
+                    $.post('setlang.php', {
+                        language: lang
+                    }, function(response) {
+                        console.log('Language changed to: ' + lang);
+                        location.reload();
+                    });
+                }
+
+                // Reset the flagClick variable
+                flagClick = false;
+            });
+
+            // Function to get flag URL based on language
+            function getFlagUrl(lang) {
+                return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
+            }
+        });
+    </script>
+
+
+
     <div class="popup-overlay"></div>
     <div id="main-container">
 
@@ -54,57 +140,50 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
             </div>
             <div class='startpopup'>
 
-                <span id='titlejoin'>DOŁĄCZ DO TURNIEJU</span>
+                <span id='titlejoin'></span>
                 <div id='definput'>
-                    Wpisz nickname:
+                    <span id='enterNickname'></span>
                     <form action="join.php" method="post">
                         <input type="text" class="inputy" name="login" maxlength="12" required>
                 </div>
                 <div id='definput'>
-                    Wpisz kod:
+                <span id='enterCode'></span>
                     </br>
                     <input type="text" i class="inputy" name="gamecode" pattern="[0-9]{4}" maxlength="4" required>
                 </div>
-                <button type='submit' class='codeconfrim'>Dołącz!</button>
+                <button type='submit' class='codeconfrim' id='join'></button>
                 </form>
             </div><br>
             <div id='join-back-cont'></div>
             <script>
-                $.ajax({
-                    url: 'chkStatus.php',
-                    type: 'GET',
-                    dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
-                    success: function(response) {
-                        $('#join-back-cont').html("<a href='joined.php' id='join-back'>TURNIEJ W TRAKCIE</a><br><br>");
-                        $('#join-back-cont').show();
-                    },
-                    error: function(response) {
-                        $('#join-back-cont').html("");
-                        $('#join-back-cont').hide();
-                    }
+                $(document).ready(function() {
+                    $("#titlejoin").html(translations['joinTournament'][lang]);
+                    $("#join").html(translations['join'][lang]);
+                    $("#enterNickname").html(translations['enterNickname'][lang] + ":");
+                    $("#enterCode").html(translations['enterCode'][lang] + ":");
+                    $("#host").html(translations['host'][lang]);
+
+                    $.ajax({
+                        url: 'chkStatus.php',
+                        type: 'GET',
+                        dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
+                        success: function(response) {
+                            $('#join-back-cont').html("<a href='joined.php' id='join-back'>" + translations['inProgress'][lang] + "</a><br><br>");
+                            $('#join-back-cont').show();
+                        },
+                        error: function(response) {
+                            $('#join-back-cont').html("");
+                            $('#join-back-cont').hide();
+                        }
+                    });
                 });
             </script>
-            <button class="button-85" id='host'>Hostuj turniej</button>
+            <button class="button-85" id='host'></button>
         </div>
         <div>
         </div>
     </div>
-    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-        LOGOWANIE
-        <br>
-        <form action="login.php" method="post">
-            Login:<br>
-            <input type="text" name="login" class='inputlogin' maxlength="12" required>
-
-            <div id='definput'>
-                Hasło:
-                </br>
-                <input type="password" name="pass" class='inputlogin' required>
-            </div>
-
-            <button type='submit' class='codeconfrim'>Loguj</button>
-        </form>
-    </div><br>
+    <br>
     <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt'); ?></span> Made by @karkarno</div>
 
 </body>

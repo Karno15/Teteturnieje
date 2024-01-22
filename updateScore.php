@@ -9,7 +9,7 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
     $userId = $_SESSION['userid'];
     $turniejId = $_SESSION['TurniejId'];
 } else {
-    echo json_encode(array("error" => "Brak dostępu."));
+    echo json_encode(array("error" => $lang["noAccess"]));
     exit();
 }
 
@@ -38,17 +38,17 @@ if (isset($_POST['login']) && isset($_POST['newScore'])) {
             mysqli_stmt_bind_param($stmt, 'dsi', $newScore, $login, $turniejId); // Uwzględnij TurniejId
 
             if (mysqli_stmt_execute($stmt)) {
-                echo "Zaktualizowano wynik.";
+                echo "Updated";
             } else {
-                echo "Błąd wykonania zapytania: " . mysqli_stmt_error($stmt);
+                echo "Error: " . mysqli_stmt_error($stmt);
             }
             mysqli_close($conn);
         } else {
-            echo "Brak uprawnień";
+            echo $lang["noAccess"];
         }
     } else {
-        echo "Nie znaleziono turnieju";
+        echo $lang["notFound"];
     }
 } else {
-    echo "Błąd danych";
+    echo "No data";
 }

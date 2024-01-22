@@ -45,10 +45,16 @@ if (!isset($_GET['turniejid'])) {
 
     <head>
         <title>TTT-TeTeTurnieje</title>
-        <link rel="icon" type="image/gif" href="images/favicon.ico">>
+        <link rel="icon" type="image/gif" href="images/favicon.ico">
         <script src="jquery/jquery-3.4.1.slim.min.js"></script>
-        <link rel="stylesheet" href="style.css">        
+        <link rel="stylesheet" href="style.css">
+        <script>
+            var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+            var lang = langses || 'en';
+            localStorage.setItem("lang", lang);
+        </script>
         <script src="script.js"></script>
+        <script src="translation/translation.js"></script>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="jquery/jquery-ui.css">
         <script src="jquery/jquery-3.6.4.min.js"></script>
@@ -64,12 +70,11 @@ if (!isset($_GET['turniejid'])) {
 
             <div id='content'>
 
-                <b>
-                    EDYTUJ UŁOŻENIE
+                <b id='editArrangement'>
                 </b>
                 <div class="startpopup">
-                    Ilość kolumn <input type="number" id="columnInput" min="1">
-                    <button onclick="updateGrid()" class='codeconfrim'>Ustaw kolumny</button>
+                    <span id='columnAmt'></span> <input type="number" id="columnInput" min="1">
+                    <button onclick="updateGrid()" class='codeconfrim' id='setColumns'></button>
                     <div class="gridpopup">
                         <div id="grid-container" class="grid-container"></div>
                     </div>
@@ -81,8 +86,14 @@ if (!isset($_GET['turniejid'])) {
 
                 <script>
                     $(document).ready(function() {
+                        $("#editArrangement").html(translations['editArrangement'][lang]);
+                        $("#columnAmt").html(translations['columnAmt'][lang]);
+                        $("#setColumns").html(translations['setColumns'][lang]);
+                        $("#back").html(translations['return'][lang]);
+
                         var turniejidFromURL = getUrlParameter('turniejid');
                         var maxColumns = 8; // Maximum number of columns
+
 
                         // Initial setup with default columns
                         createGrid();
@@ -103,7 +114,9 @@ if (!isset($_GET['turniejid'])) {
                                         var defaultColumns = Math.min(response[0].Columns, maxColumns);
 
                                         for (var i = 0; i < response.length; i++) {
-                                            var gridItem = $("<div class='category' style='cursor:move;' data-pytid='" + response[i].PytId + "'>" + response[i].Category + "<br><br>Pkt:" + (response[i].IsBid ? 'do obstawienia' : response[i].Rewards) + "</div>");
+                                            var gridItem = $("<div class='category' style='cursor:move;' data-pytid='" + response[i].PytId + "'>" 
+                                            + response[i].Category + "<br><br>" + translations['pts'][lang] +": " 
+                                            + (response[i].IsBid ? translations['betting'][lang] : response[i].Rewards) + "</div>");
                                             gridContainer.append(gridItem);
                                         }
 
@@ -121,7 +134,7 @@ if (!isset($_GET['turniejid'])) {
                                         gridContainer.css('grid-template-columns', 'repeat(' + defaultColumns + ', 1fr)');
                                     } else {
                                         console.error('Error: Invalid response format or empty response.');
-                                        window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent('Error: Brak danych.');
+                                        window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent(translations['noData'][lang]);
                                     }
                                 },
                                 error: function(error) {
@@ -129,7 +142,7 @@ if (!isset($_GET['turniejid'])) {
                                     console.error('Error:', error);
 
                                     // Redirect to the previous page with error information
-                                    window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent('Error: Brak danych.');
+                                    window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent(translations['noData'][lang]);
                                 }
                             });
 

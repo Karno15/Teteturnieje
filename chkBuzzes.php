@@ -35,5 +35,5 @@ if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
 
     echo json_encode($response);
 } else {
-    echo "Błąd danych.";
+    echo "No data.";
 }

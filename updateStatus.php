@@ -1,6 +1,8 @@
 <?php
 require('connect.php');
 
+include_once('translation/' . $_SESSION['lang'] . ".php");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'];
     $turniejId = $_POST['turniejId'];
@@ -27,6 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateStmt->bind_param("i", $turniejId);
         $updateStmt->execute();
         echo "done";
+    } else if ($status === 'Z') {
+        $sql = "CALL UpdateTournamentStatus(?)";
+        $stmtproc = $conn->prepare($sql);
+        $stmtproc->bind_param("i", $turniejId);
+        $stmtproc->execute();
+        $stmtproc->close();
     }
 
     // Prepare and bind the statement
@@ -42,6 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Close the statement and connection
     $stmt->close();
-}else {
-    echo "Nieprawidłowa metoda żądania!";
+} else {
+    echo $lang["notFound"];
 }

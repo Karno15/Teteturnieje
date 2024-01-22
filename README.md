@@ -2,13 +2,15 @@
 
 All notable changes to this project will be documented in this file
 
-## [1.10] - 2024-01-18
+## [1.10] - 2024-01-23
 
 ### Changed
 
-- Added optimization for library
+- Added optimization for libraries
+- Added a few styles changes
 - Added Registering function
-
+- Added translations [PL/EN]
+- Only 5 MB of content in question is allowed
 
 ## [1.9] - 2024-01-04
 

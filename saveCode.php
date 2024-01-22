@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include_once('translation/' . $_SESSION['lang'] . ".php");
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['turniejId']) && isset($_POST['kodTurnieju']) && $_POST['kodTurnieju'] > 0 and $_POST['kodTurnieju'] <= 9999) {
         require "connect.php"; // Assuming that the connect.php file contains the database connection configuration
@@ -21,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
             // Check if the TurniejId's creator matches the user's ID - if yes do the rest
             if ($creatorId != $userId) {
-                echo 'Nie znaleziono turnieju';
+                echo $lang["notFound"];
                 exit();
             }
         } else {
-            echo 'Nie znaleziono turnieju';
+            echo $lang["notFound"];
             exit();
         }
 
@@ -38,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkResult = $checkStmt->get_result();
 
         if ($checkResult->num_rows > 0) {
-            echo "Błąd: Taki kod już istnieje";
+            echo $lang["codeExists"];
         } else {
             // Check if there are questions
             $countSql = "SELECT PytId FROM pytania WHERE TurniejId = ?";
@@ -48,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $resultcount = $countStmt->get_result();
 
             if ($resultcount->num_rows == 0) {
-                echo "Błąd: Brak pytań w turnieju";
+                echo $lang["noQuests"];
             } else {
                 // Update the tournament code
                 $updateSql = "UPDATE turnieje SET Code = ?, Status = 'A' WHERE TurniejId = ?";
@@ -60,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['TurniejId'] = $turniejId;
                     echo "success";
                 } else {
-                    echo "Nieprawidłowy kod turnieju.";
+                    echo $lang["invalidCode"];
                     // For debugging: echo $updateStmt->error;
                 }
                 $updateStmt->close();
@@ -74,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Close the connection
         $conn->close();
     } else {
-        echo "Nieprawidłowy kod.";
+        echo $lang["invalidCode"];
     }
 } else {
-    echo "Nieprawidłowa metoda żądania.";
+    echo $lang["notFound"];
 }

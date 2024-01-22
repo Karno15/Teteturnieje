@@ -1,5 +1,13 @@
 $(document).ready(function () {
 
+
+    langses = localStorage.getItem("lang");
+    var lang = langses || 'en';
+
+    $('button#login').html(translations['login'][lang]);
+    $('button#register').html(translations['register'][lang]);
+    //console.log(getCookie('lang'));
+
     $('#head span').click(function (event) {
         event.preventDefault(); // Prevent the default link behavior
 
@@ -11,14 +19,16 @@ $(document).ready(function () {
         window.location.href = "host.php";
     });
 
-    loginHTML = '<button id="closeButton" class="codeconfrim">Powrót</button><br>LOGOWANIE<br><form action="login.php" method="post">' +
+    loginHTML = '<button id="closeButton" class="codeconfrim">' + translations['return'][lang] + '</button><br>' +
+        translations['login'][lang].toUpperCase() + '<br><form action="login.php" method="post">' +
         'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
-        '<div id="definput">Hasło:</br><input type="password" name="pass" class="inputlogin" required></div>' +
-        '<button type="submit" class="codeconfrim">Loguj</button></form>'
-    registerHTML = '<button id="closeButton" class="codeconfrim">Powrót</button><br>REJESTRACJA<br><form action="register.php" method="post">' +
+        '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>' +
+        '<button type="submit" class="codeconfrim">' + translations['log in'][lang] + '</button></form>';
+    registerHTML = '<button id="closeButton" class="codeconfrim">' + translations['return'][lang] + '</button><br>' +
+        translations['register'][lang].toUpperCase() + '<br><form  action="register.php" method="post">' +
         'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
-        '<div id="definput">Hasło:</br><input type="password" name="pass" class="inputlogin" required></div>' +
-        '<button type="submit" class="codeconfrim">Rejestracja</button></form>'
+        '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>' +
+        '<button type="submit" class="codeconfrim">' + translations['register'][lang] + '</button></form>'
     $("#popup").html(loginHTML);
 
     $("#register").on("click", function () {
@@ -56,11 +66,10 @@ $(document).ready(function () {
         var turniejId = $(this).data('turniejid'); // Pobieramy ID turnieju z atrybutu data
 
         // Wyświetlamy wartość ID turnieju w popupie
-        $('#popup').html('<button id="closeButton" class="codeconfrim">Zamknij</button><br><p>Rozpocznij turniej: ' + turniejId +
-            '<br><button id="generujKodBtn"  class="codeconfrim"> Generuj kod </button>' +
-            '<input  type="number" id="kodTurnieju" class="codeconfrim" placeholder="Wprowadź czterocyfrowy kod turnieju" min="1000" max="9999">' +
-            '<br><button id="zapiszKod" data-turniejid=' + turniejId + ' class="codeconfrim"> Zapisz kod i rozpocznij turniej</button>' +
-            '</p>');
+        $('#popup').html('<button id="closeButton" class="codeconfrim">' + translations['close'][lang] + '</button><br><p>' + translations['startTurniej'][lang]
+            + ': ' + turniejId + '<br><button id="generujKodBtn"  class="codeconfrim">' + translations['generateCode'][lang] + '</button>' +
+            '<input  type="number" id="kodTurnieju" class="codeconfrim" placeholder="' + translations['startPlaceholder'][lang] + '" min="1000" max="9999">' +
+            '<br><button id="zapiszKod" data-turniejid=' + turniejId + ' class="codeconfrim">' + translations['startButton'][lang] + '</button>' + '</p>');
         $('.popup-overlay').show();
         $('#popup').show(); // Pokazujemy popup
     });
@@ -81,12 +90,13 @@ $(document).ready(function () {
                 if (response === 'success') {
                     // Ukrywamy popup
                     $('#popup').hide();
-
-                    // Przekierowujemy na stronę "joined.php"
+                    $(".popup-overlay").hide();
                     window.location.href = 'joined.php';
                 } else {
                     // Wyświetlamy komunikat o błędzie w ".info" div
-                    $('#popup').html("<div class='info'>" + response + "</div>");
+                    $('body').append("<div class='info'>" + response + "</div>");
+                    $("#popup").hide();
+                    $(".popup-overlay").hide();
                     $('.info').delay(3000).fadeOut();
                 }
             },
@@ -119,7 +129,7 @@ function pokazPytanie(id) {
     var popup = $("#popup");
     $('.popup-overlay').show();
     $("#popup").show();
-    popup.html('<button id="closeButton" class="codeconfrim">Zamknij</button><br>');
+    popup.html('<button id="closeButton" class="codeconfrim">' + translations['close'][lang] + '</button><br>');
     // Wyświetl popup
     popup.append('<div class="loading-spinner"></div>');
 
@@ -133,7 +143,7 @@ function pokazPytanie(id) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             // Odebrano odpowiedź, więc ustaw zawartość popupa na pobraną treść
-            popup.html('<button id="closeButton" class="codeconfrim">Zamknij</button><br>');
+            popup.html('<button id="closeButton" class="codeconfrim">' + translations['close'][lang] + '</button><br>');
             popup.append(xhr.responseText);
 
             // Show the close button

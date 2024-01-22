@@ -2,12 +2,18 @@
 
 session_start(); // Start the session
 
+
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'en';
+}
+
 // Function to validate user credentials
 function validateUser($username, $password)
 {
 
     require "connect.php";
 
+    include_once( 'translation/'. $_SESSION['lang'] . ".php");
     // Sanitize the user input to prevent SQL injection
     $username = mysqli_real_escape_string($conn, $username);
     $password = mysqli_real_escape_string($conn, $password);
@@ -28,9 +34,11 @@ function validateUser($username, $password)
             // User found, set up the session
             $_SESSION['username'] = strtoupper($username);
             $_SESSION['userid'] = $resultrow[0];
+            $_SESSION['info'] = $lang['loggedin'];
             return true;
         } else {
             // User not found or invalid credentials
+            $_SESSION['info'] = $lang['invalidLogin'];
             return false;
         }
     } else {
@@ -51,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } else {
         // Show an error message
-        $_SESSION['info'] = "Błędny login lub hasło";
         header("Location: index.php");
         exit();
     }

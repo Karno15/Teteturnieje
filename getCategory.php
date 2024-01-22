@@ -2,6 +2,8 @@
 session_start();
 require('connect.php');
 
+
+include_once('translation/' . $_SESSION['lang'] . ".php");
 // Check if GET parameter is set
 if (isset($_GET['turniejid'])) {
     $turniejId = $_GET['turniejid'];
@@ -10,7 +12,7 @@ if (isset($_GET['turniejid'])) {
     $turniejId = $_SESSION['TurniejId'];
 } else {
     // Neither GET nor session variable is set
-    echo json_encode(array("error" => "Brak dostępu."));
+    echo json_encode(array("error" => $lang["noAccess"]));
     exit();
 }
 
@@ -46,7 +48,7 @@ if (!empty($data)) {
     echo json_encode($data);
 } else {
     // Nie znaleziono danych w bazie danych
-    echo json_encode(array("error" => "Brak danych."));
+    echo json_encode(array("error" => "No data"));
 }
 
 mysqli_stmt_close($stmt);

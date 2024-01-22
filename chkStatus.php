@@ -49,7 +49,7 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
         );
     } else {
         // Jeżeli brak danych, zwróć odpowiednią informację
-        $response['error'] = 'Brak pytań';
+        $response['error'] = 'No questions';
     }
 
     mysqli_close($conn);
@@ -57,5 +57,5 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
     // Zwróć dane w formie JSON
     echo json_encode($response);
 } else {
-    echo "Brak danych";
+    echo "No data.";
 }

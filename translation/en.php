@@ -1,0 +1,30 @@
+<?php
+$lang = array(
+    "userExistsInfo" => "User with given login already exists!",
+    "registerError" => "Register error. Try again.",
+    "registered" => "Registered!",
+    "invalidLogin" => "Invalid login or password!",
+    "loggedin" => "Logged in!",
+    "nicknameExists" => "Nickname already in use!",
+    "joinSuccess" => "Joined Succesfully!",
+    "invalidCode" => "Invalid Code!",
+    "notFound" => "Not Found!",
+    "noAccess" => "No Access!",
+    "questionDeleted" => "Question was deleted!",
+    "deleteConfirm" =>"Are you sure you want to delete this question?",
+    "betting" => "betting",
+    "open" => "Open",
+    "closed" => "Closed",
+    "limitReached" => "Content size exceeds the allowed limit (5 MB)",
+    "option" => "Option",
+    "newQuestion" => "NEW QUESTION",
+    "editQuestion" => "EDIT QUESTION",
+    "yourScore" => "YOUR SCORE",
+    "turniejCreated" => "Tournament was created",
+    "codeExists" => "This code already exists!",
+    "noQuests" => "No questions in tournament",
+    "success" => "Sukces!",
+    "error" => "Błąd!",
+    "code" => "Tournament code"
+);
+//$lang["closed"]

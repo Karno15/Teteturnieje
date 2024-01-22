@@ -529,6 +529,15 @@ table.datatable thead th:first-child {
   box-sizing: content-box;
 }
 
+#participantsPts{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
 #buzzerInfo {
   min-width: 10%;
   position: fixed;
@@ -812,4 +821,46 @@ table.datatable thead th:first-child {
   margin: 10px;
   place-items: center;
   place-content: center;
+}
+
+#lang{
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to right, #ff512f, #f09819);
+  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  z-index: 2;
+  border-radius: 37px;
+  min-width: 70px;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.lang-select-container {
+  position: relative;
+  display: inline-block;
+}
+
+.lang-select {
+  width: 100px;
+  padding: 5px;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  z-index: 2;
+}
+
+.flag {
+  width: 40px;
+  height: 24px;
+  display: inline-block;
+  background-size: cover;
+  margin-right: 5px;
+  border-radius: 5px;
+  margin: 0;
 }

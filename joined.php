@@ -2,6 +2,7 @@
 
 session_start();
 
+include_once('translation/' . $_SESSION['lang'] . ".php");
 if (isset($_SESSION['info'])) {
     echo "<div class='info'>";
     echo $_SESSION['info'];
@@ -11,7 +12,7 @@ if (isset($_SESSION['info'])) {
 
 
 if (!isset($_SESSION['username']) || !isset($_SESSION['TurniejId'])) {
-    $_SESSION['info'] = 'Brak dostępu';
+    $_SESSION['info'] = $lang["noAccess"];
     header('Location:index.php');
 }
 
@@ -33,9 +34,9 @@ function updateStatus($newStatus)
         $stmt->bind_param("si", $newStatus, $turniejid);
 
         if ($stmt->execute() === TRUE) {
-            $_SESSION['info'] = "Success!";
+            $_SESSION['info'] = $lang["success"];
         } else {
-            $_SESSION['info'] = "Błąd!";
+            $_SESSION['info'] = $lang["error"];
             // echo "Error: " . $stmt->error;
         }
         $stmt->close();
@@ -44,7 +45,16 @@ function updateStatus($newStatus)
 ?>
 <script src="jquery/jquery.min.js"></script>
 <script>
+    var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+    var lang = langses || 'en';
+    localStorage.setItem("lang", lang);
+</script>
+<script src="script.js"></script>
+<script src="translation/translation.js"></script>
+<script>
     $(document).ready(function() {
+        $('#awaitingStart').html(translations['awaitingStart'][lang])
+
         var isLeader = <?php echo json_encode($isLeader); ?>;
 
         var buzzsfx = new Audio("sounds/buzz.wav");
@@ -91,7 +101,7 @@ function updateStatus($newStatus)
                     if (response.participants.length == 0) {
                         $(document).on('click', '#start', function() {
                             $('#popup').show();
-                            $('#popup').html("<div class='info'>" + 'Brak uczestników!' + "</div>");
+                            $('#popup').html("<div class='info'>" + translations['noParticipants'][lang] + "</div>");
                             $('.info').delay(3000).fadeOut();
                         });
                     } else {
@@ -128,8 +138,8 @@ function updateStatus($newStatus)
                         }
                         participantsList += '</table>';
 
-                        $('#participantsInfo').html('<p>Organizator:<b><br> ' + response.creator +
-                            '</b></p><p>Rzule: ' + participantsList + '</p>');
+                        $('#participantsInfo').html('<p>Host:<b><br> ' + response.creator +
+                            '</b></p><p id="participantsPts">' + translations['participants'][lang] + ': ' + participantsList + '</p>');
                     }
 
                     /// STATUS KATEGORII I KOŃCA KATEGORI (X) --------------------------------------
@@ -148,14 +158,14 @@ function updateStatus($newStatus)
                                     if (catresponse != JSON.stringify(response)) {
 
                                         catresponse = JSON.stringify(response);
-                                        categoriesHTML = 'Wybieranie pytania<br><div class="gridpopup"><div id="grid-container" class="grid-container">';
+                                        categoriesHTML = translations['selectQuest'][lang] + '<br><div class="gridpopup"><div id="grid-container" class="grid-container">';
 
                                         for (var i = 0; i < response.length; i++) {
                                             categoriesHTML += "<div class='category";
                                             (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
                                             categoriesHTML += "' data-pytid='" + response[i].PytId + "'>" + response[i].Category +
-                                                "<br><br>Pkt:"
-                                            categoriesHTML += response[i].IsBid ? "Do obstawienia" : response[i].Rewards;
+                                                "<br><br>" + translations['pts'][lang] + ": "
+                                            categoriesHTML += response[i].IsBid ? translations['betting'][lang] : response[i].Rewards;
                                             categoriesHTML += "</div>";
                                         }
                                         categoriesHTML += "</div></div>";
@@ -172,7 +182,7 @@ function updateStatus($newStatus)
                                         }
                                         if (isLeader && status == 'X') {
 
-                                            $("#statusInfo").html('<button id="finish" href=# class="button-85">Zakończ</button>');
+                                            $("#statusInfo").html('<button id="finish" href=# class="button-85">' + translations['finish'][lang] + '</button>');
 
                                             $(document).on('click', '#finish', function() {
                                                 updateStatusAjax('Z', 0);
@@ -249,7 +259,7 @@ function updateStatus($newStatus)
 
                             },
                             error: function() {
-                                $('.info').text('Błąd pobierania buzza.');
+                                $('#buzzerInfo').text(translations['errorBuzz'][lang]);
                             }
                         });
                     }
@@ -258,11 +268,11 @@ function updateStatus($newStatus)
                     if (!showQuest) {
                         if (status == 'P' || status == 'O') {
                             showQuest = true;
-                            $('.startpopup').html('<span class="disclaimer">(spacja również działa jak przycisk BUZZ)</span><button id="buzzer">BUZZ</button>');
+                            $('.startpopup').html('<span class="disclaimer" id="tipSpace">' + translations['tipSpace'][lang] + '</span><button id="buzzer">BUZZ</button>');
                             $('#startform').hide();
 
                             if (isLeader)
-                                $("#turniej").html('<button id="status" href=# class="button-85">Pokaż odpowiedź</button>');
+                                $("#turniej").html('<button id="status" href=# class="button-85">' + translations['showAnswer'][lang] + '</button>');
 
                             $(document).on('click', '#status', function() {
                                 updateStatusAjax('O', currentQuest);
@@ -288,8 +298,8 @@ function updateStatus($newStatus)
                                     pts = Rewards;
                                     if (PytId) {
 
-                                        questHTML = '<p>Kategoria: ' + Category + '<br>Punkty: '
-                                        questHTML += isBid ? 'Do obstawienia' : Rewards;
+                                        questHTML = '<p>' + translations['questCat'][lang] + ': ' + Category + '<br>' + translations['questPts'][lang] + ': '
+                                        questHTML += isBid ? translations['betting'][lang] : Rewards;
                                         questHTML += '</p><span id="quest">' + Quest + "</span>";
 
 
@@ -313,7 +323,7 @@ function updateStatus($newStatus)
                                         if (status == 'O') {
                                             shown = true;
                                             if (isLeader)
-                                                $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
+                                                $("#turniej").html('<button id="next" class="button-85">' + translations['newQuest'][lang] + '</button>');
 
                                             $(document).on('click', '#next', function() {
                                                 updateStatusAjax('K', 0);
@@ -340,21 +350,21 @@ function updateStatus($newStatus)
                                                         $("#answer")[0].scrollIntoView();
 
                                                     } else {
-                                                        $('#answer').html('Błąd pobierania odpowiedzi');
+                                                        $('#answer').html(translations['errorAnswer'][lang]);
                                                     }
                                                 },
                                                 error: function() {
-                                                    $('.info').text('Błąd podczas pobierania pytań.');
+                                                    $('.info').text(translations['errorQuest'][lang]);
                                                     $('#participantsInfo').html('Error');
                                                 }
                                             });
                                         }
                                     } else {
-                                        $('.startpopup').append('Błąd pobierania pytania');
+                                        $('.startpopup').append(translations['errorQuest'][lang]);
                                     }
                                 },
                                 error: function() {
-                                    $('.info').text('Błąd podczas pobierania pytań.');
+                                    $('.info').text(translations['errorQuest'][lang]);
                                     $('#participantsInfo').html('Error');
                                 }
                             });
@@ -390,7 +400,7 @@ function updateStatus($newStatus)
 
                 },
                 error: function() {
-                    $('#statusInfo').text('Błąd podczas sprawdzania statusu turnieju.');
+                    $('#statusInfo').text(translations['errorStatus'][lang]);
                     $('#participantsInfo').html('Error');
                 }
             });
@@ -498,7 +508,6 @@ function updateStatus($newStatus)
     <title>TTT-TeTeTurnieje</title>
     <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
 </head>
 
 <body>
@@ -519,11 +528,11 @@ function updateStatus($newStatus)
                     $codeStmt->execute();
                     $codeResult = $codeStmt->get_result();
                     $code = $codeResult->fetch_assoc();
-                    echo 'Kod turnieju: '. $code['Code'];
+                    echo  $lang["code"] . ': ' . $code['Code'];
                 }
                 ?>
                 <div class="loading-spinner"></div>
-                Oczekiwanie na rozpoczęcie...<br><br>
+                <span id='awaitingStart'></span><br><br>
 
             </div>
             <span id='turniej'>
