@@ -233,7 +233,7 @@ function updateStatus($newStatus)
                                             buzzesHTML += '<tr><td>' + formatDuration(duration) + '</td></tr>';
                                         } else {
                                             firstBuzz = new Date(buzz.buzztime);
-                                            buzzesHTML += '<tr><td>First!</td>';
+                                            buzzesHTML += '<tr><td>'+ translations['first'][lang] +'!</td>';
                                         }
                                         buzzesHTML += '</tr><tr>';
 

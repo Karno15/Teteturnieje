@@ -280,6 +280,18 @@ var translations = {
     'awaitingStart': {
         'en': "Waiting for the start...",
         'pl': 'Oczekiwanie na rozpoczęcie...'
+    },
+    'first': {
+        'en': "First",
+        'pl': 'Pierwszy'
+    },
+    'contact': {
+        'en': "Contact: <a href='mailto:contact@teteturnieje.net'>contact@teteturnieje.net</a>",
+        'pl': "Kontakt: <a href='mailto:contact@teteturnieje.net'>contact@teteturnieje.net</a>"
+    },
+    'pageInfo': {
+        'en': "Teteturnieje is a tournament hosting application where you can create your own tournaments and play them with your friends. All you have to do is create a tournament and the questions for it, and then start it.<br>The acquired four-digit code can be sent to friends to try to solve it.<br> The host can award or take away points for answers. <br> (It is recommended to use voice chat or normal group chat when playing tournaments.)  ",
+        'pl': "Teteturnieje to aplikacja do hostowania turniejów, w której możesz tworzyć własne turnieje oraz rozgrywać je ze znajomymi. Wystarczy stworzyć turniej oraz pytania do niego, a następnie rozpocząć go.<br>Zdobyty czterocyfrowy kod można wysłać do znajomych, aby spróbowali go rozwiązać.<br> Host może przyznawać lub odbierać punkty za odpowiedzi. <br> (Zalecane jest korzystanie z voice chatu lub normalnego chatu grupowego podczas grania w teteturnieje.)  "
     }
 };
-//translations[''][lang] for setting
+//translations[''][lang]

@@ -2,7 +2,7 @@
 $lang = array(
     "userExistsInfo" => "User with given login already exists!",
     "registerError" => "Register error. Try again.",
-    "registered" => "Registered!",
+    "registered" => "Registered! You can now log in!",
     "invalidLogin" => "Invalid login or password!",
     "loggedin" => "Logged in!",
     "nicknameExists" => "Nickname already in use!",

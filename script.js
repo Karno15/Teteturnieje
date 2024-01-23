@@ -3,7 +3,36 @@ $(document).ready(function () {
 
     langses = localStorage.getItem("lang");
     var lang = langses || 'en';
+    
+    var flagClick = false;
+    $('.flag').css('background-image', 'url(' + getFlagUrl(lang) + ')');
+    $('.flag').on('click', function() {
+        flagClick = true;
+        var currentLang = $('.lang-select').val();
+        var newLang = (currentLang === 'pl') ? 'en' : 'pl';
+        $('.flag').css('background-image', 'url(' + getFlagUrl(newLang) + ')');
+        $('.lang-select').val(newLang);
+        $('.lang-select').trigger('change');
+    });
+    $('.lang-select').on('change', function() {
+        if (!flagClick) {
+            let lang = $(this).val();
+            localStorage.setItem("lang", lang);
+            $.post('setlang.php', {
+                language: lang
+            }, function(response) {
+                console.log('Language changed to: ' + lang);
+                location.reload();
+            });
+        }
+        flagClick = false;
+    });
+    function getFlagUrl(lang) {
+        return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
+    }
 
+    $('#contact').html(translations['contact'][lang]);  
+    $('#pageInfo').html(translations['pageInfo'][lang]); 
     $('button#login').html(translations['login'][lang]);
     $('button#register').html(translations['register'][lang]);
     //console.log(getCookie('lang'));

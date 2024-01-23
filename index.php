@@ -5,11 +5,11 @@ session_start();
 if (!isset($_SESSION['lang'])) {
     // Set default language to 'en' (English)
     $userLanguages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-    
+
     // Check if the first language in the list is 'pl' (Polish), otherwise set it to 'en' (English)
     $_SESSION['lang'] = (stripos($userLanguages[0], 'pl') === 0) ? 'pl' : 'en';
- //   $_SESSION['lang'] = 'en';
-    
+    //   $_SESSION['lang'] = 'en';
+
 }
 
 
@@ -32,6 +32,47 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
     </script>
     <script src="script.js"></script>
     <script src="translation/translation.js"></script>
+    <style>
+        blockquote {
+            width: 50%;
+            max-width: 500px;
+            padding: 20px 30px 20px 30px;
+            margin: 50px auto;
+            position: relative;
+            background-color: white;
+
+            p {
+                background: linear-gradient(135deg, magenta, blue);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        blockquote::after {
+            content: '';
+            height: 100%;
+            width: 100%;
+            display: block;
+            background: linear-gradient(135deg, magenta, blue);
+            position: absolute;
+            top: 17px;
+            left: 17px;
+            z-index: -1;
+        }
+
+        blockquote::before {
+            content: '';
+            height: calc(100% + 6px);
+            width: calc(100% + 6px);
+            ;
+            display: block;
+            background: linear-gradient(135deg, magenta, blue);
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            z-index: -2;
+        }
+    </style>
 </head>
 
 <body>
@@ -49,58 +90,6 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
         </select>
     </div>
-
-    <script>
-        $(document).ready(function() {
-    // Flag click flag
-    var flagClick = false;
-
-    // Set initial flag based on $lang
-    $('.flag').css('background-image', 'url(' + getFlagUrl('<?php echo $lang; ?>') + ')');
-
-    // Change flag on click
-    $('.flag').on('click', function() {
-        flagClick = true; // Set flag to true when flag is clicked
-
-        var currentLang = $('.lang-select').val();
-        var newLang = (currentLang === 'pl') ? 'en' : 'pl';
-
-        // Set the new flag
-        $('.flag').css('background-image', 'url(' + getFlagUrl(newLang) + ')');
-
-        // Change the selected option in the hidden select element
-        $('.lang-select').val(newLang);
-
-        // Trigger the change event to handle the language change
-        $('.lang-select').trigger('change');
-    });
-
-    // Change flag on select change
-    $('.lang-select').on('change', function() {
-        if (!flagClick) { // Check if the change event was triggered by the flag click
-            let lang = $(this).val();
-            localStorage.setItem("lang", lang);
-            // Make an AJAX call to setlang.php
-            $.post('setlang.php', {
-                language: lang
-            }, function(response) {
-                console.log('Language changed to: ' + lang);
-                location.reload();
-            });
-        }
-
-        // Reset the flagClick variable
-        flagClick = false;
-    });
-
-    // Function to get flag URL based on language
-    function getFlagUrl(lang) {
-        return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
-    }
-});
-
-    </script>
-
     <div class="popup-overlay"></div>
     <div id="main-container">
         <div id='head'>
@@ -135,6 +124,11 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             }
 
             ?>
+            <blockquote>
+                <p id="pageInfo">
+                </p>
+            </blockquote>
+            <span id="contact"></span>
         </div>
     </div>
     <div id='popup'>

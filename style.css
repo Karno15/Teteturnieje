@@ -1,11 +1,11 @@
 @font-face {
   font-family: titleFont;
-  src: url(fonts/title.ttf);
+  src: url('fonts/title.ttf');
 }
 
 @font-face {
   font-family: chooseFont;
-  src: url(fonts/choose.ttf);
+  src: url('fonts/choose.ttf');
 }
 
 @font-face {
@@ -25,12 +25,13 @@
 
 @font-face {
   font-family: Work Sans;
-  src: url(fonts/WorkSans.ttf);
+  src: url('fonts/WorkSans.ttf');
 }
 
 body {
   margin: 0 auto;
-  background-image: url('images/bg.webp');
+  background-color: goldenrod;
+  background-image: url('ximages/bg.webp');
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100% 100%;
@@ -81,7 +82,6 @@ body {
 #startLink {
   cursor: pointer;
 }
-
 #content {
   padding-top: 5%;
   padding-bottom: 5%;
@@ -93,6 +93,7 @@ body {
   font-family: 'Work Sans';
   border-radius: 0 0 29px 29px;
   min-height: 67%;
+  flex: 1; /* Take up the remaining space */
 }
 
 .startpopup {
@@ -863,4 +864,15 @@ table.datatable thead th:first-child {
   margin-right: 5px;
   border-radius: 5px;
   margin: 0;
+}
+
+#contact {
+  font-size: medium;
+  margin-top: auto; 
+}
+
+#pageInfo {
+  text-align: center;
+  font-size: x-large;
+  margin-top: auto; 
 }
