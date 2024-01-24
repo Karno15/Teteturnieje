@@ -1,5 +1,4 @@
 <?php
-// Plik sprawdz_status.php
 session_start();
 
 require('connect.php');
@@ -7,7 +6,6 @@ require('connect.php');
 if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
     $turniejId = $_SESSION['TurniejId'];
 
-    // Wykonaj zapytanie w celu pobrania statusu turnieju i organizera
     $statusQuery = "SELECT t.Status, m.Login AS 'Creator', t.CurrentQuest FROM turnieje t
     JOIN masters m ON m.masterId=t.Creator 
     WHERE t.TurniejId= ?";
@@ -40,7 +38,6 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
 
         $participantsStmt->close();
 
-        // Utwórz tablicę, która zawiera status i uczestników
         $response = array(
             "status" => $status,
             "participants" => $participants,
@@ -48,14 +45,11 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
             "currentQuest" => $currentQuest
         );
     } else {
-        // Jeżeli brak danych, zwróć odpowiednią informację
+
         $response['error'] = 'No questions';
     }
-
-    mysqli_close($conn);
-
-    // Zwróć dane w formie JSON
     echo json_encode($response);
 } else {
     echo "No data.";
 }
+mysqli_close($conn);

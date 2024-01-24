@@ -1,23 +1,34 @@
 <?php
-if (isset($_GET['id'])) {
+session_start();
+
+if (isset($_SESSION['userid']) && isset($_GET['id'])) {
     $id_pytania = (int)$_GET['id'];
 
+    // Validate the input to ensure it is an integer
+    if ($id_pytania <= 0) {
+        die("Invalid input");
+    }
 
     require('connect.php');
-    $id_pytania = $conn->real_escape_string($id_pytania);
 
-    // Wykonanie zapytania SQL z przygotowanym wyrażeniem
-    $sql = "SELECT Quest, After, TypeId FROM `pytania` WHERE PytId = $id_pytania";
-    $result = $conn->query($sql);
+    // Get the logged-in user's ID from the session
+    $loggedInUserId = $_SESSION['userid'];
+    $stmt = $conn->prepare("SELECT p.Quest, p.After, p.TypeId, t.Creator FROM `pytania` p JOIN turnieje t ON p.TurniejId=t.TurniejId WHERE p.PytId = ?");
+    $stmt->bind_param("i", $id_pytania);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // Sprawdzenie, czy zapytanie powiodło się
     if (!$result) {
         die("Error: " . $conn->error);
     }
 
-    // Wyświetlenie zawartości tabeli "pytania"
-
+    // Fetch the result
     while ($row1 = $result->fetch_assoc()) {
+        // Check if the logged-in user is the creator
+        if ($row1['Creator'] != $loggedInUserId) {
+            die("Access denied.");
+        }
+
         echo "<div>" . $row1['Quest'] . "</div>";
         echo "<hr>";
         if (isset($row1['Quest'])) {
@@ -26,34 +37,38 @@ if (isset($_GET['id'])) {
         $typeId = $row1['TypeId'];
     }
 
-    $sql = "SELECT pp.PytId,pp.PozId,Value,po.PozId as 'correct' FROM `pytaniapoz` pp LEFT JOIN prawiodpo po ON po.PytId=pp.PytId where pp.PytId=$id_pytania;";
-    $result1 = $conn->query($sql);
+    // Use prepared statement for the second query
+    $stmt = $conn->prepare("SELECT pp.PytId, pp.PozId, Value, po.PozId as 'correct' FROM `pytaniapoz` pp LEFT JOIN prawiodpo po ON po.PytId=pp.PytId WHERE pp.PytId=?");
+    $stmt->bind_param("i", $id_pytania);
+    $stmt->execute();
+    $result1 = $stmt->get_result();
 
-    // Sprawdzenie, czy zapytanie powiodło się
+    // Check if the second query was successful
     if (!$result1) {
         die("Error: " . $conn->error);
     }
 
-    // Wyświetlenie zawartości tabeli "pytania"
-
-
-    if (mysqli_num_rows($result1) > 0 && $typeId==1) {
-        echo    "<div class='quest-options'>";
+    // Display the options
+    if (mysqli_num_rows($result1) > 0 && $typeId == 1) {
+        echo "<div class='quest-options'>";
         while ($row = $result1->fetch_assoc()) {
-            echo    "<div class='quest-option' ";
+            echo "<div class='quest-option' ";
             if ($row['PozId'] == $row['correct'])
                 echo "id='correct'";
             echo ">" . base64_decode($row['Value']) . "</div>";
         }
-        echo    "</div><br>";
+        echo "</div><br>";
     }
 
-
-
+    // Display the 'After' content if it exists
     if (!is_null($after)) {
         echo "<div>" . $after . "</div>";
     }
+
+    // Close the database connection
+    $stmt->close();
     $conn->close();
 } else {
-    echo "No data";
+    echo "No Access";
 }
+?>
