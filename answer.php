@@ -4,7 +4,7 @@ session_start();
 require 'connect.php';
 
 if (isset($_POST['login'], $_POST['pts'], $_POST['answer'], $_POST['turniejId'],$_SESSION['userid'])) {
-    $login = htmlspecialchars($_POST['login']);
+    $login = html_entity_decode(urldecode(htmlspecialchars($_POST['login'])));
     $pts = floatval($_POST['pts']);
     $answer = intval($_POST['answer']);
     $turniejId = intval($_POST['turniejId']);

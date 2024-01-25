@@ -61,8 +61,10 @@ if (isset($_SESSION['userid']) && isset($_GET['id'])) {
     }
 
     // Display the 'After' content if it exists
-    if (!is_null($after)) {
-        echo "<div>" . $after . "</div>";
+    if (isset($after)) {
+        if (!is_null($after)) {
+            echo "<div>" . $after . "</div>";
+        }
     }
 
     // Close the database connection
@@ -71,4 +73,3 @@ if (isset($_SESSION['userid']) && isset($_GET['id'])) {
 } else {
     echo "No Access";
 }
-?>

@@ -235,9 +235,9 @@ function updateStatus($newStatus)
                                         buzzesHTML += '</tr><tr>';
 
                                         if (isLeader) {
-                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login="' + buzz.Login +
+                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login="' + encodeURIComponent(buzz.Login) +
                                                 '">✔️</button><button class="badbutton" data-login="' +
-                                                buzz.Login + '">❌</button></td></tr>';
+                                                encodeURIComponent(buzz.Login) + '">❌</button></td></tr>';
                                         }
 
                                         buzzesHTML += '</tr>';

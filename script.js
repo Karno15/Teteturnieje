@@ -251,3 +251,14 @@ function getUrlParameter(name) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+// Function to sanitize and create a text node
+function createTextNode(value) {
+    console.log(value)
+    var textNode = document.createTextNode(value);
+    var div = document.createElement('div');
+    div.appendChild(textNode);
+    console.log(div.innerHTML)
+    return div.innerHTML;
+}
+

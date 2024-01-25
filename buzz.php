@@ -5,7 +5,7 @@ require 'connect.php';
 
 if (isset($_POST['username'], $_POST['turniejId'], $_SESSION['username'])) {
     $username = $_POST['username'];
-    $turniejId = $_POST['turniejId'];
+    $turniejId = filter_var($_POST['turniejId'], FILTER_SANITIZE_NUMBER_INT);
 
     if ($username !== $_SESSION['username']) {
         echo "No Access!";
