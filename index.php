@@ -36,7 +36,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
         blockquote {
             width: 50%;
             max-width: 500px;
-            padding: 20px 30px 20px 30px;
+            padding: 0px 30px 20px 30px;
             margin: 50px auto;
             position: relative;
             background-color: white;
@@ -96,7 +96,10 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             <span>TETETURNIEJE</span>
         </div>
         <div id='content'>
-
+            <blockquote>
+                <p id="pageInfo">
+                </p>
+            </blockquote>
 
             <?php
 
@@ -124,10 +127,6 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             }
 
             ?>
-            <blockquote>
-                <p id="pageInfo">
-                </p>
-            </blockquote>
             <span id="contact"></span>
         </div>
     </div>

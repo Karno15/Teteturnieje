@@ -2,8 +2,9 @@
 session_start();
 
 require('connect.php');
-if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
-    $turniejId = $_POST['turniejId'];
+
+if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
+    $turniejId = $_SESSION['TurniejId'];
 
     $sql = "SELECT u.Login, MIN(Buzztime) as 'buzz' FROM `buzzes` b 
         JOIN `users` u ON u.UserId=b.UserId 
@@ -12,12 +13,10 @@ if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
         GROUP BY u.Login, b.TurniejId, b.PytId 
         ORDER BY buzz;";
 
-
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $turniejId);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_bind_result($stmt, $login, $buzz);
-
     $response = array('buzzes' => array());
 
     while (mysqli_stmt_fetch($stmt)) {
@@ -27,7 +26,6 @@ if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
         );
         array_push($response['buzzes'], $buzz);
     }
-
     mysqli_stmt_close($stmt);
 
     echo json_encode($response);
@@ -35,4 +33,3 @@ if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
     echo "No data.";
 }
 mysqli_close($conn);
-//to do - cant check buzzes on other active turniejs

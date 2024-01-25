@@ -202,11 +202,8 @@ function updateStatus($newStatus)
                     if (status == 'P' || status == 'O') {
                         $.ajax({
                             url: 'chkBuzzes.php',
-                            type: 'POST',
+                            type: 'GET',
                             dataType: 'json',
-                            data: {
-                                turniejId: turniejId
-                            },
                             success: function(response) {
 
                                 if (buzzresponse != JSON.stringify(response)) {

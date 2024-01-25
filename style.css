@@ -874,5 +874,5 @@ table.datatable thead th:first-child {
 #pageInfo {
   text-align: center;
   font-size: x-large;
-  margin-top: auto; 
+  margin-top: 40; 
 }

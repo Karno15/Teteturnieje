@@ -3,7 +3,7 @@ session_start();
 
 require('connect.php');
 
-if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
+if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
     $turniejId = $_SESSION['TurniejId'];
 
     $statusQuery = "SELECT t.Status, m.Login AS 'Creator', t.CurrentQuest FROM turnieje t
@@ -25,7 +25,7 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
         $currentQuest = $statusRow['CurrentQuest'];
 
         $participantsQuery = "SELECT Login, ROUND(CurrentScore, 3) as 'CurrentScore' FROM
-     turuserzy t JOIN users u ON u.UserId=t.UserId WHERE turniejid = ?";
+        turuserzy t JOIN users u ON u.UserId=t.UserId WHERE turniejid = ?";
         $participantsStmt = $conn->prepare($participantsQuery);
         $participantsStmt->bind_param("i", $turniejId);
         $participantsStmt->execute();
