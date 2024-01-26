@@ -9,16 +9,16 @@ if (isset($_SESSION['info'])) {
     unset($_SESSION['info']);
 }
 
-require('connect.php');
+include_once('translation/' . $_SESSION['lang'] . ".php");
 
-
-
-if (!isset($_GET['turniejId'])) {
-    $_SESSION['info'] = 'Nie znaleziono turnieju';
+if (!isset($_GET['turniejid'])) {
+    $_SESSION['info'] = $lang["notFound"];
     header("Location: index.php");
 }
 
-$turniejId = $_GET['turniejId'];
+require('connect.php');
+
+$turniejId = mysqli_real_escape_string($conn, $_GET['turniejid']);
 $query = "SELECT RANK() OVER (ORDER BY tu.CurrentScore DESC) AS ScoreRank, u.Login,
      tu.CurrentScore FROM turuserzy tu JOIN users u ON u.UserId=tu.UserId 
      WHERE turniejId= ? and CurrentScore IS NOT NULL;";
@@ -27,9 +27,6 @@ $stmt->bind_param("i", $turniejId);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
-
-
-include_once('translation/' . $_SESSION['lang'] . ".php");
 ?>
 
 <head>
@@ -232,16 +229,13 @@ include_once('translation/' . $_SESSION['lang'] . ".php");
                     </div>
                 </main>
                 <?php
-
                 if (isset($yourScore)) {
                 ?>
-
                     <div id='yourscore'>
                     <?php
                     echo  $lang["yourScore"] . ": <br>" . $yourScore;
                 }
                     ?>
-
                     </div>
                     <script>
                         $(document).ready(function() {
@@ -255,7 +249,6 @@ include_once('translation/' . $_SESSION['lang'] . ".php");
                     </script>
                     <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
                     <?php
-                    //echo $_SESSION['userid'];
                     if (isset($_SESSION['userid'])) {
                         unset($_SESSION['TurniejId']);
                         unset($_SESSION['currentQuest']);

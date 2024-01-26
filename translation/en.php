@@ -25,6 +25,7 @@ $lang = array(
     "noQuests" => "No questions in tournament",
     "success" => "Sukces!",
     "error" => "Błąd!",
-    "code" => "Tournament code"
+    "code" => "Tournament code",
+    "saved" => "Saved!"
 );
 //$lang["closed"]

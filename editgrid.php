@@ -1,25 +1,21 @@
 <?php
 session_start();
 
-
+include_once('translation/' . $_SESSION['lang'] . ".php");
 
 if (!isset($_GET['turniejid'])) {
-    $_SESSION['info'] = 'Nie znaleziono turnieju';
+    $_SESSION['info'] = $lang["notFound"];
     header('Location:host.php');
 } elseif (!isset($_SESSION['userid'])) {
-    $_SESSION['info'] = 'Brak dostępu';
+    $_SESSION['info'] = $lang["noAccess"];
     header('Location:index.php');
 } else {
-    // Get the user's ID from the session
+
+    require "connect.php";
+
     $userId = $_SESSION['userid'];
+    $turniejId = mysqli_real_escape_string($conn, $_GET['turniejid']);
 
-    // Get the TurniejId from the query parameter
-    $turniejId = $_GET['turniejid'];
-
-    // Connect to the database
-    require "connect.php"; // Assuming you have a connection script
-
-    // Query to check if the TurniejId belongs to the user
     $stmt = $conn->prepare("SELECT Creator FROM turnieje WHERE TurniejId = ?");
     $stmt->bind_param("i", $turniejId);
     $stmt->execute();
@@ -29,14 +25,13 @@ if (!isset($_GET['turniejid'])) {
         $row = $result->fetch_assoc();
         $creatorId = $row['Creator'];
 
-        // Check if the TurniejId's creator matches the user's ID - if yes do the rest
         if ($creatorId != $userId) {
-            $_SESSION['info'] = 'Nie znaleziono turnieju';
-            header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
+            $_SESSION['info'] = $lang["noAccess"];
+            header("Location:edit.php?turniejid=" . $turniejId);
         }
     } else {
-        $_SESSION['info'] = 'Nie znaleziono turnieju';
-        header("Location:edit.php?turniejid=" . $_GET["turniejid"]);
+        $_SESSION['info'] = $lang["notFound"];
+        header("Location:edit.php?turniejid=" .  $turniejId);
     }
     $stmt->close();
     mysqli_close($conn);
@@ -73,17 +68,13 @@ if (!isset($_GET['turniejid'])) {
                 <b id='editArrangement'>
                 </b>
                 <div class="startpopup">
-                    <span id='columnAmt'></span> <input type="number" id="columnInput" min="1">
+                    <span id='columnAmt'></span> <input type="number" class='codeconfrim' id="columnInput" min="1">
                     <button onclick="updateGrid()" class='codeconfrim' id='setColumns'></button>
                     <div class="gridpopup">
                         <div id="grid-container" class="grid-container"></div>
                     </div>
                 </div>
-                <?php
-                echo "<button onclick=\"location.href='edit.php?turniejid=" . $_GET['turniejid'] . "'\" id='back'
-             class='codeconfrim'>POWRÓT</button>";
-                ?>
-
+                <button onclick="location.href='edit.php?turniejid=<?= $turniejId ?>'" id="back" class="codeconfrim"></button>
                 <script>
                     $(document).ready(function() {
                         $("#editArrangement").html(translations['editArrangement'][lang]);
@@ -92,56 +83,48 @@ if (!isset($_GET['turniejid'])) {
                         $("#back").html(translations['return'][lang]);
 
                         var turniejidFromURL = getUrlParameter('turniejid');
-                        var maxColumns = 8; // Maximum number of columns
+                        var maxColumns = 8;
 
-
-                        // Initial setup with default columns
                         createGrid();
 
                         function createGrid() {
                             var gridContainer = $('#grid-container');
 
-                            // Make AJAX request
                             $.ajax({
                                 url: 'getCategory.php?turniejid=' + turniejidFromURL,
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
                                     if (response.length > 0 && response[0].hasOwnProperty('Columns')) {
-                                        gridContainer.empty(); // Clear existing grid items
+                                        gridContainer.empty();
 
-                                        // Calculate the default number of columns based on the response length
                                         var defaultColumns = Math.min(response[0].Columns, maxColumns);
 
                                         for (var i = 0; i < response.length; i++) {
-                                            var gridItem = $("<div class='category' style='cursor:move;' data-pytid='" + response[i].PytId + "'>" 
-                                            + response[i].Category + "<br><br>" + translations['pts'][lang] +": " 
-                                            + (response[i].IsBid ? translations['betting'][lang] : response[i].Rewards) + "</div>");
+                                            var gridItem = $("<div class='category' style='cursor:move;' data-pytid='" + response[i].PytId + "'>" +
+                                                response[i].Category + "<br><br>" + translations['pts'][lang] + ": " +
+                                                (response[i].IsBid ? translations['betting'][lang] : response[i].Rewards) + "</div>");
                                             gridContainer.append(gridItem);
                                         }
 
-                                        // Make grid items draggable and sortable
                                         gridContainer.sortable({
                                             items: '.category',
                                             cursor: 'move',
                                             tolerance: 'pointer',
                                             update: function(event, ui) {
-                                                saveGridOrder(defaultColumns); // Pass the number of columns to saveGridOrder
+                                                saveGridOrder(defaultColumns);
                                             }
                                         });
                                         $('#columnInput').val(defaultColumns);
-                                        // Set the grid columns based on user input or default, limited to the maximum
+
                                         gridContainer.css('grid-template-columns', 'repeat(' + defaultColumns + ', 1fr)');
                                     } else {
-                                        console.error('Error: Invalid response format or empty response.');
+                                        console.error('Error');
                                         window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent(translations['noData'][lang]);
                                     }
                                 },
                                 error: function(error) {
-                                    // Handle errors here
                                     console.error('Error:', error);
-
-                                    // Redirect to the previous page with error information
                                     window.location.href = 'edit.php?turniejid=' + turniejidFromURL + '&info=' + encodeURIComponent(translations['noData'][lang]);
                                 }
                             });
@@ -154,7 +137,6 @@ if (!isset($_GET['turniejid'])) {
                                 gridOrder.push($(this).data('pytid'));
                             });
 
-                            // Make AJAX request to save the grid order and number of columns to the database
                             $.ajax({
                                 url: 'saveGridOrder.php',
                                 type: 'POST',
@@ -165,8 +147,6 @@ if (!isset($_GET['turniejid'])) {
                                 },
                                 success: function(response) {
                                     console.log('Grid order saved successfully:', response);
-
-                                    // After saving the grid order, update the grid
                                     createGrid(columns);
                                 },
                                 error: function(error) {
@@ -177,20 +157,16 @@ if (!isset($_GET['turniejid'])) {
 
                         window.updateGrid = function() {
                             var columns = $('#columnInput').val();
-                            // Limit the input to a maximum of 8 columns
-                            columns = Math.min(columns, maxColumns);
-                            // Update the input field
-                            createGrid(columns);
+                            if (columns > 0) {
+                                columns = Math.min(columns, maxColumns);
+                                createGrid(columns);
 
-                            // Call saveGridOrder to update the grid order
-                            saveGridOrder(columns);
+                                saveGridOrder(columns);
+                            }
                         };
                     });
                 </script>
     </body>
 <?php
-
-
 }
-
 ?>

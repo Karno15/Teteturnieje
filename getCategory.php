@@ -2,6 +2,8 @@
 session_start();
 require('connect.php');
 
+///BIG issue - need to check wheather all of the question are within this one turniejid, if not error!!!
+
 
 include_once('translation/' . $_SESSION['lang'] . ".php");
 // Check if GET parameter is set

@@ -1,9 +1,12 @@
 <?php
 session_start();
 
-require('connect.php');
+include_once('translation/' . $_SESSION['lang'] . ".php");
 
 if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
+
+    require('connect.php');
+
     $turniejId = $_SESSION['TurniejId'];
 
     $statusQuery = "SELECT t.Status, m.Login AS 'Creator', t.CurrentQuest FROM turnieje t
@@ -46,7 +49,7 @@ if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
         );
     } else {
 
-        $response['error'] = 'No questions';
+        $response['error'] = $lang["noQuests"];
     }
     echo json_encode($response);
 } else {

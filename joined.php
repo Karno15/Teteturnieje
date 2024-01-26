@@ -133,8 +133,9 @@ function updateStatus($newStatus)
 
                             let editable = (isLeader) ? 'true' : 'false';
 
-                            participantsList += "<tr><td><div class='score-edit' contenteditable=" + editable + " data-login='" +
-                                response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</div></td></tr>';
+                            participantsList += "<tr><td><div class='score-edit' contenteditable='" + editable + "' data-login=\"" +
+                                escape(response.participants[i].Login) + "\">" + response.participants[i].CurrentScore + '</div></td></tr>';
+
                         }
                         participantsList += '</table>';
 
@@ -230,14 +231,14 @@ function updateStatus($newStatus)
                                             buzzesHTML += '<tr><td>' + formatDuration(duration) + '</td></tr>';
                                         } else {
                                             firstBuzz = new Date(buzz.buzztime);
-                                            buzzesHTML += '<tr><td>'+ translations['first'][lang] +'!</td>';
+                                            buzzesHTML += '<tr><td>' + translations['first'][lang] + '!</td>';
                                         }
                                         buzzesHTML += '</tr><tr>';
 
                                         if (isLeader) {
-                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login="' + encodeURIComponent(buzz.Login) +
-                                                '">✔️</button><button class="badbutton" data-login="' +
-                                                encodeURIComponent(buzz.Login) + '">❌</button></td></tr>';
+                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login=\"' + escape(buzz.Login) +
+                                                '\">✔️</button><button class="badbutton" data-login=\"' +
+                                                escape(buzz.Login) + '\">❌</button></td></tr>';
                                         }
 
                                         buzzesHTML += '</tr>';
@@ -388,7 +389,7 @@ function updateStatus($newStatus)
                             var parameter1 = turniejId;
 
                             // Construct the URL with parameters
-                            var redirectURL = redirectPage + "?turniejId=" + parameter1;
+                            var redirectURL = redirectPage + "?turniejid=" + parameter1;
 
                             // Redirect to the constructed URL
                             window.location.href = redirectURL;

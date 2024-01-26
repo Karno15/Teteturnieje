@@ -1,9 +1,10 @@
 <?php
 session_start();
 
-require 'connect.php';
-
 if (isset($_POST['username'], $_POST['turniejId'], $_SESSION['username'])) {
+
+    require 'connect.php';
+
     $username = $_POST['username'];
     $turniejId = filter_var($_POST['turniejId'], FILTER_SANITIZE_NUMBER_INT);
 

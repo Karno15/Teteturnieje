@@ -16,7 +16,7 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
 if (isset($_POST['login']) && isset($_POST['newScore'])) {
     // Query to check if the TurniejId belongs to the user
     $sql = "SELECT Creator FROM turnieje WHERE TurniejId = $turniejId";
-
+    
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows > 0) {
@@ -27,7 +27,7 @@ if (isset($_POST['login']) && isset($_POST['newScore'])) {
         if ($creatorId == $userId and $_SESSION['leader']) {
 
 
-            $login = $_POST['login'];
+            $login = html_entity_decode(urldecode(htmlspecialchars($_POST['login'])));
             $newScore = $_POST['newScore'];
             $turniejId = $_SESSION['TurniejId']; // Odbierz TurniejId
 
@@ -38,7 +38,7 @@ if (isset($_POST['login']) && isset($_POST['newScore'])) {
             mysqli_stmt_bind_param($stmt, 'dsi', $newScore, $login, $turniejId); // Uwzględnij TurniejId
 
             if (mysqli_stmt_execute($stmt)) {
-                echo "Updated";
+                echo "Updated.".$login;
             } else {
                 echo "Error: " . mysqli_stmt_error($stmt);
             }

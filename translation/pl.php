@@ -25,7 +25,8 @@ $lang = array(
     "noQuests" => "Brak pytań w turnieju!",
     "success" => "Success!",
     "error" => "Error!",
-    "code" => "Kod turnieju"
+    "code" => "Kod turnieju",
+    "saved" => "Zapisano!"
 );
 //$lang["closed"]
 //    include_once('translation/' . $_SESSION['lang'] . ".php");

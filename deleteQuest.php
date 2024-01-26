@@ -1,11 +1,12 @@
 <?php
 session_start();
 
-require "connect.php";
-
 include_once('translation/' . $_SESSION['lang'] . ".php");
 
 if (isset($_POST["delete_question"], $_POST["turniejid"], $_POST["question_id"], $_SESSION['userid'])) {
+    
+    require "connect.php";
+    
     $question_id = filter_var($_POST["question_id"], FILTER_SANITIZE_NUMBER_INT);
     $turniejid = filter_var($_POST["turniejid"], FILTER_SANITIZE_NUMBER_INT);
 

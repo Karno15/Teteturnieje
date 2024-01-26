@@ -1,14 +1,15 @@
 <?php
 session_start();
 
-require 'connect.php';
+if (isset($_POST['login'], $_POST['pts'], $_POST['answer'], $_POST['turniejId'], $_SESSION['userid'])) {
 
-if (isset($_POST['login'], $_POST['pts'], $_POST['answer'], $_POST['turniejId'],$_SESSION['userid'])) {
+    require 'connect.php';
+
     $login = html_entity_decode(urldecode(htmlspecialchars($_POST['login'])));
     $pts = floatval($_POST['pts']);
     $answer = intval($_POST['answer']);
     $turniejId = intval($_POST['turniejId']);
-    
+
     if ($answer == 0) {
         $pts = -1 * abs($pts);
     }
@@ -44,4 +45,3 @@ if (isset($_POST['login'], $_POST['pts'], $_POST['answer'], $_POST['turniejId'],
 } else {
     echo "No access!";
 }
-

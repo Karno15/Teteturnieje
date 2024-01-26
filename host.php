@@ -44,10 +44,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 } else {
   // Get the user's ID from the session
   $userId = $_SESSION['userid'];
-  $username = $_SESSION['username'];
+  $username = mysqli_real_escape_string($conn, $_SESSION['username']);
 
   $sql = "SELECT masterId FROM users u where Login ='$username';";
-
   $result = $conn->query($sql);
 
   if ($result && $result->num_rows > 0) {

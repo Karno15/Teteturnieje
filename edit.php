@@ -15,8 +15,6 @@ if (isset($_GET['info'])) {
     echo "</div>";
 }
 
-require('connect.php');
-
 include_once('translation/' . $_SESSION['lang'] . ".php");
 
 if (!isset($_GET['turniejid'])) {
@@ -26,9 +24,12 @@ if (!isset($_GET['turniejid'])) {
     $_SESSION['info'] = $lang['noAccess'];
     header('Location:index.php');
 } else {
+
+    require('connect.php');
+
     $userId = $_SESSION['userid'];
     $turniejId = mysqli_real_escape_string($conn, $_GET['turniejid']);
-    
+
     $sql = "SELECT Creator FROM turnieje WHERE TurniejId = ?";
     $stmt = $conn->prepare($sql);
 
@@ -78,16 +79,8 @@ if (!isset($_GET['turniejid'])) {
                     </div>
                     <div id='content' class='fonty'>
                         <div class='startpopup' style='flex-direction: row; justify-content: space-around'>
-                            <?php
-                            echo "<form action='editquest.php?turniejid=" . $turniejId. "' method='POST'>";
-                            ?>
-                            <button class="button-85" type='submit' margin-top='0px' id='addQuest'></button>
-                            </form>
-                            <?php
-                            echo "<form action='editgrid.php?turniejid=" . $turniejId . "' method='POST' >";
-                            ?>
-                            <button class="button-85" type='submit' margin-top='0px' id='editGrid'></button>
-                            </form>
+                            <a href='editquest.php?turniejid=<?= $turniejId ?>' class="button-85" id='addQuest'></a>
+                            <a href='editgrid.php?turniejid=<?= $turniejId ?>' class="button-85" id='editGrid'></a>
                         </div><br>
 
                         <div class='startpopup'>
@@ -107,8 +100,7 @@ if (!isset($_GET['turniejid'])) {
                                     <tbody>
                             <?php
 
-                            // Fetch and display questions
-                            $query = "SELECT * FROM pytania WHERE TurniejId = ?";
+                            $query = "SELECT * FROM pytania WHERE TurniejId = ? order by PytId desc";
                             $stmtQuestions = mysqli_prepare($conn, $query);
                             mysqli_stmt_bind_param($stmtQuestions, 'i', $turniejId);
                             mysqli_stmt_execute($stmtQuestions);

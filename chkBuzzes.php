@@ -1,9 +1,10 @@
 <?php
 session_start();
 
-require('connect.php');
-
 if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
+    
+    require('connect.php');
+
     $turniejId = $_SESSION['TurniejId'];
 
     $sql = "SELECT u.Login, MIN(Buzztime) as 'buzz' FROM `buzzes` b 
