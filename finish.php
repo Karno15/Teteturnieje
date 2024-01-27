@@ -48,7 +48,6 @@ $stmt->close();
             margin: 0;
         }
 
-
         main {
             width: 40rem;
             background-color: #ffffff;
@@ -74,7 +73,6 @@ $stmt->close();
             border-radius: 2rem;
             cursor: pointer;
         }
-
 
         h1 {
             letter-spacing: 3px;

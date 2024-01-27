@@ -1,8 +1,6 @@
 <?php
 require('connect.php');
 
-include_once('translation/' . $_SESSION['lang'] . ".php");
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'];
     $turniejId = $_POST['turniejId'];
@@ -43,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Execute the statement
     if ($stmt->execute()) {
-        echo "Completed successfully: " . $stmt->error;
+        echo "Completed successfully";
     } else {
         echo "Error updating status: " . $stmt->error;
     }
@@ -51,5 +49,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Close the statement and connection
     $stmt->close();
 } else {
-    echo $lang["notFound"];
+    echo 'No data';
 }
