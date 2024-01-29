@@ -10,7 +10,6 @@ if (isset($_SESSION['info'])) {
     unset($_SESSION['info']);
 }
 
-
 if (!isset($_SESSION['username']) || !isset($_SESSION['TurniejId'])) {
     $_SESSION['info'] = $lang["noAccess"];
     header('Location:index.php');
@@ -37,7 +36,6 @@ function updateStatus($newStatus)
             $_SESSION['info'] = $lang["success"];
         } else {
             $_SESSION['info'] = $lang["error"];
-            // echo "Error: " . $stmt->error;
         }
         $stmt->close();
     }
@@ -77,15 +75,13 @@ function updateStatus($newStatus)
             $.ajax({
                 url: 'chkStatus.php',
                 type: 'GET',
-                dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
+                dataType: 'json',
                 success: function(response) {
 
-                    //easter eggs
                     if (getCookie('EE_Larvolcarona') && ee_shown == false) {
                         $('body').append('<img class="flier1" src="images/larvesta.png"><img class="flier2" src="images/volcarona.png">')
                         ee_shown = true;
                     }
-
 
                     if (response.error) {
                         $('#popup').html("<div class='info'>" + response.error + "</div>");
@@ -107,20 +103,15 @@ function updateStatus($newStatus)
                     } else {
                         $(document).on('click', '#start', function() {
                             $('#popup').hide();
-                            updateStatusAjax('K', 0); //dont need current quest so we set it for 0
+                            updateStatusAjax('K', 0);
                         })
                     }
-
-
 
                     if (ptsresponse != JSON.stringify(response.participants)) {
                         var creator = response.creator
                         status = response.status
                         ptsresponse = JSON.stringify(response.participants)
-                        // Wyświetl listę uczestników
                         var participantsList = '<table class="datatables">';
-
-
 
                         for (var i = 0; i < response.participants.length; i++) {
                             participantsList += '<tr><td>';
@@ -193,7 +184,6 @@ function updateStatus($newStatus)
                                     }
                                 },
                                 error: function(error) {
-                                    // Handle errors here
                                     console.error('Error:', error);
                                 }
                             });
@@ -218,14 +208,11 @@ function updateStatus($newStatus)
                                     var buzzesHTML = '<p id="aligned">Buzzers:<table class="datatables">';
                                     var firstBuzz = 0;
 
-
                                     for (var i = 0; i < response.buzzes.length; i++) {
                                         var buzz = response.buzzes[i];
                                         var buzztime = new Date(buzz.buzztime);
 
                                         buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td></tr>';
-
-                                        // Show the buzztime only for the second and subsequent logins
                                         if (i !== 0) {
                                             var duration = buzztime - firstBuzz;
                                             buzzesHTML += '<tr><td>' + formatDuration(duration) + '</td></tr>';
@@ -284,7 +271,6 @@ function updateStatus($newStatus)
                                     turniejId: turniejId
                                 },
                                 success: function(quests) {
-                                    // Tutaj możesz przetwarzać dane zwrócone z quest.php
                                     var PytId = quests.PytId;
                                     var Quest = quests.Quest;
                                     var Category = quests.Category;
@@ -342,7 +328,6 @@ function updateStatus($newStatus)
                                                     if (PytId) {
                                                         if (PozId) {
                                                             $(".quest-option").eq(PozId - 1).attr('id', 'correct');
-                                                            //przypisz id correct do pozycji która jest prawidłowa
                                                         }
                                                         $('#answer').html('<hr id="spliter">' + Answer);
                                                         $("#answer")[0].scrollIntoView();
@@ -387,11 +372,7 @@ function updateStatus($newStatus)
                             shown = true;
                             var redirectPage = "finish.php";
                             var parameter1 = turniejId;
-
-                            // Construct the URL with parameters
                             var redirectURL = redirectPage + "?turniejid=" + parameter1;
-
-                            // Redirect to the constructed URL
                             window.location.href = redirectURL;
                         }
                     }
@@ -418,7 +399,6 @@ function updateStatus($newStatus)
 
                 var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
                 var turniejId = <?php echo isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null'; ?>;
-                // AJAX request to insert a record into the 'buzzes' table
                 $.ajax({
                     url: 'buzz.php',
                     type: 'POST',
@@ -451,7 +431,6 @@ function updateStatus($newStatus)
                     newScore: newScore
                 },
                 success: function(response) {
-                    // Aktualizuj listę uczestników po zaktualizowaniu wyniku
                     checkTournamentStatus();
                 },
                 error: function() {
@@ -479,7 +458,7 @@ function updateStatus($newStatus)
         function updateStatusAjax(status, currentQuest) {
             $.ajax({
                 type: 'POST',
-                url: 'updateStatus.php', // Replace with the actual path to your PHP file
+                url: 'updateStatus.php',
                 data: {
                     turniejId: turniejId,
                     status: status,
@@ -492,15 +471,12 @@ function updateStatus($newStatus)
                     console.error(error);
                 }
             });
-
         }
 
         checkTournamentStatus();
-        // Uruchamiaj funkcję co 2 sekundy
         setInterval(checkTournamentStatus, 400);
     });
 </script>
-
 
 <head>
     <title>TTT-TeTeTurnieje</title>
@@ -509,12 +485,10 @@ function updateStatus($newStatus)
 </head>
 
 <body>
-
     <div id="main-container">
         <div id='head'>
             <span>TETETURNIEJE</span>
         </div>
-
         <div id='content'>
             <div class='startpopup'>
                 <?php
@@ -527,6 +501,7 @@ function updateStatus($newStatus)
                     $codeResult = $codeStmt->get_result();
                     $code = $codeResult->fetch_assoc();
                     echo  $lang["code"] . ': ' . $code['Code'];
+                    $stmt->close();
                 }
                 ?>
                 <div class="loading-spinner"></div>
@@ -535,21 +510,16 @@ function updateStatus($newStatus)
             </div>
             <span id='turniej'>
                 <?php
-
-
                 if ($isLeader) {
                     echo '<button id="start" name="start" class="button-85" type="submit" padding-top="20px">START</button>';
                 }
-
-
                 ?>
             </span>
-
-
             <div id="statusInfo"></div>
             <div id="participantsInfo"></div>
             <div id="buzzerInfo"></div>
             <div id="popup"></div>
-
-
 </body>
+<?php
+mysqli_close($conn);
+?>

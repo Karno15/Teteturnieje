@@ -3,22 +3,13 @@ ob_start();
 session_start();
 
 if (!isset($_SESSION['lang'])) {
-    // Set default language to 'en' (English)
     $userLanguages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-
-    // Check if the first language in the list is 'pl' (Polish), otherwise set it to 'en' (English)
     $_SESSION['lang'] = (stripos($userLanguages[0], 'pl') === 0) ? 'pl' : 'en';
-    //   $_SESSION['lang'] = 'en';
-
 }
-
 
 $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
 
-
 ?>
-
-
 
 <head>
     <title>TTT-TeTeTurnieje</title>
@@ -64,7 +55,6 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             content: '';
             height: calc(100% + 6px);
             width: calc(100% + 6px);
-            ;
             display: block;
             background: linear-gradient(135deg, magenta, blue);
             position: absolute;
@@ -100,9 +90,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
                 <p id="pageInfo">
                 </p>
             </blockquote>
-
             <?php
-
             if (!isset($_SESSION['userid'])) {
 
                 if (isset($_SESSION['info'])) {
@@ -125,13 +113,19 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             } else {
                 header('Location:logged.php');
             }
-
             ?>
             <span id="contact"></span>
         </div>
     </div>
     <div id='popup'>
     </div>
-    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt');
-                                        ob_flush(); ?></span> Made by @karkarno</div>
+    <div id='footer'>v<span id='ver'>
+            <?php echo file_get_contents('verinfo.txt');
+            ob_flush(); ?>
+        </span> Made by @karkarno
+        <?php
+echo ini_get("session.gc_maxlifetime");
+?>
+    </div>
+    
 </body>

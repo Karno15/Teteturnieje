@@ -7,62 +7,37 @@ if (isset($_SESSION['info'])) {
   unset($_SESSION['info']);
 }
 
-require "connect.php"; // Assuming you have a connection script
+require "connect.php";
 
 include_once('translation/' . $_SESSION['lang'] . ".php");
 
-
-if (isset($_POST['formname'])) {
-
+if (isset($_POST['formname'], $_SESSION['userid'])) {
+  $formname = $_POST['formname'];
   $sqlInsert = "INSERT INTO turnieje (TypeId, Creator, Name, Status)
                 SELECT 1, m.masterId, ?, 'N' FROM users u
                 JOIN masters m ON u.masterId = m.masterId
                 WHERE m.masterId = ? LIMIT 1";
   $stmtInsert = $conn->prepare($sqlInsert);
-  $stmtInsert->bind_param('si', $_POST['formname'], $_SESSION['userid']);
+  $stmtInsert->bind_param('si', $formname, $_SESSION['userid']);
   $execute = $stmtInsert->execute();
 
   if ($execute) {
-      // Retrieve the last inserted TurniejId
-      $lastTurniejId = $stmtInsert->insert_id;
+    $lastTurniejId = $stmtInsert->insert_id;
 
-      $_SESSION['info'] = $lang["turniejCreated"];
-      header('Location: edit.php?turniejid=' . $lastTurniejId);
-      exit();
+    $_SESSION['info'] = $lang["turniejCreated"];
+    header('Location: edit.php?turniejid=' . $lastTurniejId);
+    exit();
   } else {
-      // Handle errors
-      $_SESSION['info'] = "Error:" . $stmtInsert->error;
+    $_SESSION['info'] = "Error:" . $stmtInsert->error;
   }
-
-  // Close the statement
   $stmtInsert->close();
 }
 
 if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
   $_SESSION['info'] = $lang["noAccess"];
   header('Location:logged.php');
-} else {
-  // Get the user's ID from the session
-  $userId = $_SESSION['userid'];
-  $username = mysqli_real_escape_string($conn, $_SESSION['username']);
-
-  $sql = "SELECT masterId FROM users u where Login ='$username';";
-  $result = $conn->query($sql);
-
-  if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $masterId = $row['masterId'];
-
-    // Check if the TurniejId's creator matches the user's ID - if no do the error
-    if ($masterId != $userId) {
-      $_SESSION['info'] = $lang["noAccess"];
-      header('Location:index.php');
-    }
-  } else {
-    $_SESSION['info'] = $lang["notFound"];
-    header('Location:index.php');
-  }
 }
+
 ?>
 
 <head>
@@ -96,7 +71,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
       $("#back").html(translations['return'][lang]);
     });
   </script>
-    <div id='popup'></div>
+  <div id='popup'></div>
   <div class="popup-overlay"></div>
   <div id="main-container">
     <div id='head'>
@@ -127,18 +102,16 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
             </thead>
             <tbody>
               <?php
-              // Fetch records from the "turnieje" table
+              $lang = mysqli_real_escape_string($conn, $_SESSION['lang']);
+              
               $query = "SELECT t.TurniejId, t.Name, t.Created, t.Code, d.Label, d.Description FROM turnieje t
             JOIN dictionary d ON d.Symbol=t.Status where t.Creator= " . $_SESSION['userid'] . "
-             and Type='quest.Status' and Language ='" . $_SESSION['lang'] . "' order by t.Created desc;";
+             and Type='quest.Status' and Language ='" . $lang . "' order by t.Created desc;";
               $result = mysqli_query($conn, $query);
 
-              // Check for errors in the query
               if (!$result) {
                 die("Query failed: " . mysqli_error($connection));
               }
-
-              // Loop through the results and display them in HTML
               while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>";
                 echo "<td>" . $row['TurniejId'] . "</td>";
@@ -151,8 +124,6 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
                 echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img class='monke' src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
                 echo "</tr>";
               }
-
-              // Close the database connection
               mysqli_close($conn);
               ?>
             </tbody>
@@ -162,9 +133,6 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
       </div>
       <button onclick="location.href='logged.php'" id='back' class='codeconfrim'>
       </button>
-      <div>
-      </div>
     </div>
   </div>
-
 </body>
