@@ -242,8 +242,8 @@ var translations = {
         'pl': 'Uczestnicy'
     },
     'selectQuest': {
-        'en': "Selecting a question",
-        'pl': 'Wybieranie pytania'
+        'en': "Host is selecting a question",
+        'pl': 'Host wybiera pytanie'
     },
     'finish': {
         'en': "Finish",

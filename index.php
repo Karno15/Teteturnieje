@@ -123,9 +123,6 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             <?php echo file_get_contents('verinfo.txt');
             ob_flush(); ?>
         </span> Made by @karkarno
-        <?php
-echo ini_get("session.gc_maxlifetime");
-?>
     </div>
-    
+
 </body>

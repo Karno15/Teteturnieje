@@ -13,19 +13,13 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
     header('Location:index.php');
 }
 
-
 if (!isset($_SESSION['lang'])) {
-    // Set default language to 'en' (English)
     $userLanguages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-
-    // Check if the first language in the list is 'pl' (Polish), otherwise set it to 'en' (English)
     $_SESSION['lang'] = (stripos($userLanguages[0], 'pl') === 0) ? 'pl' : 'en';
-    //   $_SESSION['lang'] = 'en';
-
 }
 
-
 $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
+$login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
 
 ?>
 
@@ -80,8 +74,8 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
                 if (isset($row['Login'])) {
                     echo $row['Login'];
                 }
-                if ($result->num_rows > 0 && $_SESSION['username'] != $row['Login']) {
-                    echo " (" . $_SESSION['username'] . ")";
+                if ($result->num_rows > 0 && stripslashes($_SESSION['username']) != $row['Login']) {
+                    echo " (" . stripslashes($_SESSION['username']) . ")";
                 }
 
                 ?>
@@ -95,7 +89,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
                         <input type="text" class="inputy" name="login" maxlength="12" required>
                 </div>
                 <div id='definput'>
-                <span id='enterCode'></span>
+                    <span id='enterCode'></span>
                     </br>
                     <input type="text" i class="inputy" name="gamecode" pattern="[0-9]{4}" maxlength="4" required>
                 </div>
@@ -105,16 +99,19 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             <div id='join-back-cont'></div>
             <script>
                 $(document).ready(function() {
+                    var login = decodeEntities('<?= htmlspecialchars($login, ENT_QUOTES, 'UTF-8'); ?>');
+
                     $("#titlejoin").html(translations['joinTournament'][lang]);
                     $("#join").html(translations['join'][lang]);
                     $("#enterNickname").html(translations['enterNickname'][lang] + ":");
                     $("#enterCode").html(translations['enterCode'][lang] + ":");
                     $("#host").html(translations['host'][lang]);
+                    $(".inputy[name='login']").val(login);
 
                     $.ajax({
                         url: 'chkStatus.php',
                         type: 'GET',
-                        dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
+                        dataType: 'json',
                         success: function(response) {
                             $('#join-back-cont').html("<a href='joined.php' id='join-back'>" + translations['inProgress'][lang] + "</a><br><br>");
                             $('#join-back-cont').show();

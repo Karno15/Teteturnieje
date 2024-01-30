@@ -262,3 +262,8 @@ function createTextNode(value) {
     return div.innerHTML;
 }
 
+function decodeEntities(encodedString) {
+    var textarea = document.createElement('textarea');
+    textarea.innerHTML = encodedString;
+    return textarea.value;
+}

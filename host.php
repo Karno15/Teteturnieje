@@ -12,7 +12,7 @@ require "connect.php";
 include_once('translation/' . $_SESSION['lang'] . ".php");
 
 if (isset($_POST['formname'], $_SESSION['userid'])) {
-  $formname = $_POST['formname'];
+  $formname = htmlspecialchars($_POST['formname']);
   $sqlInsert = "INSERT INTO turnieje (TypeId, Creator, Name, Status)
                 SELECT 1, m.masterId, ?, 'N' FROM users u
                 JOIN masters m ON u.masterId = m.masterId
@@ -103,7 +103,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
             <tbody>
               <?php
               $lang = mysqli_real_escape_string($conn, $_SESSION['lang']);
-              
+
               $query = "SELECT t.TurniejId, t.Name, t.Created, t.Code, d.Label, d.Description FROM turnieje t
             JOIN dictionary d ON d.Symbol=t.Status where t.Creator= " . $_SESSION['userid'] . "
              and Type='quest.Status' and Language ='" . $lang . "' order by t.Created desc;";

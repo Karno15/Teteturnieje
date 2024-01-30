@@ -501,7 +501,6 @@ function updateStatus($newStatus)
                     $codeResult = $codeStmt->get_result();
                     $code = $codeResult->fetch_assoc();
                     echo  $lang["code"] . ': ' . $code['Code'];
-                    $stmt->close();
                 }
                 ?>
                 <div class="loading-spinner"></div>
