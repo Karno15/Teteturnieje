@@ -119,8 +119,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
     </div>
     <div id='popup'>
     </div>
-    <div id='footer'>v<span id='ver'>
-            <?php echo file_get_contents('verinfo.txt');
+    <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt');
             ob_flush(); ?>
         </span> Made by @karkarno
     </div>

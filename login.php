@@ -6,12 +6,20 @@ if (!isset($_SESSION['lang'])) {
     $_SESSION['lang'] = 'en';
 }
 
+require "connect.php";
+
 function validateUser($username, $password)
 {
+    include_once('translation/' . $_SESSION['lang'] . ".php");
+
     require "connect.php";
 
-    include_once('translation/' . $_SESSION['lang'] . ".php");
-    
+    if ($username == '' || $password == '') {
+        $_SESSION['info'] = $lang['invalidLogin'];
+        header("Location: index.php");
+        exit();
+    }
+
     $password = md5($password);
 
     $query = "SELECT masterId, Login FROM masters WHERE Login = UPPER(?) AND Pass= ? ;";
@@ -55,6 +63,7 @@ function validateUser($username, $password)
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $username = $_POST['login'];
     $password = $_POST['pass'];
 

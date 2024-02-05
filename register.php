@@ -6,9 +6,8 @@ if (!isset($_SESSION['lang'])) {
     $_SESSION['lang'] = 'en';
 }
 
+require('connect.php');
 
-require ('connect.php');
-// Function to check if a username already exists in masters or users (case insensitive)
 function usernameExists($username, $conn)
 {
     $checkQuery = "SELECT COUNT(*) FROM masters WHERE UPPER(Login) = UPPER(?) AND UPPER(Login) IN (SELECT UPPER(Login) FROM users);";
@@ -22,21 +21,21 @@ function usernameExists($username, $conn)
     return $userCount > 0;
 }
 
-// Function to register a new user
 function registerUser($username, $password, $conn)
 {
-    include_once( 'translation/'. $_SESSION['lang'] . ".php");
-    echo $lang['userExistsInfo'];
-    // Check if the username already exists
+    include_once('translation/' . $_SESSION['lang'] . ".php");
+    if ($username == '' || $password == '') {
+        $_SESSION['info'] = $lang['registerError'];
+        header("Location: index.php");
+        exit();
+    }
+
     if (usernameExists($username, $conn)) {
         $_SESSION['info'] = $lang['userExistsInfo'];
         return false;
     }
-
-    // Hash the password using md5 (this is just for demonstration, consider using more secure methods like password_hash)
     $hashedPassword = md5($password);
 
-    // Insert into masters table
     $insertMasterQuery = "INSERT INTO masters (Login, Pass) VALUES (UPPER(?), ?);";
     $stmtMaster = mysqli_prepare($conn, $insertMasterQuery);
     mysqli_stmt_bind_param($stmtMaster, 'ss', $username, $hashedPassword);
@@ -49,10 +48,8 @@ function registerUser($username, $password, $conn)
         return false;
     }
 
-    // Get the masterId of the inserted master
     $masterId = mysqli_insert_id($conn);
 
-    // Insert into users table
     $insertUserQuery = "INSERT INTO users (Login, Pass, masterId) VALUES (UPPER(?), ?, ?);";
     $stmtUser = mysqli_prepare($conn, $insertUserQuery);
     mysqli_stmt_bind_param($stmtUser, 'ssi', $username, $hashedPassword, $masterId);
@@ -65,28 +62,22 @@ function registerUser($username, $password, $conn)
         return false;
     }
 
-    // Registration successful, set up the session
     $_SESSION['info'] = $lang['registered'];
 
-    // Close the statements
     mysqli_stmt_close($stmtMaster);
     mysqli_stmt_close($stmtUser);
 
     return true;
 }
 
-
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['login'];
     $password = $_POST['pass'];
 
     if (registerUser($username, $password, $conn)) {
-        // Registration successful, you can redirect to a different page if needed
         header("Location: index.php");
         exit();
     } else {
-        // Show an appropriate error message
         header("Location: index.php");
         exit();
     }

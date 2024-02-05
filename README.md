@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file
 - Added Registering function
 - Added translations [PL/EN]
 - Only 5 MB of content in question is allowed
+- Added a big security change
 
 ## [1.9] - 2024-01-04
 
