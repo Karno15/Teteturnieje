@@ -41,10 +41,6 @@ body {
   padding: 20px 60px 20px 60px;
 }
 
-/*div{
-    border: 1px solid black;
-}*/
-
 #footer {
   position: fixed;
   left: 0;
@@ -82,6 +78,7 @@ body {
 #startLink {
   cursor: pointer;
 }
+
 #content {
   padding-top: 5%;
   padding-bottom: 5%;
@@ -93,7 +90,7 @@ body {
   font-family: 'Work Sans';
   border-radius: 0 0 29px 29px;
   min-height: 67%;
-  flex: 1; /* Take up the remaining space */
+  flex: 1;
 }
 
 .startpopup {
@@ -201,9 +198,6 @@ body {
   font-family: chooseFont;
 }
 
-
-
-/* CSS */
 .button-85 {
   font-family: playButtons;
   font-size: 20pt;
@@ -331,22 +325,16 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  /* Kolor tła */
   display: none;
-  /* Początkowo ukryj tło */
   z-index: 7;
-  /* Wyżej niż inne elementy, ale niższy niż popup */
 }
 
-
-#nickname{
+#nickname {
   position: relative;
   font-size: 13pt;
   font-weight: bolder;
-  left:40%;
+  left: 40%;
 }
-
-
 
 #join-back {
   color: black;
@@ -357,29 +345,30 @@ body {
   margin-top: -10%;
   margin-bottom: 4%;
   text-decoration: none;
-  --c:  #0e269d; /* the color*/
-  box-shadow: 0 0 0 .1em inset var(--c); 
+  --c: #0e269d;
+  box-shadow: 0 0 0 .1em inset var(--c);
   outline-offset: .1em;
   transition: background-size .4s, background-position 0s .4s;
-  background: rgb(34,193,195);
-  background: linear-gradient(0deg, rgba(34,193,195,1) 14%, rgba(158,253,45,1) 100%);
+  background: rgb(34, 193, 195);
+  background: linear-gradient(0deg, rgba(34, 193, 195, 1) 14%, rgba(158, 253, 45, 1) 100%);
   border-radius: 20px;
   border: 3px solid black;
 }
+
 #join-back:hover {
-  background: rgb(34,193,195);
-  background: linear-gradient(0deg, rgba(34,193,195,1) 14%, rgba(158,253,45,1) 100%);
+  background: rgb(34, 193, 195);
+  background: linear-gradient(0deg, rgba(34, 193, 195, 1) 14%, rgba(158, 253, 45, 1) 100%);
   --_p: 100%;
   transition: background-position .4s, background-size 0s;
-  color:white;
-}
-#join-back:active {
-  box-shadow: 0 0 9e9q inset #0009; 
-  background-color: var(--c);
-  background: rgb(34,193,195);
-  background: linear-gradient(0deg, rgba(34,193,195,1) 14%, rgba(158,253,45,1) 100%);
+  color: white;
 }
 
+#join-back:active {
+  box-shadow: 0 0 9e9q inset #0009;
+  background-color: var(--c);
+  background: rgb(34, 193, 195);
+  background: linear-gradient(0deg, rgba(34, 193, 195, 1) 14%, rgba(158, 253, 45, 1) 100%);
+}
 
 .datatable {
   font-family: 'Work Sans';
@@ -526,7 +515,7 @@ table.datatable thead th:first-child {
   box-sizing: content-box;
 }
 
-#participantsPts{
+#participantsPts {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -713,19 +702,26 @@ table.datatable thead th:first-child {
 
 @keyframes flyAnimation {
   0% {
-      transform: translate(-10vw, -10vh);
+    transform: translate(-10vw, -10vh);
   }
-  5%, 20% {
-      transform: translate(110vw, 95vh );
+
+  5%,
+  20% {
+    transform: translate(110vw, 95vh);
   }
-  50%, 70% {
-      transform: translate(110vw, -10vh);
+
+  50%,
+  70% {
+    transform: translate(110vw, -10vh);
   }
-  75%, 95% {
-      transform: translate(-10vw, 110vh);
+
+  75%,
+  95% {
+    transform: translate(-10vw, 110vh);
   }
+
   100% {
-      transform: translate(-10vw, -10vh);
+    transform: translate(-10vw, -10vh);
   }
 }
 
@@ -733,7 +729,7 @@ table.datatable thead th:first-child {
 .flier2 {
   pointer-events: none;
   position: fixed;
-  top:-20vh;
+  top: -20vh;
   left: -20vw;
   animation: flyAnimation 25s linear infinite;
   z-index: 1;
@@ -750,62 +746,103 @@ table.datatable thead th:first-child {
   animation-delay: 1s;
 }
 
-.logout{
+.logout {
   margin-top: -4.5%;
   left: 40%;
 }
 
 .view {
-  content:url("images/unowneyeclose.png");
+  content: url("images/unowneyeclose.png");
   cursor: pointer;
 }
+
 .view:hover {
-  content:url("images/unowneyeopen.png");
+  content: url("images/unowneyeopen.png");
 }
+
 .view:active {
-  content:url("images/unowneyeclosed.png");
+  content: url("images/unowneyeclosed.png");
   transform: translateY(3px);
 }
 
 .wrench {
   transition: transform .2s ease-in-out;
 }
+
 .wrench:hover {
   transform: rotate(-60deg);
 }
+
 .wrench:active {
   transform: translateY(5px);
 }
 
-.trash{
-  padding-top:10px;
+.trash {
+  padding-top: 10px;
 }
 
-.trash, .monke{
+.trash,
+.monke {
   cursor: pointer;
 }
 
-.trash:hover, .monke:hover {
+.trash:hover,
+.monke:hover {
   animation: shake 0.5s;
   animation-iteration-count: 1;
 }
-.trash:active, .monke:active {
+
+.trash:active,
+.monke:active {
   transform: translateY(5px);
 }
 
 @keyframes shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-1deg); }
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
 }
+
 .gridpopup {
   min-width: 100%;
 }
@@ -813,14 +850,13 @@ table.datatable thead th:first-child {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* Default 3 columns, you can customize this */
   gap: 10px;
   margin: 10px;
   place-items: center;
   place-content: center;
 }
 
-#lang{
+#lang {
   position: absolute;
   top: 0;
   left: 0;
@@ -864,11 +900,11 @@ table.datatable thead th:first-child {
 
 #contact {
   font-size: medium;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 #pageInfo {
   text-align: center;
   font-size: x-large;
-  margin-top: 40; 
+  margin-top: 40;
 }

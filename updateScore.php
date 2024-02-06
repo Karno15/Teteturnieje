@@ -3,7 +3,8 @@
 session_start();
 
 require 'connect.php';
-$userId = '';
+
+include_once('translation/' . $_SESSION['lang'] . ".php");
 
 if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
     $userId = $_SESSION['userid'];
@@ -14,41 +15,44 @@ if (isset($_SESSION['userid']) && isset($_SESSION['TurniejId'])) {
 }
 
 if (isset($_POST['login']) && isset($_POST['newScore'])) {
-    // Query to check if the TurniejId belongs to the user
-    $sql = "SELECT Creator FROM turnieje WHERE TurniejId = $turniejId";
-    
-    $result = $conn->query($sql);
 
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $creatorId = $row['Creator'];
+    $sql = "SELECT Creator FROM turnieje WHERE TurniejId = ?";
+    $stmtCreator = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmtCreator, 'i', $turniejId);
 
-        // Check if the TurniejId's creator matches the user's ID - if yes do the rest
-        if ($creatorId == $userId and $_SESSION['leader']) {
+    if (mysqli_stmt_execute($stmtCreator)) {
+        $result = mysqli_stmt_get_result($stmtCreator);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $creatorId = $row['Creator'];
+            if ($creatorId == $userId && $_SESSION['leader']) {
 
+                $login = $_POST['login'];
+                $newScore = $_POST['newScore'];
 
-            $login = html_entity_decode(urldecode(htmlspecialchars($_POST['login'])));
-            $newScore = $_POST['newScore'];
-            $turniejId = $_SESSION['TurniejId']; // Odbierz TurniejId
+                $sqlUpdate = "UPDATE turuserzy t JOIN users u ON u.UserId=t.UserId SET t.CurrentScore = ? WHERE u.Login = ? AND t.turniejId = ?";
+                $stmtUpdate = mysqli_prepare($conn, $sqlUpdate);
+                mysqli_stmt_bind_param($stmtUpdate, 'dsi', $newScore, $login, $turniejId);
 
-
-            $sql = "UPDATE turuserzy t JOIN users u ON u.UserId=t.UserId SET t.CurrentScore = ? WHERE u.Login =?
-    AND t.turniejId = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'dsi', $newScore, $login, $turniejId); // Uwzględnij TurniejId
-
-            if (mysqli_stmt_execute($stmt)) {
-                echo "Updated.".$login;
+                if (mysqli_stmt_execute($stmtUpdate)) {
+                    echo "Updated.";
+                    print_r($stmtUpdate);
+                } else {
+                    echo "Error: " . mysqli_stmt_error($stmtUpdate);
+                }
+                mysqli_stmt_close($stmtUpdate);
             } else {
-                echo "Error: " . mysqli_stmt_error($stmt);
+                echo $lang["noAccess"];
             }
-            mysqli_close($conn);
         } else {
-            echo $lang["noAccess"];
+            echo $lang["notFound"];
         }
     } else {
-        echo $lang["notFound"];
+        echo "Error: " . mysqli_stmt_error($stmtCreator);
     }
+    mysqli_stmt_close($stmtCreator);
+
+    mysqli_close($conn);
 } else {
     echo "No data";
 }

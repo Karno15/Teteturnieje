@@ -21,25 +21,6 @@ $turniejid = isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null';
 $currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
-function updateStatus($newStatus)
-{
-    require('connect.php');
-
-    if (isset($_POST['start'])) {
-        $sql = "UPDATE turnieje SET Status=? WHERE TurniejId =?";
-        $turniejid = $_SESSION['TurniejId'];
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $newStatus, $turniejid);
-
-        if ($stmt->execute() === TRUE) {
-            $_SESSION['info'] = $lang["success"];
-        } else {
-            $_SESSION['info'] = $lang["error"];
-        }
-        $stmt->close();
-    }
-}
 ?>
 <script src="jquery/jquery.min.js"></script>
 <script>
@@ -51,6 +32,7 @@ function updateStatus($newStatus)
 <script src="translation/translation.js"></script>
 <script>
     $(document).ready(function() {
+
         $('#awaitingStart').html(translations['awaitingStart'][lang])
 
         var isLeader = <?php echo json_encode($isLeader); ?>;
@@ -101,10 +83,10 @@ function updateStatus($newStatus)
                             $('.info').delay(3000).fadeOut();
                         });
                     } else {
-                        $(document).on('click', '#start', function() {
+                        $(document).off('click', '#start').on('click', '#start', function() {
                             $('#popup').hide();
                             updateStatusAjax('K', 0);
-                        })
+                        });
                     }
 
                     if (ptsresponse != JSON.stringify(response.participants)) {
@@ -230,16 +212,11 @@ function updateStatus($newStatus)
 
                                         buzzesHTML += '</tr>';
                                     }
-
-                                    // Remove the trailing comma
                                     buzzesHTML = buzzesHTML.replace(/,\s*$/, '');
-
                                     buzzesHTML += '</b>';
-
                                     buzzesHTML += '</table></p>';
-                                    // Insert the HTML into the #buzzerInfo element
                                     $('#buzzerInfo').html(buzzesHTML);
-                                    $('#buzzerInfo').show(); //set block
+                                    $('#buzzerInfo').show();
                                 }
 
                             },
@@ -285,8 +262,6 @@ function updateStatus($newStatus)
                                         questHTML = '<p>' + translations['questCat'][lang] + ': ' + Category + '<br>' + translations['questPts'][lang] + ': '
                                         questHTML += isBid ? translations['betting'][lang] : Rewards;
                                         questHTML += '</p><span id="quest">' + Quest + "</span>";
-
-
 
                                         if (typeof pozycje !== 'undefined')
                                             questHTML += "<div class='quest-options' id='questOptionsContainer'></div>";
@@ -416,9 +391,6 @@ function updateStatus($newStatus)
             }
         }
 
-
-
-
         $('body').on('blur', '.score-edit', function() {
             var login = $(this).data('login');
             var newScore = $(this).text();
@@ -460,12 +432,11 @@ function updateStatus($newStatus)
                 type: 'POST',
                 url: 'updateStatus.php',
                 data: {
-                    turniejId: turniejId,
                     status: status,
                     currentQuest: currentQuest
                 },
                 success: function(response) {
-                    checkTournamentStatus();
+
                 },
                 error: function(error) {
                     console.error(error);

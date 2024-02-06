@@ -28,5 +28,3 @@ $lang = array(
     "code" => "Kod turnieju",
     "saved" => "Zapisano!"
 );
-//$lang["closed"]
-//    include_once('translation/' . $_SESSION['lang'] . ".php");

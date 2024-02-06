@@ -1,5 +1,3 @@
-//translations here
-
 var translations = {
     'login': {
         'en': 'Login',
@@ -294,4 +292,4 @@ var translations = {
         'pl': "Teteturnieje to aplikacja do hostowania turniejów, w której możesz tworzyć własne turnieje oraz rozgrywać je ze znajomymi. Wystarczy stworzyć turniej oraz pytania do niego, a następnie rozpocząć go.<br>Zdobyty czterocyfrowy kod można wysłać do znajomych, aby spróbowali go rozwiązać.<br> Host może przyznawać lub odbierać punkty za odpowiedzi. <br> (Zalecane jest korzystanie z voice chatu lub normalnego chatu grupowego podczas grania w teteturnieje.)  "
     }
 };
-//translations[''][lang]
+

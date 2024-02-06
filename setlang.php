@@ -1,9 +1,16 @@
 <?php
 session_start();
 
-if(isset($_POST['language'])) {
-    $_SESSION['lang'] = $_POST['language'];
-    echo 'Language set to: ' . $_POST['language'];
+if (isset($_POST['language'])) {
+    $validLanguages = ['en', 'pl'];
+    $selectedLanguage = $_POST['language'];
+
+    if (in_array($selectedLanguage, $validLanguages)) {
+        $_SESSION['lang'] = $selectedLanguage;
+        echo 'Language set to: ' . $selectedLanguage;
+    } else {
+        echo 'Invalid language value';
+    }
 } else {
-    echo 'Invalid language data';
+    echo 'Language data not provided';
 }

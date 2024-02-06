@@ -28,4 +28,3 @@ $lang = array(
     "code" => "Tournament code",
     "saved" => "Saved!"
 );
-//$lang["closed"]
