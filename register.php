@@ -30,6 +30,11 @@ function registerUser($username, $password, $conn)
         exit();
     }
 
+    if (!isValidUsername($username)) {
+        $_SESSION['info'] = $lang['invalidLogin'];
+        return false;
+    }
+
     if (usernameExists($username, $conn)) {
         $_SESSION['info'] = $lang['userExistsInfo'];
         return false;
@@ -43,7 +48,7 @@ function registerUser($username, $password, $conn)
 
     if (!$resultMaster) {
         $_SESSION['info'] = $lang['registerError'];
-        error_log("Error inserting: " . mysqli_error($conn));
+        error_log("Error inserting");
         mysqli_stmt_close($stmtMaster);
         return false;
     }
@@ -57,7 +62,7 @@ function registerUser($username, $password, $conn)
 
     if (!$resultUser) {
         $_SESSION['info'] = $lang['registerError'];
-        error_log("Error inserting into users: " . mysqli_error($conn));
+        error_log("Error inserting into users");
         mysqli_stmt_close($stmtUser);
         return false;
     }
@@ -69,6 +74,14 @@ function registerUser($username, $password, $conn)
 
     return true;
 }
+
+function isValidUsername($username)
+{
+    $allowedCharacters = "/^[a-zA-Z0-9_\-]+$/";
+
+    return preg_match($allowedCharacters, $username);
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['login'];

@@ -122,7 +122,7 @@ if (!isset($_GET['turniejid'])) {
                             $resultQuestions = mysqli_stmt_get_result($stmtQuestions);
 
                             if (!$resultQuestions) {
-                                die("Query failed: " . mysqli_error($conn));
+                                die("Query failed");
                             }
 
                             if (mysqli_num_rows($resultQuestions) == 0) {

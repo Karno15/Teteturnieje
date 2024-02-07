@@ -108,8 +108,8 @@ var translations = {
         'pl': 'Do obstawienia'
     },
     'noData': {
-        'en': 'No Data',
-        'pl': 'Brak danych'
+        'en': 'First add the questions',
+        'pl': 'Najpierw dodaj pytania'
     },
     'loadingQuest': {
         'en': 'Loading question...',

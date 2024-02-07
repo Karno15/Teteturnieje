@@ -8,6 +8,14 @@ if (!isset($_SESSION['lang'])) {
 
 require "connect.php";
 
+function isValidUsername($username)
+{
+    $allowedCharacters = "/^[a-zA-Z0-9_\-]+$/";
+
+    return preg_match($allowedCharacters, $username);
+}
+
+
 function validateUser($username, $password)
 {
     include_once('translation/' . $_SESSION['lang'] . ".php");
@@ -18,6 +26,11 @@ function validateUser($username, $password)
         $_SESSION['info'] = $lang['invalidLogin'];
         header("Location: index.php");
         exit();
+    }
+
+    if (!isValidUsername($username)) {
+        $_SESSION['info'] = $lang['invalidLogin'];
+        return false;
     }
 
     $password = md5($password);
@@ -52,12 +65,12 @@ function validateUser($username, $password)
                 return false;
             }
         } else {
-            echo "Error: " . mysqli_error($conn);
+            echo "Error";
             return false;
         }
         mysqli_stmt_close($stmt);
     } else {
-        echo "Error: " . mysqli_error($conn);
+        echo "Error";
         return false;
     }
 }

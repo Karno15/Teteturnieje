@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
     $('.lang-select').on('change', function() {
         if (!flagClick) {
-            let lang = $(this).val();
+            lang = $(this).val();
             localStorage.setItem("lang", lang);
             $.post('setlang.php', {
                 language: lang
@@ -162,11 +162,6 @@ function pokazPytanie(id) {
         }
     };
     xhr.send();
-}
-
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 $(document).on('click', '#closeButton', function () {

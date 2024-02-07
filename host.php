@@ -135,7 +135,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
               $result = mysqli_query($conn, $query);
 
               if (!$result) {
-                die("Query failed: " . mysqli_error($connection));
+                die("Query failed");
               }
               if (mysqli_num_rows($result) == 0) {
                 echo "<tr><td id='emptyTurniej' colspan='7'></td></tr>";
