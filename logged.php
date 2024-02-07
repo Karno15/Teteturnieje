@@ -98,8 +98,6 @@ $login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
             <div id='join-back-cont'></div>
             <script>
                 $(document).ready(function() {
-                    console.log('<?= $login; ?>');
-
                     var login = decodeEntities('<?= htmlspecialchars_decode($login, ENT_QUOTES); ?>');
 
                     $("#titlejoin").html(translations['joinTournament'][lang]);
