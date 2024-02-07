@@ -3,6 +3,14 @@ require "connect.php";
 
 session_start();
 
+function isValidUsername($username)
+{
+    $allowedCharacters = "/^[a-zA-Z0-9_\-]+$/";
+
+    return preg_match($allowedCharacters, $username);
+}
+
+
 if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
 
     include_once( 'translation/'. $_SESSION['lang'] . ".php");
@@ -30,6 +38,13 @@ if (isset($_POST["login"]) && isset($_POST["gamecode"])) {
         $result = mysqli_stmt_get_result($stmt);
 
         if ($result->num_rows == 0) {
+
+            if (!isValidUsername($login)) {
+                $_SESSION['info'] = $lang['invalidLogin'];
+                header("Location: logged.php");
+                exit();
+            }
+
             $sql = "INSERT INTO users (Login, LastLogged, masterId) VALUES (UPPER(?), CURRENT_TIMESTAMP(), ? )";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "si", $login, $masterid);
