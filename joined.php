@@ -2,6 +2,7 @@
 
 session_start();
 
+include_once('translation/' . $_SESSION['lang'] . ".php");
 if (isset($_SESSION['info'])) {
     echo "<div class='info'>";
     echo $_SESSION['info'];
@@ -9,9 +10,8 @@ if (isset($_SESSION['info'])) {
     unset($_SESSION['info']);
 }
 
-
 if (!isset($_SESSION['username']) || !isset($_SESSION['TurniejId'])) {
-    $_SESSION['info'] = 'Brak dostępu';
+    $_SESSION['info'] = $lang["noAccess"];
     header('Location:index.php');
 }
 
@@ -21,30 +21,20 @@ $turniejid = isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null';
 $currentQuest = isset($_SESSION['currentQuest']) ? json_encode($_SESSION['currentQuest']) : 0;
 $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
 
-function updateStatus($newStatus)
-{
-    require('connect.php');
-
-    if (isset($_POST['start'])) {
-        $sql = "UPDATE turnieje SET Status=? WHERE TurniejId =?";
-        $turniejid = $_SESSION['TurniejId'];
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $newStatus, $turniejid);
-
-        if ($stmt->execute() === TRUE) {
-            $_SESSION['info'] = "Success!";
-        } else {
-            $_SESSION['info'] = "Błąd!";
-            // echo "Error: " . $stmt->error;
-        }
-        $stmt->close();
-    }
-}
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="jquery/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {    
+    var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+    var lang = langses || 'en';
+    localStorage.setItem("lang", lang);
+</script>
+<script src="script.js"></script>
+<script src="translation/translation.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $('#awaitingStart').html(translations['awaitingStart'][lang])
+
         var isLeader = <?php echo json_encode($isLeader); ?>;
 
         var buzzsfx = new Audio("sounds/buzz.wav");
@@ -67,15 +57,13 @@ function updateStatus($newStatus)
             $.ajax({
                 url: 'chkStatus.php',
                 type: 'GET',
-                dataType: 'json', // Wskazujemy, że oczekujemy danych JSON
+                dataType: 'json',
                 success: function(response) {
-                    
-                    //easter eggs
-                    if(getCookie('EE_Larvolcarona') && ee_shown==false){
+
+                    if (getCookie('EE_Larvolcarona') && ee_shown == false) {
                         $('body').append('<img class="flier1" src="images/larvesta.png"><img class="flier2" src="images/volcarona.png">')
-                        ee_shown=true ;
+                        ee_shown = true;
                     }
-                    
 
                     if (response.error) {
                         $('#popup').html("<div class='info'>" + response.error + "</div>");
@@ -91,26 +79,21 @@ function updateStatus($newStatus)
                     if (response.participants.length == 0) {
                         $(document).on('click', '#start', function() {
                             $('#popup').show();
-                            $('#popup').html("<div class='info'>" + 'Brak uczestników!' + "</div>");
+                            $('#popup').html("<div class='info'>" + translations['noParticipants'][lang] + "</div>");
                             $('.info').delay(3000).fadeOut();
                         });
                     } else {
-                        $(document).on('click', '#start', function() {
+                        $(document).off('click', '#start').on('click', '#start', function() {
                             $('#popup').hide();
-                            updateStatusAjax('K', 0); //dont need current quest so we set it for 0
-                        })
+                            updateStatusAjax('K', 0);
+                        });
                     }
-
-
 
                     if (ptsresponse != JSON.stringify(response.participants)) {
                         var creator = response.creator
                         status = response.status
                         ptsresponse = JSON.stringify(response.participants)
-                        // Wyświetl listę uczestników
                         var participantsList = '<table class="datatables">';
-
-
 
                         for (var i = 0; i < response.participants.length; i++) {
                             participantsList += '<tr><td>';
@@ -123,13 +106,14 @@ function updateStatus($newStatus)
 
                             let editable = (isLeader) ? 'true' : 'false';
 
-                            participantsList += "<tr><td><div class='score-edit' contenteditable=" + editable + " data-login='" +
-                                response.participants[i].Login + "'>" + response.participants[i].CurrentScore + '</div></td></tr>';
+                            participantsList += "<tr><td><div class='score-edit' contenteditable='" + editable + "' data-login=\"" +
+                                escape(response.participants[i].Login) + "\">" + response.participants[i].CurrentScore + '</div></td></tr>';
+
                         }
                         participantsList += '</table>';
 
-                        $('#participantsInfo').html('<p>Organizator:<b><br> ' + response.creator +
-                            '</b></p><p>Rzule: ' + participantsList + '</p>');
+                        $('#participantsInfo').html('<p>Host:<b><br> ' + response.creator +
+                            '</b></p><p id="participantsPts">' + translations['participants'][lang] + ': ' + participantsList + '</p>');
                     }
 
                     /// STATUS KATEGORII I KOŃCA KATEGORI (X) --------------------------------------
@@ -148,14 +132,14 @@ function updateStatus($newStatus)
                                     if (catresponse != JSON.stringify(response)) {
 
                                         catresponse = JSON.stringify(response);
-                                        categoriesHTML = 'Wybieranie pytania<br><div class="gridpopup"><div id="grid-container" class="grid-container">';
-                                        
+                                        categoriesHTML = translations['selectQuest'][lang] + '<br><div class="gridpopup"><div id="grid-container" class="grid-container">';
+
                                         for (var i = 0; i < response.length; i++) {
                                             categoriesHTML += "<div class='category";
                                             (response[i].Done) ? categoriesHTML += "-none": categoriesHTML += "";
                                             categoriesHTML += "' data-pytid='" + response[i].PytId + "'>" + response[i].Category +
-                                                "<br><br>Pkt:"
-                                            categoriesHTML += response[i].IsBid ? "Do obstawienia" : response[i].Rewards;
+                                                "<br><br>" + translations['pts'][lang] + ": "
+                                            categoriesHTML += response[i].IsBid ? translations['betting'][lang] : response[i].Rewards;
                                             categoriesHTML += "</div>";
                                         }
                                         categoriesHTML += "</div></div>";
@@ -172,7 +156,7 @@ function updateStatus($newStatus)
                                         }
                                         if (isLeader && status == 'X') {
 
-                                            $("#statusInfo").html('<button id="finish" href=# class="button-85">Zakończ</button>');
+                                            $("#statusInfo").html('<button id="finish" href=# class="button-85">' + translations['finish'][lang] + '</button>');
 
                                             $(document).on('click', '#finish', function() {
                                                 updateStatusAjax('Z', 0);
@@ -182,7 +166,6 @@ function updateStatus($newStatus)
                                     }
                                 },
                                 error: function(error) {
-                                    // Handle errors here
                                     console.error('Error:', error);
                                 }
                             });
@@ -192,64 +175,53 @@ function updateStatus($newStatus)
                     if (status == 'P' || status == 'O') {
                         $.ajax({
                             url: 'chkBuzzes.php',
-                            type: 'POST',
+                            type: 'GET',
                             dataType: 'json',
-                            data: {
-                                turniejId: turniejId
-                            },
                             success: function(response) {
 
                                 if (buzzresponse != JSON.stringify(response)) {
 
                                     buzzresponse = JSON.stringify(response);
-                                    if(buzzresponse != '{"buzzes":[]}'){
+                                    if (buzzresponse != '{"buzzes":[]}') {
                                         buzzsfx.play();
-                                        
+
                                     }
 
                                     var buzzesHTML = '<p id="aligned">Buzzers:<table class="datatables">';
                                     var firstBuzz = 0;
-
 
                                     for (var i = 0; i < response.buzzes.length; i++) {
                                         var buzz = response.buzzes[i];
                                         var buzztime = new Date(buzz.buzztime);
 
                                         buzzesHTML += '<tr><td><b>' + buzz.Login + ' </b></td></tr>';
-
-                                        // Show the buzztime only for the second and subsequent logins
                                         if (i !== 0) {
                                             var duration = buzztime - firstBuzz;
                                             buzzesHTML += '<tr><td>' + formatDuration(duration) + '</td></tr>';
                                         } else {
                                             firstBuzz = new Date(buzz.buzztime);
-                                            buzzesHTML += '<tr><td>First!</td>';
+                                            buzzesHTML += '<tr><td>' + translations['first'][lang] + '!</td>';
                                         }
                                         buzzesHTML += '</tr><tr>';
 
                                         if (isLeader) {
-                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login="' + buzz.Login +
-                                                '">✔️</button><button class="badbutton" data-login="' +
-                                                buzz.Login + '">❌</button></td></tr>';
+                                            buzzesHTML += '<td id="answerbuttons"><button class="okbutton" data-login=\"' + escape(buzz.Login) +
+                                                '\">✔️</button><button class="badbutton" data-login=\"' +
+                                                escape(buzz.Login) + '\">❌</button></td></tr>';
                                         }
 
                                         buzzesHTML += '</tr>';
                                     }
-
-                                    // Remove the trailing comma
                                     buzzesHTML = buzzesHTML.replace(/,\s*$/, '');
-
                                     buzzesHTML += '</b>';
-
                                     buzzesHTML += '</table></p>';
-                                    // Insert the HTML into the #buzzerInfo element
                                     $('#buzzerInfo').html(buzzesHTML);
-                                    $('#buzzerInfo').show(); //set block
+                                    $('#buzzerInfo').show();
                                 }
 
                             },
                             error: function() {
-                                $('.info').text('Błąd pobierania buzza.');
+                                $('#buzzerInfo').text(translations['errorBuzz'][lang]);
                             }
                         });
                     }
@@ -258,11 +230,11 @@ function updateStatus($newStatus)
                     if (!showQuest) {
                         if (status == 'P' || status == 'O') {
                             showQuest = true;
-                            $('.startpopup').html('<span class="disclaimer">(spacja również działa jak przycisk BUZZ)</span><button id="buzzer">BUZZ</button>');
+                            $('.startpopup').html('<span class="disclaimer" id="tipSpace">' + translations['tipSpace'][lang] + '</span><button id="buzzer">BUZZ</button>');
                             $('#startform').hide();
 
                             if (isLeader)
-                                $("#turniej").html('<button id="status" href=# class="button-85">Pokaż odpowiedź</button>');
+                                $("#turniej").html('<button id="status" href=# class="button-85">' + translations['showAnswer'][lang] + '</button>');
 
                             $(document).on('click', '#status', function() {
                                 updateStatusAjax('O', currentQuest);
@@ -276,7 +248,6 @@ function updateStatus($newStatus)
                                     turniejId: turniejId
                                 },
                                 success: function(quests) {
-                                    // Tutaj możesz przetwarzać dane zwrócone z quest.php
                                     var PytId = quests.PytId;
                                     var Quest = quests.Quest;
                                     var Category = quests.Category;
@@ -288,11 +259,9 @@ function updateStatus($newStatus)
                                     pts = Rewards;
                                     if (PytId) {
 
-                                        questHTML = '<p>Kategoria: ' + Category + '<br>Punkty: '
-                                        questHTML += isBid ? 'Do obstawienia' : Rewards;
+                                        questHTML = '<p>' + translations['questCat'][lang] + ': ' + Category + '<br>' + translations['questPts'][lang] + ': '
+                                        questHTML += isBid ? translations['betting'][lang] : Rewards;
                                         questHTML += '</p><span id="quest">' + Quest + "</span>";
-
-
 
                                         if (typeof pozycje !== 'undefined')
                                             questHTML += "<div class='quest-options' id='questOptionsContainer'></div>";
@@ -313,7 +282,7 @@ function updateStatus($newStatus)
                                         if (status == 'O') {
                                             shown = true;
                                             if (isLeader)
-                                                $("#turniej").html('<button id="next" class="button-85">Nowe Pytanie</button>');
+                                                $("#turniej").html('<button id="next" class="button-85">' + translations['newQuest'][lang] + '</button>');
 
                                             $(document).on('click', '#next', function() {
                                                 updateStatusAjax('K', 0);
@@ -334,27 +303,26 @@ function updateStatus($newStatus)
                                                     if (PytId) {
                                                         if (PozId) {
                                                             $(".quest-option").eq(PozId - 1).attr('id', 'correct');
-                                                            //przypisz id correct do pozycji która jest prawidłowa
                                                         }
                                                         $('#answer').html('<hr id="spliter">' + Answer);
                                                         $("#answer")[0].scrollIntoView();
 
                                                     } else {
-                                                        $('#answer').html('Błąd pobierania odpowiedzi');
+                                                        $('#answer').html(translations['errorAnswer'][lang]);
                                                     }
                                                 },
                                                 error: function() {
-                                                    $('.info').text('Błąd podczas pobierania pytań.');
+                                                    $('.info').text(translations['errorQuest'][lang]);
                                                     $('#participantsInfo').html('Error');
                                                 }
                                             });
                                         }
                                     } else {
-                                        $('.startpopup').append('Błąd pobierania pytania');
+                                        $('.startpopup').append(translations['errorQuest'][lang]);
                                     }
                                 },
                                 error: function() {
-                                    $('.info').text('Błąd podczas pobierania pytań.');
+                                    $('.info').text(translations['errorQuest'][lang]);
                                     $('#participantsInfo').html('Error');
                                 }
                             });
@@ -379,18 +347,14 @@ function updateStatus($newStatus)
                             shown = true;
                             var redirectPage = "finish.php";
                             var parameter1 = turniejId;
-
-                            // Construct the URL with parameters
-                            var redirectURL = redirectPage + "?turniejId=" + parameter1;
-
-                            // Redirect to the constructed URL
+                            var redirectURL = redirectPage + "?turniejid=" + parameter1;
                             window.location.href = redirectURL;
                         }
                     }
 
                 },
                 error: function() {
-                    $('#statusInfo').text('Błąd podczas sprawdzania statusu turnieju.');
+                    $('#statusInfo').text(translations['errorStatus'][lang]);
                     $('#participantsInfo').html('Error');
                 }
             });
@@ -410,7 +374,6 @@ function updateStatus($newStatus)
 
                 var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
                 var turniejId = <?php echo isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null'; ?>;
-                // AJAX request to insert a record into the 'buzzes' table
                 $.ajax({
                     url: 'buzz.php',
                     type: 'POST',
@@ -428,9 +391,6 @@ function updateStatus($newStatus)
             }
         }
 
-
-
-
         $('body').on('blur', '.score-edit', function() {
             var login = $(this).data('login');
             var newScore = $(this).text();
@@ -443,7 +403,6 @@ function updateStatus($newStatus)
                     newScore: newScore
                 },
                 success: function(response) {
-                    // Aktualizuj listę uczestników po zaktualizowaniu wyniku
                     checkTournamentStatus();
                 },
                 error: function() {
@@ -454,86 +413,83 @@ function updateStatus($newStatus)
 
         $(document).on('click', '.okbutton', function() {
             var login = $(this).data('login');
-            if(pts!=0){
-            answerPoints(login, pts, 1, turniejId);
-            checkTournamentStatus();
+            if (pts != 0) {
+                answerPoints(login, pts, 1, turniejId);
+                checkTournamentStatus();
             }
         });
 
         $(document).on('click', '.badbutton', function() {
             var login = $(this).data('login');
-            if(pts!=0){
-            answerPoints(login, pts, 0, turniejId);
-            checkTournamentStatus();
+            if (pts != 0) {
+                answerPoints(login, pts, 0, turniejId);
+                checkTournamentStatus();
             }
         });
 
         function updateStatusAjax(status, currentQuest) {
             $.ajax({
                 type: 'POST',
-                url: 'updateStatus.php', // Replace with the actual path to your PHP file
+                url: 'updateStatus.php',
                 data: {
-                    turniejId: turniejId,
                     status: status,
                     currentQuest: currentQuest
                 },
                 success: function(response) {
-                    checkTournamentStatus();
+
                 },
                 error: function(error) {
                     console.error(error);
                 }
             });
-
         }
 
         checkTournamentStatus();
-        // Uruchamiaj funkcję co 2 sekundy
         setInterval(checkTournamentStatus, 400);
     });
 </script>
-
 
 <head>
     <title>TTT-TeTeTurnieje</title>
     <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-    <script src="script.js"></script>
 </head>
 
 <body>
-
     <div id="main-container">
         <div id='head'>
             <span>TETETURNIEJE</span>
         </div>
-
         <div id='content'>
             <div class='startpopup'>
+                <?php
+                if (isset($_SESSION['TurniejId'])) {
+
+                    $codeSql = "SELECT Code FROM turnieje WHERE TurniejId = ?";
+                    $codeStmt = $conn->prepare($codeSql);
+                    $codeStmt->bind_param("i", $_SESSION['TurniejId']);
+                    $codeStmt->execute();
+                    $codeResult = $codeStmt->get_result();
+                    $code = $codeResult->fetch_assoc();
+                    echo  $lang["code"] . ': ' . $code['Code'];
+                }
+                ?>
                 <div class="loading-spinner"></div>
-                Oczekiwanie na rozpoczęcie...<br><br>
+                <span id='awaitingStart'></span><br><br>
 
             </div>
             <span id='turniej'>
                 <?php
-
-
                 if ($isLeader) {
                     echo '<button id="start" name="start" class="button-85" type="submit" padding-top="20px">START</button>';
                 }
-
-
                 ?>
             </span>
-
-
             <div id="statusInfo"></div>
             <div id="participantsInfo"></div>
             <div id="buzzerInfo"></div>
             <div id="popup"></div>
-
-
 </body>
+<?php
+mysqli_close($conn);
+?>

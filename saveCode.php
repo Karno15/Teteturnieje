@@ -1,15 +1,18 @@
 <?php
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['turniejId']) && isset($_POST['kodTurnieju']) && $_POST['kodTurnieju'] > 0 and $_POST['kodTurnieju'] <= 9999) {
-        require "connect.php"; // Assuming that the connect.php file contains the database connection configuration
+include_once('translation/' . $_SESSION['lang'] . ".php");
 
-        $turniejId = $_POST['turniejId'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['userid'])) {
+    if (isset($_POST['turniejId'], $_POST['kodTurnieju']) && $_POST['kodTurnieju'] > 0 and $_POST['kodTurnieju'] <= 9999) {
+
+        require "connect.php";
+
+        $turniejId = filter_var($_POST['turniejId'], FILTER_SANITIZE_NUMBER_INT);
+        $kodTurnieju = filter_var($_POST['kodTurnieju'], FILTER_SANITIZE_NUMBER_INT);
         $kodTurnieju = $_POST['kodTurnieju'];
         $userId = $_SESSION['userid'];
 
-        // Query to check if the TurniejId belongs to the user
         $stmt = $conn->prepare("SELECT Creator FROM turnieje WHERE TurniejId = ?");
         $stmt->bind_param("i", $turniejId);
         $stmt->execute();
@@ -19,18 +22,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $row = $result->fetch_assoc();
             $creatorId = $row['Creator'];
     
-            // Check if the TurniejId's creator matches the user's ID - if yes do the rest
             if ($creatorId != $userId) {
-                echo 'Nie znaleziono turnieju';
+                echo $lang["noAccess"];
                 exit();
             }
         } else {
-            echo 'Nie znaleziono turnieju';
+            echo $lang["notFound"];
             exit();
         }
 
-
-        // Check if the code already exists
         $checkSql = "SELECT TurniejId FROM turnieje WHERE Code = ? AND TurniejId != ?";
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->bind_param("ii", $kodTurnieju, $turniejId);
@@ -38,9 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkResult = $checkStmt->get_result();
 
         if ($checkResult->num_rows > 0) {
-            echo "Błąd: Taki kod już istnieje";
+            echo $lang["codeExists"];
         } else {
-            // Check if there are questions
             $countSql = "SELECT PytId FROM pytania WHERE TurniejId = ?";
             $countStmt = $conn->prepare($countSql);
             $countStmt->bind_param("i", $turniejId);
@@ -48,9 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $resultcount = $countStmt->get_result();
 
             if ($resultcount->num_rows == 0) {
-                echo "Błąd: Brak pytań w turnieju";
+                echo $lang["noQuests"];
             } else {
-                // Update the tournament code
                 $updateSql = "UPDATE turnieje SET Code = ?, Status = 'A' WHERE TurniejId = ?";
                 $updateStmt = $conn->prepare($updateSql);
                 $updateStmt->bind_param("ii", $kodTurnieju, $turniejId);
@@ -60,22 +58,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['TurniejId'] = $turniejId;
                     echo "success";
                 } else {
-                    echo "Nieprawidłowy kod turnieju.";
-                    // For debugging: echo $updateStmt->error;
+                    echo $lang["invalidCode"];
                 }
                 $updateStmt->close();
             }
             $countStmt->close();
         }
-
         $stmt->close();
-        // Close the statements
         $checkStmt->close();
-        // Close the connection
+
         $conn->close();
     } else {
-        echo "Nieprawidłowy kod.";
+        echo $lang["invalidCode"];
     }
 } else {
-    echo "Nieprawidłowa metoda żądania.";
+    echo $lang["notFound"];
 }

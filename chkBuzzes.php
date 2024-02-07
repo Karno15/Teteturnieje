@@ -1,10 +1,11 @@
 <?php
-// Plik sprawdz_status.php
 session_start();
 
-require('connect.php');
-if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
-    $turniejId = $_POST['turniejId'];
+if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
+    
+    require('connect.php');
+
+    $turniejId = $_SESSION['TurniejId'];
 
     $sql = "SELECT u.Login, MIN(Buzztime) as 'buzz' FROM `buzzes` b 
         JOIN `users` u ON u.UserId=b.UserId 
@@ -13,27 +14,23 @@ if (isset($_SESSION['userid']) && isset($_POST['turniejId'])) {
         GROUP BY u.Login, b.TurniejId, b.PytId 
         ORDER BY buzz;";
 
-
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $turniejId);
     mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
+    mysqli_stmt_bind_result($stmt, $login, $buzz);
     $response = array('buzzes' => array());
 
-    while ($row = mysqli_fetch_assoc($result)) {
+    while (mysqli_stmt_fetch($stmt)) {
         $buzz = array(
-            'Login' => $row['Login'],
-            'buzztime' => $row['buzz']
+            'Login' => $login,
+            'buzztime' => $buzz
         );
         array_push($response['buzzes'], $buzz);
     }
-
     mysqli_stmt_close($stmt);
-
-    mysqli_close($conn);
 
     echo json_encode($response);
 } else {
-    echo "Błąd danych.";
+    echo "No data.";
 }
+mysqli_close($conn);

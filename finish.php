@@ -9,16 +9,16 @@ if (isset($_SESSION['info'])) {
     unset($_SESSION['info']);
 }
 
-require('connect.php');
+include_once('translation/' . $_SESSION['lang'] . ".php");
 
-
-
-if (!isset($_GET['turniejId'])) {
-    $_SESSION['info'] = 'Nie znaleziono turnieju';
+if (!isset($_GET['turniejid'])) {
+    $_SESSION['info'] = $lang["notFound"];
     header("Location: index.php");
 }
 
-$turniejId = $_GET['turniejId'];
+require('connect.php');
+
+$turniejId = mysqli_real_escape_string($conn, $_GET['turniejid']);
 $query = "SELECT RANK() OVER (ORDER BY tu.CurrentScore DESC) AS ScoreRank, u.Login,
      tu.CurrentScore FROM turuserzy tu JOIN users u ON u.UserId=tu.UserId 
      WHERE turniejId= ? and CurrentScore IS NOT NULL;";
@@ -27,27 +27,26 @@ $stmt->bind_param("i", $turniejId);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
-
-
-
 ?>
 
 <head>
     <title>TTT-TeTeTurnieje</title>
     <link rel="icon" type="image/gif" href="images/favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="jquery/jquery.min.js"></script>
+    <script>
+        var langses = <?php echo json_encode($_SESSION['lang']); ?>;
+        var lang = langses || 'en';
+        localStorage.setItem("lang", lang);
+    </script>
     <script src="script.js"></script>
+    <script src="translation/translation.js"></script>
     <style>
         * {
             font-size: 62, 5%;
             box-sizing: border-box;
             margin: 0;
         }
-
 
         main {
             width: 40rem;
@@ -74,7 +73,6 @@ $stmt->close();
             border-radius: 2rem;
             cursor: pointer;
         }
-
 
         h1 {
             letter-spacing: 3px;
@@ -191,6 +189,20 @@ $stmt->close();
 </head>
 
 <body>
+    <div id='lang' class="lang-select-container">
+        <span class="flag" style="cursor: pointer;"></span>
+        <select class="lang-select" name="lang" style="display: none;">
+            <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+            <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+        </select>
+    </div>
+    <div id='lang' class="lang-select-container">
+        <span class="flag" style="cursor: pointer;"></span>
+        <select class="lang-select" name="lang" style="display: none;">
+            <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+            <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+        </select>
+    </div>
     <div class="popup-overlay"></div>
     <div id="main-container">
         <div id='head'>
@@ -200,7 +212,7 @@ $stmt->close();
             <div class='startpopup'>
                 <main>
                     <div id="header">
-                        <h1>Wyniki turnieju:</h1>
+                        <h1 id="turResult"></h1>
                     </div>
                     <div id="leaderboard">
 
@@ -229,45 +241,32 @@ $stmt->close();
                     </div>
                 </main>
                 <?php
-
                 if (isset($yourScore)) {
                 ?>
-
                     <div id='yourscore'>
                     <?php
-                    echo "Twój wynik: <br>" . $yourScore;
+                    echo  $lang["yourScore"] . ": <br>" . $yourScore;
                 }
                     ?>
-
                     </div>
-                    <a class='button-85' href='index.php'>Powrót</a>
+                    <script>
+                        $(document).ready(function() {
+                            $("#turResult").html(translations['turResult'][lang]);
+                            $("#back").html(translations['return'][lang]);
+
+                            $("#back").click(function() {
+                                window.location.href = 'logged.php';
+                            })
+                        });
+                    </script>
+                    <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
                     <?php
-                    //echo $_SESSION['userid'];
                     if (isset($_SESSION['userid'])) {
                         unset($_SESSION['TurniejId']);
                         unset($_SESSION['currentQuest']);
                     }
-
                     ?>
             </div>
         </div>
     </div>
-    <div id='popup'> <button id='closeButton' class='codeconfrim'>Powrót</button><br>
-                            LOGOWANIE
-                            <br>
-                            <form action="login.php" method="post">
-                                Login:<br>
-                                <input type="text" name="login" class='inputlogin' maxlength="12" required>
-
-                                <div id='definput'>
-                                    Hasło:
-                                    </br>
-                                    <input type="password" name="pass" class='inputlogin' required>
-                                </div>
-
-                                <button type='submit' class='codeconfrim'>Loguj</button>
-                            </form>
-
-
-                        </div><br>
 </body>

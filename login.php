@@ -1,57 +1,89 @@
 <?php
 
-session_start(); // Start the session
+session_start();
 
-// Function to validate user credentials
+if (!isset($_SESSION['lang'])) {
+    $_SESSION['lang'] = 'en';
+}
+
+require "connect.php";
+
+function isValidUsername($username)
+{
+    $allowedCharacters = "/^[a-zA-Z0-9_\-]+$/";
+
+    return preg_match($allowedCharacters, $username);
+}
+
+
 function validateUser($username, $password)
 {
+    include_once('translation/' . $_SESSION['lang'] . ".php");
 
     require "connect.php";
 
-    // Sanitize the user input to prevent SQL injection
-    $username = mysqli_real_escape_string($conn, $username);
-    $password = mysqli_real_escape_string($conn, $password);
+    if ($username == '' || $password == '') {
+        $_SESSION['info'] = $lang['invalidLogin'];
+        header("Location: index.php");
+        exit();
+    }
+
+    if (!isValidUsername($username)) {
+        $_SESSION['info'] = $lang['invalidLogin'];
+        return false;
+    }
 
     $password = md5($password);
-    // Query the database for the user
-    $query = "SELECT masterId,Login FROM masters WHERE Login=UPPER('$username') AND Pass='$password'";
-    $result = mysqli_query($conn, $query);
 
-    $resultrow = mysqli_fetch_row($result);
+    $query = "SELECT masterId, Login FROM masters WHERE Login = UPPER(?) AND Pass= ? ;";
+    $stmt = mysqli_prepare($conn, $query);
 
-    if ($result) {
-        if (mysqli_num_rows($result) === 1) {
-            //update last login
-            $query = "UPDATE users SET LastLogged=CURRENT_TIMESTAMP() where UserID=" . $resultrow[0];
-            $result = mysqli_query($conn, $query);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-            // User found, set up the session
-            $_SESSION['username'] = strtoupper($username);
-            $_SESSION['userid'] = $resultrow[0];
-            return true;
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+
+            if ($row) {
+                $query = "UPDATE users SET LastLogged = CURRENT_TIMESTAMP() WHERE UserID = ?";
+                $stmtUpdate = mysqli_prepare($conn, $query);
+
+                if ($stmtUpdate) {
+                    mysqli_stmt_bind_param($stmtUpdate, "i", $row['masterId']);
+                    mysqli_stmt_execute($stmtUpdate);
+                    mysqli_stmt_close($stmtUpdate);
+                }
+
+                $_SESSION['username'] = strtoupper($username);
+                $_SESSION['userid'] = $row['masterId'];
+                $_SESSION['info'] = $lang['loggedin'];
+                return true;
+            } else {
+                $_SESSION['info'] = $lang['invalidLogin'];
+                return false;
+            }
         } else {
-            // User not found or invalid credentials
+            echo "Error";
             return false;
         }
+        mysqli_stmt_close($stmt);
     } else {
-        // Error executing the query
-        echo "Error: " . mysqli_error($conn);
+        echo "Error";
         return false;
     }
 }
 
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $username = $_POST['login'];
     $password = $_POST['pass'];
 
     if (validateUser($username, $password)) {
-        // Redirect the user to a logged-in page
         header("Location: logged.php");
         exit();
     } else {
-        // Show an error message
-        $_SESSION['info'] = "Błędny login lub hasło";
         header("Location: index.php");
         exit();
     }
