@@ -3,12 +3,13 @@ $(document).ready(function () {
     langses = localStorage.getItem("lang");
     var lang = langses || 'en';
     
+    localStorage.setItem("lang", lang);
+
     var flagClick = false;
     $('.flag').css('background-image', 'url(' + getFlagUrl(lang) + ')');
     $('.flag').on('click', function() {
         flagClick = true;
-        var currentLang = $('.lang-select').val();
-        var newLang = (currentLang === 'pl') ? 'en' : 'pl';
+        var newLang = (lang === 'pl') ? 'en' : 'pl';
         $('.flag').css('background-image', 'url(' + getFlagUrl(newLang) + ')');
         $('.lang-select').val(newLang);
         $('.lang-select').trigger('change');

@@ -189,6 +189,20 @@ $stmt->close();
 </head>
 
 <body>
+    <div id='lang' class="lang-select-container">
+        <span class="flag" style="cursor: pointer;"></span>
+        <select class="lang-select" name="lang" style="display: none;">
+            <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+            <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+        </select>
+    </div>
+    <div id='lang' class="lang-select-container">
+        <span class="flag" style="cursor: pointer;"></span>
+        <select class="lang-select" name="lang" style="display: none;">
+            <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+            <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+        </select>
+    </div>
     <div class="popup-overlay"></div>
     <div id="main-container">
         <div id='head'>

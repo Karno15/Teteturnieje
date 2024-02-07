@@ -58,6 +58,20 @@ if (!isset($_GET['turniejid'])) {
             </head>
 
             <body>
+                <div id='lang' class="lang-select-container">
+                    <span class="flag" style="cursor: pointer;"></span>
+                    <select class="lang-select" name="lang" style="display: none;">
+                        <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+                        <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+                    </select>
+                </div>
+                <div id='lang' class="lang-select-container">
+                    <span class="flag" style="cursor: pointer;"></span>
+                    <select class="lang-select" name="lang" style="display: none;">
+                        <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+                        <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+                    </select>
+                </div>
                 <script>
                     $(document).ready(function() {
                         $("#back").html(translations['return'][lang]);
@@ -70,6 +84,7 @@ if (!isset($_GET['turniejid'])) {
                         $('#questDelete').html(translations['questDelete'][lang]);
                         $('#addQuest').html(translations['addQuest'][lang]);
                         $('#editGrid').html(translations['editGrid'][lang]);
+                        $('#emptyQuestion').html(translations['emptyQuestion'][lang]);
                     });
                 </script>
                 <div class="popup-overlay"></div>
@@ -110,22 +125,26 @@ if (!isset($_GET['turniejid'])) {
                                 die("Query failed: " . mysqli_error($conn));
                             }
 
-                            while ($row = mysqli_fetch_assoc($resultQuestions)) {
-                                echo "<tr>";
-                                echo "<td>" . $row['PytId'] . "</td>";
-                                echo "<td>";
-                                echo ($row['TypeId'] == 1) ? $lang["closed"] : $lang["open"];
-                                echo "</td>";
-                                echo "<td>" . $row['Category'] . "</td><td>";
-                                echo ($row['IsBid'] == 1) ? $lang["betting"] : $row['Rewards'];
-                                echo "</td><td><img class='view' src='images/unowneyeclose.png' onclick='pokazPytanie(" . $row['PytId'] . ")' alt='unownclose' height='40px' width='40px'></button></td>";
-                                echo "<td> <a href='editquest.php?turniejid=" . $row['TurniejId'] . "&pytid=" . $row['PytId'] . "'><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'></a></td>";
-                                echo "<td><form method='post' action='deleteQuest.php'>
+                            if (mysqli_num_rows($resultQuestions) == 0) {
+                                echo "<tr><td id='emptyQuestion' colspan='7'></td></tr>";
+                            } else {
+                                while ($row = mysqli_fetch_assoc($resultQuestions)) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row['PytId'] . "</td>";
+                                    echo "<td>";
+                                    echo ($row['TypeId'] == 1) ? $lang["closed"] : $lang["open"];
+                                    echo "</td>";
+                                    echo "<td>" . $row['Category'] . "</td><td>";
+                                    echo ($row['IsBid'] == 1) ? $lang["betting"] : $row['Rewards'];
+                                    echo "</td><td><img class='view' src='images/unowneyeclose.png' onclick='pokazPytanie(" . $row['PytId'] . ")' alt='unownclose' height='40px' width='40px'></button></td>";
+                                    echo "<td> <a href='editquest.php?turniejid=" . $row['TurniejId'] . "&pytid=" . $row['PytId'] . "'><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'></a></td>";
+                                    echo "<td><form method='post' action='deleteQuest.php'>
                 <input type='hidden' name='question_id' value='" . $row['PytId'] . "'>
                 <input type='hidden' name='turniejid' value='" . $turniejId . "'>
                 <button type='submit' name='delete_question' onclick=\"return confirm('" . $lang["deleteConfirm"] . "')\"
                 style='background: none; border: none; cursor: pointer;'>
                 <img class='trash' src='images/trash.png' alt='trash' height='40px' width='40px'></button></form></td></tr>";
+                                }
                             }
                         } else {
                             $_SESSION['info'] = $lang['noAccess'];

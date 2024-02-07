@@ -1,5 +1,14 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['lang'])) {
+  $userLanguages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+  $_SESSION['lang'] = (stripos($userLanguages[0], 'pl') === 0) ? 'pl' : 'en';
+}
+
+$lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
+
+
 if (isset($_SESSION['info'])) {
   echo "<div class='info'>";
   echo $_SESSION['info'];
@@ -56,6 +65,21 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 </head>
 
 <body>
+  <div id='lang' class="lang-select-container">
+    <span class="flag" style="cursor: pointer;"></span>
+    <select class="lang-select" name="lang" style="display: none;">
+      <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+      <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+    </select>
+  </div>
+  <div id='lang' class="lang-select-container">
+    <span class="flag" style="cursor: pointer;"></span>
+    <select class="lang-select" name="lang" style="display: none;">
+      <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+      <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+    </select>
+  </div>
+
   <script>
     $(document).ready(function() {
       $("#newTurniej").html(translations['newTurniej'][lang] + ":");
@@ -69,6 +93,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
       $("#turniejStart").html(translations['turniejStart'][lang]);
       $("#tipHover").html(translations['tipHover'][lang]);
       $("#back").html(translations['return'][lang]);
+      $("#emptyTurniej").html(translations['emptyTurniej'][lang]);
     });
   </script>
   <div id='popup'></div>
@@ -112,17 +137,21 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
               if (!$result) {
                 die("Query failed: " . mysqli_error($connection));
               }
-              while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>";
-                echo "<td>" . $row['TurniejId'] . "</td>";
-                echo "<td>" . $row['Name'] . "</td>";
-                echo "<td>" . $row['Created'] . "</td>";
-                echo "<td>" . $row['Code'] . "</td>";
-                echo "<td>" . $row['Label'] . "<img class='ask' src='images/questionmark.svg' alt='questionmark' ";
-                echo "title='" . $row['Description'] . "' ></td>";
-                echo "<td> <a href='edit.php?turniejid=" . $row['TurniejId'] . "' ><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'</a></td>";
-                echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img class='monke' src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
-                echo "</tr>";
+              if (mysqli_num_rows($result) == 0) {
+                echo "<tr><td id='emptyTurniej' colspan='7'></td></tr>";
+              } else {
+                while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<tr>";
+                  echo "<td>" . $row['TurniejId'] . "</td>";
+                  echo "<td>" . $row['Name'] . "</td>";
+                  echo "<td>" . $row['Created'] . "</td>";
+                  echo "<td>" . $row['Code'] . "</td>";
+                  echo "<td>" . $row['Label'] . "<img class='ask' src='images/questionmark.svg' alt='questionmark' ";
+                  echo "title='" . $row['Description'] . "' ></td>";
+                  echo "<td> <a href='edit.php?turniejid=" . $row['TurniejId'] . "' ><img class='wrench' src='images/edit.svg' alt='edit' height='40px' width='40px'</a></td>";
+                  echo "<td> <a class='startLink' data-turniejid='" . $row['TurniejId'] . "'><img class='monke' src='images/maupka.webp' alt='start' height='40px' width='40px'></a></td>";
+                  echo "</tr>";
+                }
               }
               mysqli_close($conn);
               ?>

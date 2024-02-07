@@ -40,8 +40,8 @@ if (!isset($_GET['turniejid'])) {
 
     <head>
         <title>TTT-TeTeTurnieje</title>
+        <script src="jquery/jquery.min.js"></script>
         <link rel="icon" type="image/gif" href="images/favicon.ico">
-        <script src="jquery/jquery-3.4.1.slim.min.js"></script>
         <link rel="stylesheet" href="style.css">
         <script>
             var langses = <?php echo json_encode($_SESSION['lang']); ?>;
@@ -52,12 +52,25 @@ if (!isset($_GET['turniejid'])) {
         <script src="translation/translation.js"></script>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="jquery/jquery-ui.css">
-        <script src="jquery/jquery-3.6.4.min.js"></script>
         <script src="jquery/jquery-ui.js"></script>
 
     </head>
 
     <body>
+        <div id='lang' class="lang-select-container">
+            <span class="flag" style="cursor: pointer;"></span>
+            <select class="lang-select" name="lang" style="display: none;">
+                <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+                <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+            </select>
+        </div>
+        <div id='lang' class="lang-select-container">
+            <span class="flag" style="cursor: pointer;"></span>
+            <select class="lang-select" name="lang" style="display: none;">
+                <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+                <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+            </select>
+        </div>
         <div id="main-container">
             <div id='head'>
                 <span>TETETURNIEJE</span>

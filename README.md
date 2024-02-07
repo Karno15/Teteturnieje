@@ -10,8 +10,9 @@ All notable changes to this project will be documented in this file
 - Added a few styles changes
 - Added Registering function
 - Added translations [PL/EN]
-- Only 5 MB of content in question is allowed
+- Only 5MB of content in question is now allowed
 - Added a big security change
+- Added front page description
 
 ## [1.9] - 2024-01-04
 

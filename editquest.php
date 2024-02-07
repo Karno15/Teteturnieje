@@ -272,7 +272,7 @@ if (!isset($_GET['turniejid'])) {
             localStorage.setItem("lang", lang);
         </script>
         <script src="translation/translation.js"></script>
-        <script src="jquery/jquery-3.4.1.slim.min.js"></script>
+        <script src="jquery/jquery.min.js"></script>
         <link href="summernote/summernote-lite.min.css" rel="stylesheet">
         <script src="summernote/summernote-lite.min.js"></script>
         <link rel="stylesheet" href="summernote/summernote-audio.css">
@@ -282,6 +282,20 @@ if (!isset($_GET['turniejid'])) {
     </head>
 
     <body>
+        <div id='lang' class="lang-select-container">
+            <span class="flag" style="cursor: pointer;"></span>
+            <select class="lang-select" name="lang" style="display: none;">
+                <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+                <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+            </select>
+        </div>
+        <div id='lang' class="lang-select-container">
+            <span class="flag" style="cursor: pointer;"></span>
+            <select class="lang-select" name="lang" style="display: none;">
+                <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
+                <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
+            </select>
+        </div>
         <div id="popup"><span id='loadingQuest'></span><br>
             <div class='loading-spinner'></div>
         </div>
@@ -507,7 +521,7 @@ if (!isset($_GET['turniejid'])) {
                             });
 
                             $('select[name="type"]').on('change', function() {
-                                var opcja = $('select option:selected').val();
+                                var opcja = $('select[name="type"] option:selected').val();
                                 if (opcja == 2) {
                                     $(".section-options").hide();
                                     $("#questionForm input[type='radio']").removeAttr("required");

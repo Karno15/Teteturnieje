@@ -31,7 +31,6 @@ $login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
     <script>
         var langses = <?php echo json_encode($_SESSION['lang']); ?>;
         var lang = langses || 'en';
-        localStorage.setItem("lang", lang);
     </script>
     <script src="script.js"></script>
     <script src="translation/translation.js"></script>
