@@ -58,6 +58,7 @@ if (!isset($_GET['turniejid'])) {
             </head>
 
             <body>
+
                 <div id='lang' class="lang-select-container">
                     <span class="flag" style="cursor: pointer;"></span>
                     <select class="lang-select" name="lang" style="display: none;">
@@ -72,6 +73,7 @@ if (!isset($_GET['turniejid'])) {
                         <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
                     </select>
                 </div>
+                <div class="tooltiplang"></div>
                 <script>
                     $(document).ready(function() {
                         $("#back").html(translations['return'][lang]);

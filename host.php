@@ -79,7 +79,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
       <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
     </select>
   </div>
-
+  <div class="tooltiplang"></div>
   <script>
     $(document).ready(function() {
       $("#newTurniej").html(translations['newTurniej'][lang] + ":");

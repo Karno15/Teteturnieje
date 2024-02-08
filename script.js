@@ -2,38 +2,55 @@ $(document).ready(function () {
 
     langses = localStorage.getItem("lang");
     var lang = langses || 'en';
-    
+
     localStorage.setItem("lang", lang);
 
     var flagClick = false;
     $('.flag').css('background-image', 'url(' + getFlagUrl(lang) + ')');
-    $('.flag').on('click', function() {
+    $('.flag').on('click', function () {
         flagClick = true;
         var newLang = (lang === 'pl') ? 'en' : 'pl';
         $('.flag').css('background-image', 'url(' + getFlagUrl(newLang) + ')');
         $('.lang-select').val(newLang);
         $('.lang-select').trigger('change');
     });
-    $('.lang-select').on('change', function() {
+    $('.lang-select').on('change', function () {
         if (!flagClick) {
             lang = $(this).val();
             localStorage.setItem("lang", lang);
             $.post('setlang.php', {
                 language: lang
-            }, function(response) {
+            }, function (response) {
                 console.log('Language changed to: ' + lang);
                 location.reload();
             });
         }
         flagClick = false;
     });
+    $('.flag').on('mouseenter', function () {
+        var newLang = (lang === 'pl') ? 'en' : 'pl';
+        $('.flag').fadeOut(100, function () {
+            $(this).css('background-image', 'url(' + getFlagUrl(newLang) + ')').fadeIn(100);
+        });
+        $('.tooltiplang').fadeIn(200);
+    });
+
+    $('.flag').on('mouseleave', function () {
+        $('.flag').fadeOut(100, function () {
+            $(this).css('background-image', 'url(' + getFlagUrl(lang) + ')').fadeIn(100);
+        });
+        $('.tooltiplang').fadeOut(200);
+    });
+
 
     function getFlagUrl(lang) {
         return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
     }
 
-    $('#contact').html(translations['contact'][lang]);  
-    $('#pageInfo').html(translations['pageInfo'][lang]); 
+    $('#contact').html(translations['contact'][lang]);
+    $('#pageInfoTitle').html(translations['pageInfoTitle'][lang]);
+    $('#pageInfo').html(translations['pageInfo'][lang]);
+    $('.tooltiplang').html(translations['tooltiplang'][lang]);
     $('button#login').html(translations['login'][lang]);
     $('button#register').html(translations['register'][lang]);
 

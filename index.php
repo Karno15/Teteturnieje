@@ -25,15 +25,15 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
     <script src="translation/translation.js"></script>
     <style>
         blockquote {
-            width: 50%;
-            max-width: 500px;
+            width: 70%;
+            max-width: 600px;
             padding: 0px 30px 20px 30px;
-            margin: 50px auto;
+            margin-top: -5px;
             position: relative;
             background-color: white;
 
-            p {
-                background: linear-gradient(135deg, magenta, blue);
+            * {
+                background: linear-gradient(135deg, orange, blue);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
@@ -44,7 +44,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             height: 100%;
             width: 100%;
             display: block;
-            background: linear-gradient(135deg, magenta, blue);
+            background: linear-gradient(135deg, red, blue);
             position: absolute;
             top: 17px;
             left: 17px;
@@ -56,7 +56,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             height: calc(100% + 6px);
             width: calc(100% + 6px);
             display: block;
-            background: linear-gradient(135deg, magenta, blue);
+            background: linear-gradient(135deg, red, blue);
             position: absolute;
             top: -3px;
             left: -3px;
@@ -80,6 +80,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
         </select>
     </div>
+    <div class="tooltiplang"></div>
     <div class="popup-overlay"></div>
     <div id="main-container">
         <div id='head'>
@@ -87,8 +88,11 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
         </div>
         <div id='content'>
             <blockquote>
-                <p id="pageInfo">
-                </p>
+                
+
+                    <h2 id='pageInfoTitle'></h2>
+                    <h3 id="pageInfo"></h3>
+                
             </blockquote>
             <?php
             if (!isset($_SESSION['userid'])) {

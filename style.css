@@ -28,6 +28,11 @@
   src: url('fonts/WorkSans.ttf');
 }
 
+@font-face {
+  font-family: infoTitle;
+  src: url('fonts/infoTitle.ttf');
+}
+
 body {
   margin: 0 auto;
   background-color: goldenrod;
@@ -856,7 +861,8 @@ table.datatable thead th:first-child {
   place-content: center;
 }
 
-#lang {
+#lang,
+.tooltiplang {
   position: absolute;
   top: 0;
   left: 0;
@@ -872,6 +878,15 @@ table.datatable thead th:first-child {
   justify-content: center;
   align-items: center;
   align-content: center;
+  z-index: 6;
+}
+
+.tooltiplang {
+  display: none;
+  font-family: chooseFont;
+  top: 53px;
+  text-align: center;
+  line-height: 50px;
 }
 
 .lang-select-container {
@@ -900,11 +915,18 @@ table.datatable thead th:first-child {
 
 #contact {
   font-size: medium;
-  margin-top: auto;
+  margin-top: 20;
 }
 
 #pageInfo {
+  font-family: infoTitle;
   text-align: center;
   font-size: x-large;
-  margin-top: 40;
+  margin-top: 0;
+}
+
+#pageInfoTitle {
+  font-family: infoTitle;
+  text-align: center;
+  margin: 0 0 20 0;
 }

@@ -71,6 +71,7 @@ if (!isset($_GET['turniejid'])) {
                 <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
             </select>
         </div>
+        <div class="tooltiplang"></div>
         <div id="main-container">
             <div id='head'>
                 <span>TETETURNIEJE</span>

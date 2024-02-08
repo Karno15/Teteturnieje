@@ -296,6 +296,7 @@ if (!isset($_GET['turniejid'])) {
                 <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
             </select>
         </div>
+        <div class="tooltiplang"></div>
         <div id="popup"><span id='loadingQuest'></span><br>
             <div class='loading-spinner'></div>
         </div>

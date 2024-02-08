@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.11] - 2024-02-08
+
+### Changed
+
+- Changed the front page text and style
+- Added animations for language buttons
+
 ## [1.10] - 2024-02-07
 
 ### Changed
