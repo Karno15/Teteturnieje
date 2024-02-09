@@ -30,8 +30,8 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             padding: 0px 30px 20px 30px;
             margin-top: -5px;
             position: relative;
-            background-color: white;
-
+            background-color: #8EC5FC;
+            background-image: linear-gradient(62deg, #8EC5FC 0%, #f3f3f3 100%);
             * {
                 background: linear-gradient(135deg, orange, blue);
                 -webkit-background-clip: text;
@@ -66,14 +66,15 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
 </head>
 
 <body>
-    <div id='lang' class="lang-select-container">
+    <div id="gear"><img src='images/gear.svg'></div>
+    <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
         <select class="lang-select" name="lang" style="display: none;">
             <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
             <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
         </select>
     </div>
-    <div id='lang' class="lang-select-container">
+    <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
         <select class="lang-select" name="lang" style="display: none;">
             <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
@@ -88,11 +89,8 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
         </div>
         <div id='content'>
             <blockquote>
-                
-
-                    <h2 id='pageInfoTitle'></h2>
-                    <h3 id="pageInfo"></h3>
-                
+                <h2 id='pageInfoTitle'></h2>
+                <h3 id="pageInfo"></h3>
             </blockquote>
             <?php
             if (!isset($_SESSION['userid'])) {

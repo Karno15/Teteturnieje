@@ -5,6 +5,18 @@ $(document).ready(function () {
 
     localStorage.setItem("lang", lang);
 
+    gearClicked = false;
+    $('#gear').on('click', function () {
+        if (!gearClicked) {
+            $('.lang').css('display', 'flex');
+            gearClicked = true;
+        } else {
+            $('.lang').fadeOut(200);
+            $('.tooltiplang').fadeOut(200);
+            gearClicked = false;
+        }
+    });
+
     var flagClick = false;
     $('.flag').css('background-image', 'url(' + getFlagUrl(lang) + ')');
     $('.flag').on('click', function () {
@@ -27,7 +39,8 @@ $(document).ready(function () {
         }
         flagClick = false;
     });
-    $('.flag').on('mouseenter', function () {
+
+    $('.lang').on('mouseenter', function () {
         var newLang = (lang === 'pl') ? 'en' : 'pl';
         $('.flag').fadeOut(100, function () {
             $(this).css('background-image', 'url(' + getFlagUrl(newLang) + ')').fadeIn(100);
@@ -35,13 +48,12 @@ $(document).ready(function () {
         $('.tooltiplang').fadeIn(200);
     });
 
-    $('.flag').on('mouseleave', function () {
+    $('.lang').on('mouseleave', function () {
         $('.flag').fadeOut(100, function () {
             $(this).css('background-image', 'url(' + getFlagUrl(lang) + ')').fadeIn(100);
         });
         $('.tooltiplang').fadeOut(200);
     });
-
 
     function getFlagUrl(lang) {
         return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
