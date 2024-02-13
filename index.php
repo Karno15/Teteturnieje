@@ -33,7 +33,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
             background-color: #8EC5FC;
             background-image: linear-gradient(62deg, #8EC5FC 0%, #f3f3f3 100%);
             * {
-                background: linear-gradient(135deg, orange, blue);
+                background: linear-gradient(135deg, darkorange, blue);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
@@ -65,7 +65,7 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
     </style>
 </head>
 
-<body>
+<body loading="lazy">
     <div id="gear"><img src='images/gear.svg'></div>
     <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
@@ -121,9 +121,9 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
     </div>
     <div id='popup'>
     </div>
+    <a id='bgcontr' href="https://www.vecteezy.com/free-vector/orange-background">Background Vectors by Vecteezy</a>
     <div id='footer'>v<span id='ver'><?php echo file_get_contents('verinfo.txt');
                                         ob_flush(); ?>
         </span> Made by @karkarno
     </div>
-
 </body>

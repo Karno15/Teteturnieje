@@ -57,6 +57,7 @@ if (!isset($_GET['turniejid'])) {
     </head>
 
     <body>
+        <div id="gear"><img src='images/gear.svg'></div>
         <div class='lang' class="lang-select-container">
             <span class="flag" style="cursor: pointer;"></span>
             <select class="lang-select" name="lang" style="display: none;">

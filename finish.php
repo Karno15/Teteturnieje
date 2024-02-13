@@ -189,6 +189,7 @@ $stmt->close();
 </head>
 
 <body>
+    <div id="gear"><img src='images/gear.svg'></div>
     <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
         <select class="lang-select" name="lang" style="display: none;">
@@ -260,14 +261,14 @@ $stmt->close();
                             })
                         });
                     </script>
-                    <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
-                    <?php
-                    if (isset($_SESSION['userid'])) {
-                        unset($_SESSION['TurniejId']);
-                        unset($_SESSION['currentQuest']);
-                    }
-                    ?>
             </div>
+            <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
+            <?php
+            if (isset($_SESSION['userid'])) {
+                unset($_SESSION['TurniejId']);
+                unset($_SESSION['currentQuest']);
+            }
+            ?>
         </div>
     </div>
 </body>

@@ -156,7 +156,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                         }
                                         if (isLeader && status == 'X') {
 
-                                            $("#statusInfo").html('<button id="finish" href=# class="button-85">' + translations['finish'][lang] + '</button>');
+                                            $("#statusInfo").html('<br><button id="finish" href=# class="button-85">' + translations['finish'][lang] + '</button>');
 
                                             $(document).on('click', '#finish', function() {
                                                 updateStatusAjax('Z', 0);
@@ -234,7 +234,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                             $('#startform').hide();
 
                             if (isLeader)
-                                $("#turniej").html('<button id="status" href=# class="button-85">' + translations['showAnswer'][lang] + '</button>');
+                                $("#turniej").html('<br><button id="status" href=# class="button-85">' + translations['showAnswer'][lang] + '</button>');
 
                             $(document).on('click', '#status', function() {
                                 updateStatusAjax('O', currentQuest);
@@ -282,7 +282,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                         if (status == 'O') {
                                             shown = true;
                                             if (isLeader)
-                                                $("#turniej").html('<button id="next" class="button-85">' + translations['newQuest'][lang] + '</button>');
+                                                $("#turniej").html('<br><button id="next" class="button-85">' + translations['newQuest'][lang] + '</button>');
 
                                             $(document).on('click', '#next', function() {
                                                 updateStatusAjax('K', 0);
@@ -370,7 +370,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                 pressed = true;
                 $('#buzzer').css("background", "gray");
                 $('#buzzer').css("border-color", "dimgray");
-                $('#buzzer').css("box-shadow", "3px 7px 0px 0px #4d4d4d");
+                $('#buzzer').css("box-shadow", "-3px 7px 0px 0px #4d4d4d");
 
                 var username = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
                 var turniejId = <?php echo isset($_SESSION['TurniejId']) ? $_SESSION['TurniejId'] : 'null'; ?>;
@@ -481,7 +481,7 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
             <span id='turniej'>
                 <?php
                 if ($isLeader) {
-                    echo '<button id="start" name="start" class="button-85" type="submit" padding-top="20px">START</button>';
+                    echo '<br><button id="start" name="start" class="button-85" type="submit" padding-top="20px">START</button>';
                 }
                 ?>
             </span>

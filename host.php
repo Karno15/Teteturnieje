@@ -65,6 +65,7 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
 </head>
 
 <body>
+  <div id="gear"><img src='images/gear.svg'></div>
   <div class='lang' class="lang-select-container">
     <span class="flag" style="cursor: pointer;"></span>
     <select class="lang-select" name="lang" style="display: none;">
@@ -112,7 +113,6 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
       </div>
       <br>
       <div class='startpopup'>
-        <div id='pass'>
           <table class='datatable'>
             <thead>
               <tr>
@@ -157,9 +157,8 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['username'])) {
               ?>
             </tbody>
           </table>
+          <span class="disclaimer" id='tipHover'></span>
         </div>
-        <span class="disclaimer" id='tipHover'></span>
-      </div>
       <button onclick="location.href='logged.php'" id='back' class='codeconfrim'>
       </button>
     </div>

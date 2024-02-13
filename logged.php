@@ -37,6 +37,7 @@ $login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
 </head>
 
 <body>
+    <div id="gear"><img src='images/gear.svg'></div>
     <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
         <select class="lang-select" name="lang" style="display: none;">

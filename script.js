@@ -77,7 +77,7 @@ $(document).ready(function () {
     });
 
     loginHTML = '<button id="closeButton" class="codeconfrim">' + translations['return'][lang] + '</button><br>' +
-        translations['login'][lang].toUpperCase() + '<br><form action="login.php" method="post">' +
+        translations['log in'][lang].toUpperCase() + '<br><form action="login.php" method="post">' +
         'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
         '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>' +
         '<button type="submit" class="codeconfrim">' + translations['log in'][lang] + '</button></form>';

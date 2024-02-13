@@ -289,7 +289,7 @@ var translations = {
     },
     'pageInfoTitle': {
         'en': "What is TeTeTurnieje?",
-        'pl': "Czym są TeTeTurnieje?"
+        'pl': "Co to TeTeTurnieje?"
     },
     'pageInfo': {
         'en': "TeTeTurnieje is an online game that allows you to organize your own quiz tournaments and play them with friends. Simply create your tournament by adding questions, and then share the four-digit code with your crew.<br> <br> As the host, you have control over awarding and deducting points for answers.<br> It is recommended to use voice chat or regular group chat to further enhance the gameplay.",
