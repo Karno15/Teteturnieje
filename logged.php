@@ -37,21 +37,22 @@ $login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
 </head>
 
 <body>
-    <div id='lang' class="lang-select-container">
+    <div id="gear"><img src='images/gear.svg'></div>
+    <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
         <select class="lang-select" name="lang" style="display: none;">
             <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
             <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
         </select>
     </div>
-    <div id='lang' class="lang-select-container">
+    <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>
         <select class="lang-select" name="lang" style="display: none;">
             <option value="pl" <?php echo ($lang === 'pl') ? 'selected' : ''; ?>></option>
             <option value="en" <?php echo ($lang === 'en') ? 'selected' : ''; ?>></option>
         </select>
     </div>
-
+    <div class="tooltiplang"></div>
     <div class="popup-overlay"></div>
     <div id="main-container">
 
@@ -98,8 +99,6 @@ $login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
             <div id='join-back-cont'></div>
             <script>
                 $(document).ready(function() {
-                    console.log('<?= $login; ?>');
-
                     var login = decodeEntities('<?= htmlspecialchars_decode($login, ENT_QUOTES); ?>');
 
                     $("#titlejoin").html(translations['joinTournament'][lang]);

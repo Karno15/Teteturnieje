@@ -287,9 +287,13 @@ var translations = {
         'en': "Contact: <a href='mailto:contact@teteturnieje.net'>contact@teteturnieje.net</a>",
         'pl': "Kontakt: <a href='mailto:contact@teteturnieje.net'>contact@teteturnieje.net</a>"
     },
+    'pageInfoTitle': {
+        'en': "What is TeTeTurnieje?",
+        'pl': "Co to TeTeTurnieje?"
+    },
     'pageInfo': {
-        'en': "Teteturnieje is a tournament hosting application where you can create your own tournaments and play them with your friends. All you have to do is create a tournament and the questions for it, and then start it.<br>The acquired four-digit code can be sent to friends to try to solve it.<br> The host can award or take away points for answers. <br> (It is recommended to use voice chat or normal group chat when playing tournaments.)  ",
-        'pl': "Teteturnieje to aplikacja do hostowania turniejów, w której możesz tworzyć własne turnieje oraz rozgrywać je ze znajomymi. Wystarczy stworzyć turniej oraz pytania do niego, a następnie rozpocząć go.<br>Zdobyty czterocyfrowy kod można wysłać do znajomych, aby spróbowali go rozwiązać.<br> Host może przyznawać lub odbierać punkty za odpowiedzi. <br> (Zalecane jest korzystanie z voice chatu lub normalnego chatu grupowego podczas grania w teteturnieje.)  "
+        'en': "TeTeTurnieje is an online game that allows you to organize your own quiz tournaments and play them with friends. Simply create your tournament by adding questions, and then share the four-digit code with your crew.<br> <br> As the host, you have control over awarding and deducting points for answers.<br> It is recommended to use voice chat or regular group chat to further enhance the gameplay.",
+        'pl': "TeTeTurnieje to gra online umożliwiająca organizowanie własnych turniejów z pytaniami oraz rozgrywanie ich ze znajomymi. Wystarczy stworzyć swój turniej, dodając pytania, a następnie podzielić się uzyskanym czterocyfrowym kodem z ekipą.<br> <br> Jako organizator, masz kontrolę nad przyznawaniem i odbieraniem punktów za odpowiedzi.<br> Zalecane korzystanie z voice chatu lub normalnego czatu grupowego, aby jeszcze bardziej wzbogacić rozgrywkę."
     },
     'emptyTurniej': {
         'en': "There are no tournaments yet",
@@ -298,5 +302,9 @@ var translations = {
     'emptyQuestion': {
         'en': "There are no questions yet",
         'pl': 'Nie ma jescze żadnych pytań'
+    },
+    'tooltiplang': {
+        'en': "Polski",
+        'pl': "English"
     }
 };

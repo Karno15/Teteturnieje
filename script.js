@@ -2,25 +2,37 @@ $(document).ready(function () {
 
     langses = localStorage.getItem("lang");
     var lang = langses || 'en';
-    
+
     localStorage.setItem("lang", lang);
+
+    gearClicked = false;
+    $('#gear').on('click', function () {
+        if (!gearClicked) {
+            $('.lang').css('display', 'flex');
+            gearClicked = true;
+        } else {
+            $('.lang').fadeOut(200);
+            $('.tooltiplang').fadeOut(200);
+            gearClicked = false;
+        }
+    });
 
     var flagClick = false;
     $('.flag').css('background-image', 'url(' + getFlagUrl(lang) + ')');
-    $('.flag').on('click', function() {
+    $('.flag').on('click', function () {
         flagClick = true;
         var newLang = (lang === 'pl') ? 'en' : 'pl';
         $('.flag').css('background-image', 'url(' + getFlagUrl(newLang) + ')');
         $('.lang-select').val(newLang);
         $('.lang-select').trigger('change');
     });
-    $('.lang-select').on('change', function() {
+    $('.lang-select').on('change', function () {
         if (!flagClick) {
             lang = $(this).val();
             localStorage.setItem("lang", lang);
             $.post('setlang.php', {
                 language: lang
-            }, function(response) {
+            }, function (response) {
                 console.log('Language changed to: ' + lang);
                 location.reload();
             });
@@ -28,12 +40,29 @@ $(document).ready(function () {
         flagClick = false;
     });
 
+    $('.lang').on('mouseenter', function () {
+        var newLang = (lang === 'pl') ? 'en' : 'pl';
+        $('.flag').fadeOut(100, function () {
+            $(this).css('background-image', 'url(' + getFlagUrl(newLang) + ')').fadeIn(100);
+        });
+        $('.tooltiplang').fadeIn(200);
+    });
+
+    $('.lang').on('mouseleave', function () {
+        $('.flag').fadeOut(100, function () {
+            $(this).css('background-image', 'url(' + getFlagUrl(lang) + ')').fadeIn(100);
+        });
+        $('.tooltiplang').fadeOut(200);
+    });
+
     function getFlagUrl(lang) {
         return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
     }
 
-    $('#contact').html(translations['contact'][lang]);  
-    $('#pageInfo').html(translations['pageInfo'][lang]); 
+    $('#contact').html(translations['contact'][lang]);
+    $('#pageInfoTitle').html(translations['pageInfoTitle'][lang]);
+    $('#pageInfo').html(translations['pageInfo'][lang]);
+    $('.tooltiplang').html(translations['tooltiplang'][lang]);
     $('button#login').html(translations['login'][lang]);
     $('button#register').html(translations['register'][lang]);
 
@@ -48,7 +77,7 @@ $(document).ready(function () {
     });
 
     loginHTML = '<button id="closeButton" class="codeconfrim">' + translations['return'][lang] + '</button><br>' +
-        translations['login'][lang].toUpperCase() + '<br><form action="login.php" method="post">' +
+        translations['log in'][lang].toUpperCase() + '<br><form action="login.php" method="post">' +
         'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
         '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>' +
         '<button type="submit" class="codeconfrim">' + translations['log in'][lang] + '</button></form>';
