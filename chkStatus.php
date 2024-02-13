@@ -3,6 +3,8 @@ session_start();
 
 include_once('translation/' . $_SESSION['lang'] . ".php");
 
+$response = array();
+
 if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
 
     require('connect.php');
@@ -19,8 +21,6 @@ if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
     $statusRow = $statusResult->fetch_assoc();
 
     $statusStmt->close();
-
-    $response = array();
 
     if ($statusResult->num_rows > 0) {
         $status = $statusRow['Status'];
@@ -51,8 +51,8 @@ if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
 
         $response['error'] = $lang["noQuests"];
     }
+    mysqli_close($conn);
     echo json_encode($response);
 } else {
-    echo "No data.";
+    echo json_encode($response);
 }
-mysqli_close($conn);

@@ -113,8 +113,10 @@ $login = (isset($_SESSION['username']) ? $_SESSION['username'] : '');
                         type: 'GET',
                         dataType: 'json',
                         success: function(response) {
-                            $('#join-back-cont').html("<a href='joined.php' id='join-back'>" + translations['inProgress'][lang] + "</a><br><br>");
-                            $('#join-back-cont').show();
+                            if (response.hasOwnProperty('status')) {
+                                $('#join-back-cont').html("<a href='joined.php' id='join-back'>" + translations['inProgress'][lang] + "</a><br><br>");
+                                $('#join-back-cont').show();
+                            }
                         },
                         error: function(response) {
                             $('#join-back-cont').html("");
