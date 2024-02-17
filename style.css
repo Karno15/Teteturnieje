@@ -120,8 +120,11 @@ body {
 }
 
 .startpopup {
-  background: rgba(255, 153, 51, 1);
+  background: rgba(245, 105, 17, 1);
   background-image: url('images/texture.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  background-size: 100% 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -147,6 +150,10 @@ body {
 
 .note-editable {
   background-image: url('images/texture.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  background-size: 100% 100%;
+  max-width: 1050px;
 }
 
 .inputy {

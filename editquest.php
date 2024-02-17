@@ -137,7 +137,7 @@ if (!isset($_GET['turniejid'])) {
                             $_SESSION['info'] = $stmt1->error;
                             break;
                         }
-                        $selectedAnswer = $_POST["answer"];
+                        $selectedAnswer = isset($_POST["answer"]) ? $_POST["answer"] : NULL;
                         $selectedAnswerId = substr($selectedAnswer, 1);
 
                         if ($i == $selectedAnswerId) {
@@ -223,7 +223,7 @@ if (!isset($_GET['turniejid'])) {
                                 break;
                             }
 
-                            $selectedAnswer = $_POST["answer"];
+                            $selectedAnswer = isset($_POST["answer"]) ? $_POST["answer"] : NULL;
                             $selectedAnswerId = substr($selectedAnswer, 1);
 
                             if ($i == $selectedAnswerId) {
@@ -242,7 +242,7 @@ if (!isset($_GET['turniejid'])) {
                     }
                 }
                 $stmtUpdateOdp = $conn->prepare("UPDATE prawiodpo SET `PozId` = ? WHERE `PytId` = ?");
-                $selectedAnswer = $_POST["answer"];
+                $selectedAnswer = isset($_POST["answer"]) ? $_POST["answer"] : NULL;
                 $selectedAnswerId = substr($selectedAnswer, 1);
 
                 $stmtUpdateOdp->bind_param("ii", $selectedAnswerId, $pytid);

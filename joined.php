@@ -465,12 +465,13 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                 <?php
                 if (isset($_SESSION['TurniejId'])) {
 
-                    $codeSql = "SELECT Code FROM turnieje WHERE TurniejId = ?";
+                    $codeSql = "SELECT Name, Code FROM turnieje WHERE TurniejId = ?";
                     $codeStmt = $conn->prepare($codeSql);
                     $codeStmt->bind_param("i", $_SESSION['TurniejId']);
                     $codeStmt->execute();
                     $codeResult = $codeStmt->get_result();
                     $code = $codeResult->fetch_assoc();
+                    echo  $code['Name'].'<br>';
                     echo  $lang["code"] . ': ' . $code['Code'];
                 }
                 ?>
