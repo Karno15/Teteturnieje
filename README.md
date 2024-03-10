@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file
 
-## [1.12] - 2024-02-19
+## [1.12] - 2024-03-10
 
 ### Changed
 
 - Minor fixes
+- Password policy
+- Cookie policy
 
 ## [1.11] - 2024-02-13
 
