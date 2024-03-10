@@ -23,8 +23,9 @@ $lang = array(
     "turniejCreated" => "Tournament was created",
     "codeExists" => "This code already exists!",
     "noQuests" => "No questions in tournament",
-    "success" => "Sukces!",
-    "error" => "Błąd!",
+    "success" => "Succes!",
+    "error" => "Error!",
     "code" => "Tournament code",
-    "saved" => "Saved!"
+    "saved" => "Saved!",
+    "invalidPassword" => "Password does not meet the requirements"
 );

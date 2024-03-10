@@ -84,7 +84,8 @@ $(document).ready(function () {
     registerHTML = '<button id="closeButton" class="codeconfrim">' + translations['return'][lang] + '</button><br>' +
         translations['register'][lang].toUpperCase() + '<br><form  action="register.php" method="post">' +
         'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
-        '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>' +
+        '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>'
+        + '<div class="disclaimer">' + translations['passPolicy'][lang] + '</div>' +
         '<button type="submit" class="codeconfrim">' + translations['register'][lang] + '</button></form>'
     $("#popup").html(loginHTML);
 

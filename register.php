@@ -8,6 +8,24 @@ if (!isset($_SESSION['lang'])) {
 
 require('connect.php');
 
+function isValidPassword($password)
+{
+    if (strlen($password) < 6) {
+        return false;
+    }
+
+    if (!preg_match('/[0-9]/', $password)) {
+        return false;
+    }
+
+    if (!preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password)) {
+        return false;
+    }
+
+    return true;
+}
+
+
 function usernameExists($username, $conn)
 {
     $checkQuery = "SELECT COUNT(*) FROM masters WHERE UPPER(Login) = UPPER(?) AND UPPER(Login) IN (SELECT UPPER(Login) FROM users);";
@@ -32,6 +50,11 @@ function registerUser($username, $password, $conn)
 
     if (!isValidUsername($username)) {
         $_SESSION['info'] = $lang['invalidLogin'];
+        return false;
+    }
+
+    if (!isValidPassword($password)) {
+        $_SESSION['info'] = $lang['invalidPassword'];
         return false;
     }
 
