@@ -261,14 +261,14 @@ $stmt->close();
                             })
                         });
                     </script>
+                    <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
+                    <?php
+                    if (isset($_SESSION['userid'])) {
+                        unset($_SESSION['TurniejId']);
+                        unset($_SESSION['currentQuest']);
+                    }
+                    ?>
             </div>
-            <button id='back' class='button-85' style='padding: 0; min-width: 200px;'></button>
-            <?php
-            if (isset($_SESSION['userid'])) {
-                unset($_SESSION['TurniejId']);
-                unset($_SESSION['currentQuest']);
-            }
-            ?>
         </div>
     </div>
 </body>

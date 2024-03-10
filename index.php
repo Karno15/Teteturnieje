@@ -66,6 +66,8 @@ $lang = (isset($_SESSION['lang']) ? $_SESSION['lang'] : '');
 </head>
 
 <body loading="lazy">
+    <div id="cookie"><img src='images/cookie.svg'></div>
+    <div id="cookieinfo"></div>
     <div id="gear"><img src='images/gear.svg'></div>
     <div class='lang' class="lang-select-container">
         <span class="flag" style="cursor: pointer;"></span>

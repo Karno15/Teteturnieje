@@ -2,11 +2,20 @@
 
 All notable changes to this project will be documented in this file
 
+## [1.12] - 2024-03-10
+
+### Changed
+
+- Minor fixes
+- Password policy
+- Cookie policy
+
 ## [1.11] - 2024-02-13
 
 ### Changed
 
-- Changed the front page text and the overall style of the page
+- Changed the front page text 
+- Changed overall style of the page
 - Added animations for language buttons
 
 ## [1.10] - 2024-02-07

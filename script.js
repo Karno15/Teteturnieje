@@ -59,6 +59,15 @@ $(document).ready(function () {
         return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
     }
 
+    $('#cookie').on('mouseenter', function () {
+        $('#cookieinfo').fadeIn(100);
+    });
+    
+    $('#cookie').on('mouseleave', function () {
+        $('#cookieinfo').fadeOut(100);
+    });
+
+    $('#cookieinfo').html(translations['cookieinfo'][lang]);
     $('#contact').html(translations['contact'][lang]);
     $('#pageInfoTitle').html(translations['pageInfoTitle'][lang]);
     $('#pageInfo').html(translations['pageInfo'][lang]);
@@ -84,7 +93,8 @@ $(document).ready(function () {
     registerHTML = '<button id="closeButton" class="codeconfrim">' + translations['return'][lang] + '</button><br>' +
         translations['register'][lang].toUpperCase() + '<br><form  action="register.php" method="post">' +
         'Login:<br><input type="text" name="login" class="inputlogin" maxlength="12" required><div id="definput">' +
-        '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>' +
+        '<div id="definput">' + translations['password'][lang] + ':</br><input type="password" name="pass" class="inputlogin" required></div>'
+        + '<div class="disclaimer">' + translations['passPolicy'][lang] + '</div>' +
         '<button type="submit" class="codeconfrim">' + translations['register'][lang] + '</button></form>'
     $("#popup").html(loginHTML);
 

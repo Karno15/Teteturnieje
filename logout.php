@@ -8,9 +8,10 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : $userLanguages[0];
 $_SESSION = array();
 
 session_destroy();
-session_regenerate_id(true);
 
 session_start();
+
+session_regenerate_id(true);
 
 $_SESSION['lang'] = $lang;
 

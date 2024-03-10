@@ -178,15 +178,17 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                             type: 'GET',
                             dataType: 'json',
                             success: function(response) {
-
                                 if (buzzresponse != JSON.stringify(response)) {
 
+                                    savedbuzzresponse = buzzresponse;
+
                                     buzzresponse = JSON.stringify(response);
-                                    if (buzzresponse != '{"buzzes":[]}') {
-                                        buzzsfx.play();
-
+                                    if (savedbuzzresponse != 0) {
+                                        if (buzzresponse != '{"buzzes":[]}') {
+                                            console.log(buzzresponse);
+                                            buzzsfx.play();
+                                        }
                                     }
-
                                     var buzzesHTML = '<p id="aligned">Buzzers:<table class="datatables">';
                                     var firstBuzz = 0;
 
@@ -465,12 +467,13 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                 <?php
                 if (isset($_SESSION['TurniejId'])) {
 
-                    $codeSql = "SELECT Code FROM turnieje WHERE TurniejId = ?";
+                    $codeSql = "SELECT Name, Code FROM turnieje WHERE TurniejId = ?";
                     $codeStmt = $conn->prepare($codeSql);
                     $codeStmt->bind_param("i", $_SESSION['TurniejId']);
                     $codeStmt->execute();
                     $codeResult = $codeStmt->get_result();
                     $code = $codeResult->fetch_assoc();
+                    echo  $code['Name'] . '<br>';
                     echo  $lang["code"] . ': ' . $code['Code'];
                 }
                 ?>

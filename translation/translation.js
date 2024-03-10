@@ -306,5 +306,13 @@ var translations = {
     'tooltiplang': {
         'en': "Polski",
         'pl': "English"
+    },
+    'passPolicy': {
+        'en': "<br>The password must include at least: <li> 6 characters</li> <li> one number </li> <li> one special character </li>",
+        'pl': "<br>Hasło musi zawierać conajmniej: <li> 6 znaków </li> <li> jedną cyfrę </li> <li> jeden znak specjalny </li>"
+    },
+    'cookieinfo': {
+        'en': "This site uses \"cookies\" in order to <br>function properly. By using this site,<br> you agree to the use of \"cookies\".",
+        'pl': "Strona wykorzystuje pliki \"cookies\"<br> w celu prawidłowego funkcjonowania. <br>Korzystając z tej strony, wyrażasz<br> zgodę na używanie plików \"cookie\"."
     }
 };
