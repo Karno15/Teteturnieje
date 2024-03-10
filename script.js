@@ -59,6 +59,15 @@ $(document).ready(function () {
         return (lang === 'en') ? 'images/en.svg' : 'images/pl.svg';
     }
 
+    $('#cookie').on('mouseenter', function () {
+        $('#cookieinfo').fadeIn(100);
+    });
+    
+    $('#cookie').on('mouseleave', function () {
+        $('#cookieinfo').fadeOut(100);
+    });
+
+    $('#cookieinfo').html(translations['cookieinfo'][lang]);
     $('#contact').html(translations['contact'][lang]);
     $('#pageInfoTitle').html(translations['pageInfoTitle'][lang]);
     $('#pageInfo').html(translations['pageInfo'][lang]);
