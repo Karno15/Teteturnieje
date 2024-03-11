@@ -185,7 +185,6 @@ $isLeader = (isset($_SESSION['leader']) && $turniejid == $_SESSION['leader']);
                                     buzzresponse = JSON.stringify(response);
                                     if (savedbuzzresponse != 0) {
                                         if (buzzresponse != '{"buzzes":[]}') {
-                                            console.log(buzzresponse);
                                             buzzsfx.play();
                                         }
                                     }

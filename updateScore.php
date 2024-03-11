@@ -36,7 +36,6 @@ if (isset($_POST['login']) && isset($_POST['newScore'])) {
 
                 if (mysqli_stmt_execute($stmtUpdate)) {
                     echo "Updated.";
-                    print_r($stmtUpdate);
                 } else {
                     echo "Error: " . mysqli_stmt_error($stmtUpdate);
                 }

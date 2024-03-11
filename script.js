@@ -264,7 +264,6 @@ function getUrlParameter(name) {
 }
 
 function createTextNode(value) {
-    console.log(value)
     var textNode = document.createTextNode(value);
     var div = document.createElement('div');
     div.appendChild(textNode);
