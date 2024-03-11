@@ -38,7 +38,7 @@ if (isset($_SESSION['userid'], $_SESSION['TurniejId'])) {
         while ($participantsRow = $participantsResult->fetch_assoc()) {
             $participants[] = $participantsRow;
         }
-
+        $participantsResult->close();
         $participantsStmt->close();
 
         $response = array(

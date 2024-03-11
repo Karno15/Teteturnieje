@@ -11,14 +11,37 @@ if (isset($_SESSION['info'])) {
 
 include_once('translation/' . $_SESSION['lang'] . ".php");
 
+require('connect.php');
+
 if (!isset($_GET['turniejid'])) {
     $_SESSION['info'] = $lang["notFound"];
     header("Location: index.php");
+    exit();
+} else {
+    $turniejId = mysqli_real_escape_string($conn, $_GET['turniejid']);
+    $query = "select TurniejId, Status from turnieje where TurniejId= ?;";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $turniejId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    if ($row) {
+        $status = $row['Status'];
+        if ($status != 'Z') {
+            $_SESSION['info'] = $lang["notFinished"];
+            header("Location: index.php");
+            exit();
+        }
+    } else {
+        $_SESSION['info'] = $lang["notFound"];
+        header("Location: index.php");
+        exit();
+    }
+    $stmt->close();
+    $result->close();
 }
 
-require('connect.php');
-
-$turniejId = mysqli_real_escape_string($conn, $_GET['turniejid']);
 $query = "SELECT RANK() OVER (ORDER BY tu.CurrentScore DESC) AS ScoreRank, u.Login,
      tu.CurrentScore FROM turuserzy tu JOIN users u ON u.UserId=tu.UserId 
      WHERE turniejId= ? and CurrentScore IS NOT NULL;";

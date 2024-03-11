@@ -27,5 +27,6 @@ $lang = array(
     "error" => "Błąd!",
     "code" => "Kod turnieju",
     "saved" => "Zapisano!",
-    "invalidPassword" => "Hasło nie spełnia wymagań"
+    "invalidPassword" => "Hasło nie spełnia wymagań",
+    "notFinished" => "Turniej nie został jeszcze zakończony!"
 );

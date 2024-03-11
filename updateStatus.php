@@ -94,7 +94,7 @@ if ($status === 'K') {
     $updateStmt->bind_param("i", $turniejId);
     $updateStmt->execute();
 } elseif ($status === 'Z') {
-    $sql = "CALL UpdateTournamentStatus(?)";
+    $sql = "CALL CompleteTournament(?)";
     $stmtproc = $conn->prepare($sql);
     $stmtproc->bind_param("i", $turniejId);
     $stmtproc->execute();

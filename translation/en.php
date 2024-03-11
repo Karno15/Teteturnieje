@@ -27,5 +27,6 @@ $lang = array(
     "error" => "Error!",
     "code" => "Tournament code",
     "saved" => "Saved!",
-    "invalidPassword" => "Password does not meet the requirements"
+    "invalidPassword" => "Password does not meet the requirements",
+    "notFinished" => "The tournament has not been finished yet!"
 );
